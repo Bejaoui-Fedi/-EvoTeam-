@@ -1,0 +1,205 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Evolia — Gestion Utilisateurs{% endblock %}
+
+{% block body_class %}admin-theme{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin_dashboard.css') }}">
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+{% endblock %}
+
+{% block body %}
+
+<div class="admin-scope">
+<div class="admin-sidebar">
+    <div class="sidebar-brand">
+        <div class="logo-animation-wrapper mb-4" style="position: relative; width: 120px; height: 120px; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
+            <div class="logo-animation-bg" style="position: absolute; inset: 10px; background: rgba(255, 255, 255, 0.08); border-radius: 50%; box-shadow: 0 8px 32px rgba(0,0,0,0.2);"></div>
+            <lottie-player 
+                src="{{ asset('Logo_Evolia.json') }}" 
+                background="transparent" 
+                speed="1" 
+                style="width: 160px; height: 160px; position: relative; z-index: 2;" 
+                loop 
+                autoplay>
+            </lottie-player>
+        </div>
+        <div class="d-flex align-items-center justify-content-center gap-2">
+            <h2 class="mb-0" style="font-size: 1.5rem; letter-spacing: 2px;">EVOLIA</h2>
+            <span class="sidebar-badge">Admin</span>
+        </div>
+    </div>
+
+    <div class="admin-sidebar-nav">
+        <div class="nav-section-title">Principal</div>
+        <a href="{{ path('app_admin_dashboard') }}" class="admin-nav-link">
+            <i class="fa-solid fa-chart-line"></i> Tableau de bord
+        </a>
+        <a href="{{ path('app_user_list') }}" class="admin-nav-link active">
+            <i class="fa-solid fa-users"></i> Utilisateurs
+        </a>
+
+        <div class="nav-section-title mt-4">Gestion</div>
+        <a href="#" class="admin-nav-link">
+            <i class="fa-solid fa-calendar-days"></i> Événements
+        </a>
+        <a href="#" class="admin-nav-link">
+            <i class="fa-solid fa-dumbbell"></i> Exercices
+        </a>
+        <a href="#" class="admin-nav-link">
+            <i class="fa-solid fa-heart-pulse"></i> Bien-être
+        </a>
+        <a href="#" class="admin-nav-link">
+            <i class="fa-solid fa-clipboard-list"></i> Consult-RDV
+        </a>
+    </div>
+
+    <div class="admin-sidebar-footer">
+        <a href="{{ path('app_home') }}" class="btn-logout">
+            <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
+        </a>
+    </div>
+</div>
+
+<div class="admin-main-content">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div class="header-title">
+            <div class="d-flex align-items-center gap-4">
+                <div class="p-4 bg-white rounded-5 shadow-sm border border-light">
+                    <i class="fa-solid fa-users-gear fs-2 text-success"></i>
+                </div>
+                <div>
+                    <h1 class="display-6 fw-bold mb-0">Gestion Utilisateurs</h1>
+                    <p class="small text-uppercase tracking-wider">Administration du personnel & patients</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-header">
+                <span>COMMUNAUTÉ</span>
+                <div class="p-2 bg-light rounded-circle"><i class="fa-solid fa-users text-success"></i></div>
+            </div>
+            <div class="stat-value">{{ stats.total }} <small class="fs-6 fw-normal opacity-50">Membres</small></div>
+            <div class="mt-2 text-muted small">Inscriptions totales</div>
+        </div>
+        <div class="stat-card active">
+            <div class="stat-header">
+                <span>ENGAGEMENT</span>
+                <div class="p-2 bg-success bg-opacity-10 rounded-circle"><i class="fa-solid fa-bolt text-success"></i></div>
+            </div>
+            <div class="stat-value">{{ stats.active_percentage }}% <small class="fs-6 fw-normal opacity-50">Actifs</small></div>
+            <div class="mt-2 text-success small"><i class="fa-solid fa-check-double"></i> Comptes vérifiés</div>
+        </div>
+        <div class="stat-card inactive">
+            <div class="stat-header">
+                <span>EN ATTENTE / INACTIFS</span>
+                <div class="p-2 bg-light rounded-circle"><i class="fa-solid fa-clock text-muted"></i></div>
+            </div>
+            <div class="stat-value">{{ stats.inactive }}</div>
+            <div class="mt-2 text-muted small">Aucune action requise</div>
+        </div>
+    </div>
+
+    <div class="management-card">
+        <div class="card-header-actions">
+            <form action="{{ path('app_user_list') }}" method="get" class="search-filter-form m-0 w-100 d-flex flex-wrap gap-3 align-items-center">
+                <div class="search-box flex-grow-1" style="max-width: 500px;">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" name="q" value="{{ app.request.query.get('q') }}" placeholder="Rechercher par nom, email ou téléphone...">
+                </div>
+                
+                <div class="filter-box">
+                    <select name="role" class="form-select custom-role-select" onchange="this.form.submit()">
+                        <option value="">Tous les rôles</option>
+                        <option value="ROLE_ADMIN" {% if app.request.query.get('role') == 'ROLE_ADMIN' %}selected{% endif %}>Administrateurs</option>
+                        <option value="ROLE_PATIENT" {% if app.request.query.get('role') == 'ROLE_PATIENT' %}selected{% endif %}>Patients</option>
+                        <option value="PSY_COACH" {% if app.request.query.get('role') == 'PSY_COACH' %}selected{% endif %}>Psychologues & Coachs</option>
+                    </select>
+                </div>
+
+                <div class="d-flex gap-2 ms-auto">
+
+                    <a href="{{ path('app_user_list') }}" class="btn-action" title="Réinitialiser">
+                        <i class="fa-solid fa-rotate"></i>
+                    </a>
+                    <a href="{{ path('app_admin_user_new') }}" class="btn-add ms-2 text-decoration-none d-flex align-items-center justify-content-center">
+                        <i class="fa-solid fa-plus me-2"></i> Nouvel Utilisateur
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom complet</th>
+                        <th>Adresse email</th>
+                        <th>Rôle</th>
+                        <th>Téléphone</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td><strong>{{ user.nom }}</strong></td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            <span class="role-badge">
+                                {% if 'ROLE_ADMIN' in user.roles %}
+                                    <i class="fa-solid fa-user-shield text-dark"></i> Administrateur
+                                {% elseif 'ROLE_PSYCHOLOGUE' in user.roles or 'ROLE_COACH' in user.roles %}
+                                    <i class="fa-solid fa-user-doctor text-info"></i> Psychologue/Coach
+                                {% else %}
+                                    <i class="fa-solid fa-heart text-danger"></i> Patient
+                                {% endif %}
+                            </span>
+                        </td>
+                        <td>{{ user.telephone }}</td>
+                        <td>
+                            {% if user.actif %}
+                                <span class="status-badge status-active"><i class="fa-solid fa-check"></i> Actif</span>
+                            {% else %}
+                                <span class="status-badge status-inactive"><i class="fa-solid fa-xmark"></i> Inactif</span>
+                            {% endif %}
+                        </td>
+                        <td class="action-btns">
+                            <a href="{{ path('app_admin_user_edit', {id: user.id}) }}" class="btn-action"><i class="fa-solid fa-pen-to-square"></i></a>
+                            <form method="post" action="{{ path('app_user_toggle', {'id': user.id}) }}" style="display:inline;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('toggle' ~ user.id) }}">
+                                <button type="submit" class="btn-action" style="border:none;background:none;padding:0;" title="{{ user.actif ? 'Désactiver' : 'Activer' }}">
+                                    <i class="fa-solid fa-user-tag {% if not user.actif %}opacity-50{% endif %}"></i>
+                                </button>
+                            </form>
+                            
+                            <form method="post" action="{{ path('app_user_delete', {'id': user.id}) }}" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+                                <button type="submit" class="btn-action btn-delete" style="border:none;background:none;padding:0;"><i class="fa-solid fa-trash-can"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center">Aucun utilisateur trouvé.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}
