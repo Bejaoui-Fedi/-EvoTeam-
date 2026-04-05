@@ -1,0 +1,107 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Evolia — Mon Profil{% endblock %}
+
+{% block body_class %}user-theme{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('user_dashboard.css') }}">
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+{% endblock %}
+
+{% block body %}
+
+<div class="user-scope">
+{% include 'user_nav_bar/index.html.twig' %}
+
+<div class="user-main-content">
+    <div class="profile-card">
+        <div class="profile-hero">
+            <div class="d-flex align-items-center justify-content-between w-100">
+                <div class="d-flex align-items-center gap-4">
+                    <div class="hero-icon-wrapper">
+                        <i class="fa-solid fa-sparkles fs-1 text-white opacity-50"></i>
+                    </div>
+                    <div>
+                        <h1>Mon Profil</h1>
+                        <p class="m-0 fs-5 opacity-75">Bienvenue dans votre havre de paix, fedi.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-content">
+            <div class="row g-5">
+                <div class="col-lg-4 text-center">
+                    <div class="profile-sidebar-inner p-4 rounded-5" style="background: rgba(30, 77, 107, 0.03);">
+                        <div class="avatar-container mx-auto mb-4 shadowed-avatar">
+                            <img src="https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?auto=format&fit=crop&q=80&w=120&h=120" alt="Avatar">
+                        </div>
+                        <div class="mb-3">
+                            <span class="badge-patient px-3 py-2">Patient Premium</span>
+                        </div>
+                        <div class="stats-mini d-flex justify-content-center gap-3 mt-4">
+                            <div class="stat-item text-center">
+                                <span class="d-block fw-bold text-primary">12</span>
+                                <small class="text-muted" style="font-size: 0.65rem;">Exercices</small>
+                            </div>
+                            <div class="vr my-2"></div>
+                            <div class="stat-item text-center">
+                                <span class="d-block fw-bold text-primary">5</span>
+                                <small class="text-muted" style="font-size: 0.65rem;">RDV</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-8">
+                    <div class="profile-main-section">
+                        <h2 class="profile-section-title">
+                            <i class="fa-solid fa-address-card me-2 opacity-50"></i> Informations personnelles
+                        </h2>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <label>Nom complet</label>
+                                <p>fedi</p>
+                            </div>
+                            <div class="info-item">
+                                <label>Email professionnel</label>
+                                <p>fedi@gmail.com</p>
+                            </div>
+                            <div class="info-item">
+                                <label>Téléphone</label>
+                                <p>23 654 789</p>
+                            </div>
+                            <div class="info-item">
+                                <label>Statut du compte</label>
+                                <p><span class="status-active-dot"></span> <span class="text-success">Vérifié & Actif</span></p>
+                            </div>
+                        </div>
+
+                        <h2 class="profile-section-title mt-5">
+                            <i class="fa-solid fa-quote-left me-2 opacity-50"></i> À propos de moi
+                        </h2>
+                        <div class="info-item">
+                            <p class="text-muted fst-italic bg-light p-4 rounded-4">
+                                "En quête de sérénité et d'équilibre. Passionné par le bien-être et le développement personnel."
+                            </p>
+                        </div>
+
+                        <div class="mt-5">
+                            <button class="edit-btn m-0 px-5 py-3 shadow-lg">
+                                <i class="fa-solid fa-user-pen me-2"></i> Éditer mon profil
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

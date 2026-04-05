@@ -1,0 +1,229 @@
+/* ——— Page layout ——— */
+html,
+body {
+    min-height: 100%;
+}
+
+body {
+    background: transparent;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+    padding: 40px 20px;
+    overflow-y: auto;
+}
+
+/* ——— Card ——— */
+.registration-card {
+    position: relative;
+    z-index: 2;
+    background: rgba(240, 248, 253, 0.94);
+    backdrop-filter: blur(10px);
+    border: 1.5px solid rgba(168, 212, 232, 0.5);
+    border-radius: 28px;
+    padding: 35px 44px 28px;
+    width: 100%;
+    max-width: 580px;
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.2);
+    animation: fadeUp 0.5s ease both;
+    margin-top: 20px;
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ——— Title ——— */
+.registration-card h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #1e4d6b;
+    margin-bottom: 4px;
+    text-align: left;
+}
+
+.registration-card .subtitle {
+    font-style: italic;
+    font-size: 0.95rem;
+    color: #4a87a8;
+    margin-bottom: 12px;
+    text-align: left;
+}
+
+.section-divider {
+    border: none;
+    border-top: 1.5px solid #c5dff0;
+    margin: 10px 0 20px;
+}
+
+/* ——— Section Titles ——— */
+.section-title {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #1e4d6b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 20px 0 12px;
+    text-align: left;
+}
+
+/* ——— Form ——— */
+.form-label {
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: #1e4d6b;
+    text-align: left;
+    display: block;
+    margin-bottom: 7px;
+}
+
+.form-control {
+    border: 1.5px solid #a8d4e8;
+    border-radius: 12px;
+    padding: 11px 16px;
+    font-size: 0.93rem;
+    color: #333;
+    background: #f8fcff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    margin-bottom: 12px;
+}
+
+.form-control::placeholder {
+    color: #93bad0;
+}
+
+.form-control:focus {
+    border-color: #1e4d6b;
+    box-shadow: 0 0 0 3px rgba(30, 77, 107, 0.12);
+    outline: none;
+    background: #fff;
+}
+
+/* ——— Radio Group ——— */
+.radio-group {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.radio-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.93rem;
+    color: #333;
+    cursor: pointer;
+}
+
+.radio-item input {
+    cursor: pointer;
+}
+
+/* ——— Strength Bar ——— */
+.strength-container {
+    margin-top: -8px;
+    margin-bottom: 20px;
+    text-align: right;
+}
+
+.strength-bar {
+    height: 4px;
+    background: #e1e9f0;
+    border-radius: 4px;
+    width: 60%;
+    margin-left: auto;
+    position: relative;
+    overflow: hidden;
+}
+
+.strength-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 30%;
+    /* Mocked value */
+    background: #ff6b6b;
+    /* Faible */
+}
+
+.strength-label {
+    font-size: 0.75rem;
+    color: #ff6b6b;
+    margin-top: 4px;
+    font-weight: 600;
+}
+
+/* ——— Footer Options ——— */
+.form-options {
+    text-align: left;
+    margin-top: 15px;
+    font-size: 0.88rem;
+    color: #444;
+}
+
+.form-options a {
+    color: #1e4d6b;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.form-options a:hover {
+    text-decoration: underline;
+}
+
+/* ——— Submit button ——— */
+.btn-submit {
+    width: 100%;
+    max-width: 320px;
+    background: #1e4d6b;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    padding: 13px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 30px auto 15px;
+    transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+}
+
+.btn-submit:hover {
+    background: #2d7da6;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(30, 77, 107, 0.35);
+}
+
+/* ——— Login link ——— */
+.login-link {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: #777;
+    text-align: center;
+}
+
+.login-link a {
+    color: #1e4d6b;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}
