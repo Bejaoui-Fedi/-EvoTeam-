@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Log Wellbeing{% endblock %}
+
+{% block body %}
+    <h1 class="title">Log <span>Wellbeing</span></h1>
+    <div class="hero-divider"></div>
+    <p class="subtitle" style="text-align: center; margin-bottom: 30px;">Track your daily feelings</p>
+
+    {{ include('wellbeing_tracker/_form.html.twig') }}
+{% endblock %}

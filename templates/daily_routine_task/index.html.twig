@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Daily Routine Tasks{% endblock %}
+
+{% block body %}
+    <h1 class="title">Routines <span>Management</span></h1>
+    <div class="hero-divider"></div>
+    <p class="subtitle" style="text-align: center; margin-bottom: 30px;">Manage daily tasks for users</p>
+
+    <div class="card admin" style="width: 100%; margin-bottom: 2rem; overflow-x: auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Title</th>
+                    <th>User</th>
+                    <th>Status</th>
+                    <th>Completed At</th>
+                    <th>Created At</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for daily_routine_task in daily_routine_tasks %}
+                <tr>
+                    <td>{{ daily_routine_task.id }}</td>
+                    <td><span style="color: var(--green-light); font-weight: 500;">{{ daily_routine_task.title }}</span></td>
+                    <td>{{ daily_routine_task.user ? daily_routine_task.user.nom : 'Unknown User' }}</td>
+                    <td>
+                        {% if daily_routine_task.isCompleted %}
+                            <span style="color: #a7f3d0">Completed</span>
+                        {% else %}
+                            <span style="color: #fcd34d">Pending</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ daily_routine_task.completedAt ? daily_routine_task.completedAt|date('Y-m-d H:i') : '-' }}</td>
+                    <td>{{ daily_routine_task.createdAt ? daily_routine_task.createdAt|date('Y-m-d H:i') : '' }}</td>
+                    <td>
+                        <div style="display: flex; gap: 10px;">
+                            <a href="{{ path('app_daily_routine_task_show', {'id': daily_routine_task.id}) }}" class="btn btn-personal" style="padding: 6px 14px; font-size: 0.8rem; width: auto;"><i class="fa fa-eye"></i> View</a>
+                            <a href="{{ path('app_daily_routine_task_edit', {'id': daily_routine_task.id}) }}" class="btn btn-admin" style="padding: 6px 14px; font-size: 0.8rem; width: auto;"><i class="fa fa-edit"></i> Edit</a>
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7" style="text-align: center; color: var(--green-pale); padding: 20px;">No routine tasks found.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div style="text-align: center;">
+        <a href="{{ path('app_daily_routine_task_new') }}" class="btn btn-admin" style="max-width: 300px; margin: 0 auto;">
+            <i class="fa fa-plus"></i> Create New Routine Task
+        </a>
+    </div>
+{% endblock %}

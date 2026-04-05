@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Wellbeing Tracker{% endblock %}
+
+{% block body %}
+    <h1 class="title">Wellbeing <span>Tracker</span></h1>
+    <div class="hero-divider"></div>
+    <p class="subtitle" style="text-align: center; margin-bottom: 30px;">Monitor sleep, stress, and mood</p>
+
+    <div class="card user" style="width: 100%; margin-bottom: 2rem; overflow-x: auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Date</th>
+                    <th>User</th>
+                    <th>Task</th>
+                    <th>Mood</th>
+                    <th>Stress</th>
+                    <th>Energy</th>
+                    <th>Sleep</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for wellbeing_tracker in wellbeing_trackers %}
+                <tr>
+                    <td>{{ wellbeing_tracker.id }}</td>
+                    <td><span style="color: var(--teal-mid); font-weight: 500;">{{ wellbeing_tracker.date ? wellbeing_tracker.date|date('Y-m-d') : '' }}</span></td>
+                    <td>{{ wellbeing_tracker.user ? wellbeing_tracker.user.nom : 'Unknown User' }}</td>
+                    <td>{{ wellbeing_tracker.routineTask ? wellbeing_tracker.routineTask.title : 'Unknown Task' }}</td>
+                    <td>{{ wellbeing_tracker.mood }}/5</td>
+                    <td>{{ wellbeing_tracker.stress }}/5</td>
+                    <td>{{ wellbeing_tracker.energy }}/5</td>
+                    <td>{{ wellbeing_tracker.sleepHours }}h</td>
+                    <td>
+                        <div style="display: flex; gap: 10px;">
+                            <a href="{{ path('app_wellbeing_tracker_show', {'id': wellbeing_tracker.id}) }}" class="btn btn-personal" style="padding: 6px 14px; font-size: 0.8rem; width: auto;"><i class="fa fa-eye"></i> View</a>
+                            <a href="{{ path('app_wellbeing_tracker_edit', {'id': wellbeing_tracker.id}) }}" class="btn btn-admin" style="padding: 6px 14px; font-size: 0.8rem; width: auto;"><i class="fa fa-edit"></i> Edit</a>
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="9" style="text-align: center; color: var(--green-pale); padding: 20px;">No wellbeing trackers found.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div style="text-align: center;">
+        <a href="{{ path('app_wellbeing_tracker_new') }}" class="btn btn-personal" style="max-width: 300px; margin: 0 auto;">
+            <i class="fa fa-plus"></i> Log Wellbeing Entry
+        </a>
+    </div>
+{% endblock %}

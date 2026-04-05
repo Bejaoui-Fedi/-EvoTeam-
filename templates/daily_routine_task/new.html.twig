@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Routine Task{% endblock %}
+
+{% block body %}
+    <h1 class="title">New <span>Routine Task</span></h1>
+    <div class="hero-divider"></div>
+    <p class="subtitle" style="text-align: center; margin-bottom: 30px;">Create a new healthy habit</p>
+
+    {{ include('daily_routine_task/_form.html.twig') }}
+{% endblock %}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ProSynf Dashboard{% endblock %}</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>✨</text></svg>">
+    
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('styles/styles.css') }}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    {% endblock %}
+</head>
+<body class="admin-theme">
+
+    <div class="bg-carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="https://images.unsplash.com/photo-1542435503-91dce5315f13?q=80&w=2600&auto=format&fit=crop" alt="Forest Background">
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-dark-overlay"></div>
+
+    <div class="home-container" style="height: auto; min-height: 85vh; overflow-y: auto; display: block;">
+        <div class="navbar-links">
+            <a href="{{ path('app_dashboard') }}" class="{{ app.request.attributes.get('_route') == 'app_dashboard' ? 'active' : '' }}">Dashboard</a>
+            <a href="{{ path('app_user_index') }}" class="{{ app.request.attributes.get('_route') matches '/^app_user_/' ? 'active' : '' }}">Users</a>
+            <a href="{{ path('app_daily_routine_task_index') }}" class="{{ app.request.attributes.get('_route') matches '/^app_daily_routine_task_/' ? 'active' : '' }}">Routines</a>
+            <a href="{{ path('app_wellbeing_tracker_index') }}" class="{{ app.request.attributes.get('_route') matches '/^app_wellbeing_tracker_/' ? 'active' : '' }}">Wellbeing</a>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 30px;">
+            <div class="logo-badge"><i class="fa-solid fa-leaf"></i> ProSynf</div>
+        </div>
+
+        {% block body %}{% endblock %}
+
+        <footer style="margin-top: 40px;">
+            <div class="footer-quote"><i class="fas fa-quote-left"></i> Nurture your lifestyle <i class="fas fa-seedling"></i></div>
+            <div class="footer-copy">© 2026 ProSynf Evolution</div>
+        </footer>
+    </div>
+</body>
+</html>

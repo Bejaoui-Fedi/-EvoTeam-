@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Routine Task{% endblock %}
+
+{% block body %}
+    <h1 class="title">Edit <span>Routine Task</span></h1>
+    <div class="hero-divider"></div>
+    <p class="subtitle" style="text-align: center; margin-bottom: 30px;">Update habit details</p>
+
+    {{ include('daily_routine_task/_form.html.twig', {'button_label': 'Update Routine'}) }}
+{% endblock %}

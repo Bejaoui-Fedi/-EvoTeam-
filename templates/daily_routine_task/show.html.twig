@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Routine Task Details{% endblock %}
+
+{% block body %}
+    <h1 class="title">Routine <span>Details</span></h1>
+    <div class="hero-divider"></div>
+    <p class="subtitle" style="text-align: center; margin-bottom: 30px;">Viewing task details for {{ daily_routine_task.title }}</p>
+
+    <div class="card admin" style="width: 100%; max-width: 600px; margin: 0 auto 2rem; padding: 30px;">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th style="width: 30%;">Id</th>
+                    <td>{{ daily_routine_task.id }}</td>
+                </tr>
+                <tr>
+                    <th>Title</th>
+                    <td><span style="color: var(--green-light); font-weight: 500;">{{ daily_routine_task.title }}</span></td>
+                </tr>
+                <tr>
+                    <th>Assigned User</th>
+                    <td>{{ daily_routine_task.user ? daily_routine_task.user.nom : 'Unknown' }}</td>
+                </tr>
+                <tr>
+                    <th>Is Completed</th>
+                    <td>{{ daily_routine_task.isCompleted ? 'Yes' : 'No' }}</td>
+                </tr>
+                <tr>
+                    <th>Completed At</th>
+                    <td>{{ daily_routine_task.completedAt ? daily_routine_task.completedAt|date('Y-m-d H:i:s') : '-' }}</td>
+                </tr>
+                <tr>
+                    <th>Created At</th>
+                    <td>{{ daily_routine_task.createdAt ? daily_routine_task.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div style="display: flex; gap: 15px; margin-top: 25px; width: 100%;">
+            <a href="{{ path('app_daily_routine_task_edit', {'id': daily_routine_task.id}) }}" class="btn btn-admin" style="flex: 1;"><i class="fa fa-edit"></i> Edit</a>
+            <a href="{{ path('app_daily_routine_task_index') }}" class="btn btn-personal" style="flex: 1;"><i class="fa fa-arrow-left"></i> Back to list</a>
+        </div>
+
+        <div style="margin-top: 20px; text-align: center;">
+            <form method="post" action="{{ path('app_daily_routine_task_delete', {'id': daily_routine_task.id}) }}" onsubmit="return confirm('Are you sure you want to delete this task?');">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ daily_routine_task.id) }}">
+                <button class="btn" style="background: rgba(255,100,100,0.2); color: #ff8888; border: 1px solid rgba(255,100,100,0.5);"><i class="fa fa-trash"></i> Delete Task</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

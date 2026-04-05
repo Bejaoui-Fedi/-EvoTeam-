@@ -1,0 +1,19 @@
+{{ form_start(form) }}
+<div class="card user" style="width: 100%; max-width: 600px; margin: 0 auto 2rem; padding: 30px;">
+    {% for child in form %}
+        {% if 'hidden' not in child.vars.block_prefixes %}
+            <div class="form-group">
+                {{ form_label(child) }}
+                {{ form_widget(child, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(child) }}
+            </div>
+        {% else %}
+            {{ form_widget(child) }}
+        {% endif %}
+    {% endfor %}
+    <div style="display: flex; gap: 15px; margin-top: 25px; width: 100%;">
+        <button type="submit" class="btn btn-admin" style="flex: 1;"><i class="fa fa-save"></i> {{ button_label|default('Save') }}</button>
+        <a href="{{ path('app_user_index') }}" class="btn btn-personal" style="flex: 1;"><i class="fa fa-times"></i> Cancel</a>
+    </div>
+</div>
+{{ form_end(form) }}
