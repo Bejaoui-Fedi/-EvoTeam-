@@ -68,11 +68,10 @@ final class UserFormController extends AbstractController
                 ]);
             }
 
-            // Map role
+            // Map role to valid DB Enum
             $role = match($accountType) {
-                'coach' => 'ROLE_COACH',
-                'psychologue' => 'ROLE_PSYCHOLOGUE',
-                default => 'ROLE_PATIENT',
+                'coach', 'psychologue' => 'PSY_COACH',
+                default => 'PATIENT',
             };
 
             // Create User
@@ -90,13 +89,12 @@ final class UserFormController extends AbstractController
             $userService->createUser($user);
 
             // Create UserProfile
-            $userProfile = new UserProfile();
-            $userProfile->setUser($user);
-            $userProfile->setDateCreation(new \DateTime());
-            $userProfile->setNotificationsEmail(true);
-            $userProfile->setNotificationsSms(false);
-            
-            $userProfileService->createUserProfile($userProfile);
+            // $userProfile = new UserProfile();
+            // $userProfile->setUser($user);
+            // $userProfile->setDateCreation(new \DateTime());
+            // $userProfile->setNotificationsEmail(true);
+            // $userProfile->setNotificationsSms(false);
+            // $userProfileService->createUserProfile($userProfile);
 
             // Redirect to login or auto-login
             return $this->redirectToRoute('app_user_login', ['success' => 'Compte créé avec succès ! Veuillez vous connecter.']);
