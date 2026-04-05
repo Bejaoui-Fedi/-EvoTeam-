@@ -1,0 +1,15 @@
+[
+    {
+        "Trigger": "after_user_insert",
+        "Event": "INSERT",
+        "Table": "user",
+        "Statement": "BEGIN\r\n    DECLARE v_notifications_email BOOLEAN DEFAULT FALSE;\r\n    DECLARE v_notifications_sms BOOLEAN DEFAULT FALSE;\r\n    DECLARE v_confidentialite ENUM('PUBLIC', 'PRIVATE', 'FRIENDS_ONLY') DEFAULT 'PUBLIC';\r\n    \r\n    -- D\u00e9terminer les param\u00e8tres selon le r\u00f4le\r\n    IF NEW.role IS NOT NULL THEN\r\n        IF UPPER(NEW.role) = 'PATIENT' THEN\r\n            SET v_notifications_sms = TRUE;\r\n            SET v_confidentialite = 'FRIENDS_ONLY';\r\n        ELSEIF UPPER(NEW.role) = 'PSY_COACH' THEN\r\n            SET v_notifications_email = TRUE;\r\n            SET v_notifications_sms = TRUE;\r\n            SET v_confidentialite = 'PUBLIC';\r\n        END IF;\r\n    END IF;\r\n    \r\n    -- Cr\u00e9er le user_profile\r\n    INSERT INTO user_profile (\r\n        user_id,\r\n        avatar,\r\n        bio,\r\n        date_naissance,\r\n        langue,\r\n        notifications_email,\r\n        notifications_sms,\r\n        parametres_confidentialite,\r\n        date_creation,\r\n        date_modification\r\n    )\r\n    VALUES (\r\n        NEW.id,\r\n        NULL,\r\n        NULL,\r\n        NULL,\r\n        'FR',\r\n        v_notifications_email,\r\n        v_notifications_sms,\r\n        v_confidentialite,\r\n        NOW(),\r\n        NOW()\r\n    );\r\nEND",
+        "Timing": "AFTER",
+        "Created": "2026-03-01 19:39:37.37",
+        "sql_mode": "NO_AUTO_VALUE_ON_ZERO",
+        "Definer": "root@localhost",
+        "character_set_client": "utf8mb4",
+        "collation_connection": "utf8mb4_general_ci",
+        "Database Collation": "utf8mb4_general_ci"
+    }
+]
