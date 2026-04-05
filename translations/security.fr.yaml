@@ -1,0 +1,6 @@
+"Invalid credentials.": "Email ou mot de passe incorrect."
+"Empty credentials.": "Veuillez saisir vos identifiants."
+"Account is disabled.": "Votre compte est désactivé."
+"Account is locked.": "Votre compte est verrouillé."
+"Authentication request could not be processed due to a system problem.": "Un problème système a empêché l'authentification."
+"Invalid CSRF token.": "Jeton CSRF invalide. Veuillez réessayer."

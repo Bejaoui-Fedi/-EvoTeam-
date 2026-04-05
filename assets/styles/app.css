@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 
 :root {
@@ -248,4 +249,8 @@ label {
     gap: 1rem;
     margin-top: 2rem;
     align-items: center;
+=======
+body {
+    background-color: skyblue;
+>>>>>>> eabe32bd1d39cea1a5a722f0ae36928346b48e11
 }

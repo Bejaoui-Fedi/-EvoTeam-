@@ -1,0 +1,199 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Evolia — {{ is_edit ? 'Modifier' : 'Ajouter' }} Utilisateur{% endblock %}
+
+{% block body_class %}admin-theme{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin_dashboard.css') }}">
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        .modern-alert {
+            display: flex; align-items: center; padding: 1.25rem; border-radius: 1.5rem; 
+            border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            position: relative;
+        }
+        .alert-error { background: #fff5f5; border-color: #feb2b2; color: #c53030; }
+        .alert-success { background: #f0fff4; border-color: #9ae6b4; color: #276749; }
+        .alert-icon-circle { width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 1.25rem; background: rgba(0,0,0,0.03); font-size: 1.5rem; }
+        .alert-message strong { display: block; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 1.5px; margin-bottom: 4px; opacity: 0.7; font-weight: 800; }
+        .btn-close-white { filter: none !important; opacity: 0.5; }
+    </style>
+{% endblock %}
+
+{% block body %}
+
+<div class="admin-scope">
+<div class="admin-sidebar">
+    <div class="sidebar-brand">
+        <div class="logo-animation-wrapper mb-4" style="position: relative; width: 120px; height: 120px; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
+            <div class="logo-animation-bg" style="position: absolute; inset: 10px; background: rgba(255, 255, 255, 0.08); border-radius: 50%; box-shadow: 0 8px 32px rgba(0,0,0,0.2);"></div>
+            <lottie-player 
+                src="{{ asset('Logo_Evolia.json') }}" 
+                background="transparent" 
+                speed="1" 
+                style="width: 160px; height: 160px; position: relative; z-index: 2;" 
+                loop 
+                autoplay>
+            </lottie-player>
+        </div>
+        <div class="d-flex align-items-center justify-content-center gap-2">
+            <h2 class="mb-0" style="font-size: 1.5rem; letter-spacing: 2px;">EVOLIA</h2>
+            <span class="sidebar-badge">Admin</span>
+        </div>
+    </div>
+
+    <div class="admin-sidebar-nav">
+        <div class="nav-section-title">Principal</div>
+        <a href="{{ path('app_admin_dashboard') }}" class="admin-nav-link">
+            <i class="fa-solid fa-chart-line"></i> Tableau de bord
+        </a>
+        <a href="{{ path('app_user_list') }}" class="admin-nav-link active">
+            <i class="fa-solid fa-users"></i> Utilisateurs
+        </a>
+
+        <div class="nav-section-title mt-4">Gestion</div>
+        <a href="#" class="admin-nav-link">
+            <i class="fa-solid fa-calendar-days"></i> Événements
+        </a>
+        <a href="#" class="admin-nav-link">
+            <i class="fa-solid fa-dumbbell"></i> Exercices
+        </a>
+        <a href="#" class="admin-nav-link">
+            <i class="fa-solid fa-heart-pulse"></i> Bien-être
+        </a>
+        <a href="#" class="admin-nav-link">
+            <i class="fa-solid fa-clipboard-list"></i> Consult-RDV
+        </a>
+    </div>
+
+    <div class="admin-sidebar-footer">
+        <a href="{{ path('app_home') }}" class="btn-logout">
+            <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
+        </a>
+    </div>
+</div>
+
+    <div class="admin-main-content">
+        {# Display flash messages #}
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="modern-alert alert-{{ label == 'error' ? 'error' : 'success' }} animate__animated {{ label == 'error' ? 'animate__shakeX' : 'animate__fadeInDown' }} mb-4" role="alert">
+                    <div class="alert-icon-circle">
+                        <i class="fa-solid fa-{{ label == 'error' ? 'circle-exclamation' : 'circle-check' }}"></i>
+                    </div>
+                    <div class="alert-message text-start">
+                        <strong>{{ label == 'error' ? 'Attention' : 'Succès' }}</strong> {{ message }}
+                    </div>
+                    <button type="button" class="btn-close ms-auto btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        <div class="d-flex justify-content-between align-items-center mb-5">
+        <div class="header-title">
+            <div class="d-flex align-items-center gap-4">
+                <a href="{{ path('app_user_list') }}" class="p-4 bg-white rounded-5 shadow-sm border border-light text-success text-decoration-none">
+                    <i class="fa-solid fa-arrow-left fs-2"></i>
+                </a>
+                <div>
+                    <h1 class="display-6 fw-bold mb-0">{{ is_edit ? 'Modifier' : 'Nouvel' }} Utilisateur</h1>
+                    <p class="small text-uppercase tracking-wider">{{ is_edit ? 'Mise à jour des informations' : 'Création manuelle par l\'administrateur' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="management-card p-5">
+        <form method="post" action="{{ is_edit ? path('app_admin_user_edit', {id: user.id}) : path('app_admin_user_new') }}" autocomplete="off" style="max-width: 700px; margin: 0 auto;">
+            
+            <div class="row g-4">
+                <div class="col-md-12">
+                    <h5 class="text-success mb-4"><i class="fa-solid fa-id-card me-2"></i> Informations du Profile</h5>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Nom Complet</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-user text-muted"></i></span>
+                        <input type="text" class="form-control" name="fullname" placeholder="Ex: Jean Dupont" value="{{ is_edit ? user.nom : '' }}" required>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Adresse Email</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-envelope text-muted"></i></span>
+                        <input type="email" class="form-control" name="email" placeholder="email@exemple.com" value="{{ is_edit ? user.email : '' }}" required>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Téléphone</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-phone text-muted"></i></span>
+                        <input type="tel" class="form-control" name="phone" placeholder="8 chiffres (ex: 22123456)" 
+                               value="{{ is_edit ? user.telephone : '' }}" pattern="[0-9]{8}" maxlength="8" 
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Rôle / Type de compte</label>
+                    <select class="form-select custom-role-select" name="account_type" required>
+                        <option value="patient" {{ is_edit and user.role == 'ROLE_PATIENT' ? 'selected' : '' }}>Patient</option>
+                        <option value="coach" {{ is_edit and user.role == 'ROLE_COACH' ? 'selected' : '' }}>Coach</option>
+                        <option value="psychologue" {{ is_edit and user.role == 'ROLE_PSYCHOLOGUE' ? 'selected' : '' }}>Psychologue</option>
+                        <option value="admin" {{ is_edit and user.role == 'ROLE_ADMIN' ? 'selected' : '' }}>Administrateur</option>
+                    </select>
+                </div>
+
+                <div class="col-md-12 mt-5">
+                    <h5 class="text-success mb-4"><i class="fa-solid fa-shield-halved me-2"></i> Paramètres de sécurité</h5>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">{{ is_edit ? 'Nouveau mot de passe (laisser vide pour ne pas changer)' : 'Mot de passe provisoire' }}</label>
+                    <div class="input-group flex-nowrap shadow-sm" style="border-radius: 12px; overflow: hidden;">
+                        <span class="input-group-text bg-white border-end-0 px-3"><i class="fa-solid fa-lock text-success opacity-75"></i></span>
+                        <input type="password" class="form-control border-start-0 border-end-0 ps-0" name="password" id="admin_password_field" {{ is_edit ? '' : 'required' }} autocomplete="new-password" style="box-shadow: none;">
+                        <button class="input-group-text bg-white border-start-0 px-3" type="button" onclick="toggleAdminPassword()" style="cursor: pointer; transition: all 0.2s;">
+                            <i class="fa-solid fa-eye text-muted" id="togglePasswordIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="col-md-12 mt-5 text-end border-top pt-4">
+                    <a href="{{ path('app_user_list') }}" class="btn btn-light rounded-pill px-4 me-2">Annuler</a>
+                    <button type="submit" class="btn btn-success rounded-pill px-5 shadow-sm">
+                        <i class="fa-solid fa-user-{{ is_edit ? 'pen' : 'plus' }} me-2"></i> {{ is_edit ? 'Mettre à jour' : 'Enregistrer' }} l'utilisateur
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function toggleAdminPassword() {
+        const passwordField = document.getElementById('admin_password_field');
+        const icon = document.getElementById('togglePasswordIcon');
+        
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            passwordField.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
+</script>
+{% endblock %}

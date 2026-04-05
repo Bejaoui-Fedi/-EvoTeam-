@@ -1,5 +1,9 @@
 framework:
+<<<<<<< HEAD
     default_locale: en
+=======
+    default_locale: fr
+>>>>>>> eabe32bd1d39cea1a5a722f0ae36928346b48e11
     translator:
         default_path: '%kernel.project_dir%/translations'
         providers:
