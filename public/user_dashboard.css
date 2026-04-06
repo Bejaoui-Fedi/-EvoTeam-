@@ -19,6 +19,7 @@ body {
 }
 
 body.user-theme {
+<<<<<<< HEAD
     background: #f1f5f9 !important;
     display: block !important;
     margin: 0 !important;
@@ -35,6 +36,9 @@ body.user-theme {
     display: flex !important;
     margin: 0 !important;
     padding: 0 !important;
+=======
+    background: #f1f5f9;
+>>>>>>> exercisemanagement
 }
 
 /* Hide scrollbar for a truly fixed look */
@@ -199,8 +203,12 @@ body.user-theme {
 /* ——— Main Content Area ——— */
 .user-main-content {
     margin-left: var(--user-sidebar-w);
+<<<<<<< HEAD
     padding: 30px 40px;
     flex-grow: 1;
+=======
+    padding: 40px 60px;
+>>>>>>> exercisemanagement
     height: 100vh;
     overflow-y: auto;
     background: #f8fafc;
@@ -411,6 +419,7 @@ body.user-theme {
 }
 
 .edit-btn {
+<<<<<<< HEAD
     background: linear-gradient(135deg, var(--user-primary) 0%, var(--user-accent) 100%);
     color: #fff;
     border: none;
@@ -459,6 +468,25 @@ body.user-theme {
     color: #1e293b;
     border-color: #cbd5e1;
     transform: translateY(-2px);
+=======
+    background: var(--user-primary);
+    color: #fff;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 30px auto 0;
+    transition: all 0.3s;
+}
+
+.edit-btn:hover {
+    background: var(--user-accent);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(30, 77, 107, 0.2);
+>>>>>>> exercisemanagement
 }
 
 .status-active-dot {
