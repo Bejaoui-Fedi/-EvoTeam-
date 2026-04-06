@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+<<<<<<< HEAD
 use App\Entity\User;
 use App\Entity\UserProfile;
 use App\Service\UserService;
@@ -10,10 +11,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+=======
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
+>>>>>>> exercisemanagement
 use Symfony\Component\Routing\Attribute\Route;
 
 final class UserFormController extends AbstractController
 {
+<<<<<<< HEAD
     #[Route('/user/form', name: 'app_user_form', methods: ['GET', 'POST'])]
     public function index(
         Request $request, 
@@ -100,6 +106,11 @@ final class UserFormController extends AbstractController
             return $this->redirectToRoute('app_user_login', ['success' => 'Compte créé avec succès ! Veuillez vous connecter.']);
         }
 
+=======
+    #[Route('/user/form', name: 'app_user_form')]
+    public function index(): Response
+    {
+>>>>>>> exercisemanagement
         return $this->render('user_form/index.html.twig', [
             'controller_name' => 'UserFormController',
         ]);

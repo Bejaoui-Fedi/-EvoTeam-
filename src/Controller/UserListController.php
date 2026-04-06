@@ -2,16 +2,23 @@
 
 namespace App\Controller;
 
+<<<<<<< HEAD
 use App\Entity\User;
 use App\Service\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
+=======
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+>>>>>>> exercisemanagement
 
 final class UserListController extends AbstractController
 {
     #[Route('/user/list', name: 'app_user_list')]
+<<<<<<< HEAD
     public function index(Request $request, UserService $userService): Response
     {
         $searchQuery = $request->query->get('q', '');
@@ -67,4 +74,12 @@ final class UserListController extends AbstractController
 
         return $this->redirectToRoute('app_user_list', [], Response::HTTP_SEE_OTHER);
     }
+=======
+    public function index(): Response
+    {
+        return $this->render('user_list/index.html.twig', [
+            'controller_name' => 'UserListController',
+        ]);
+    }
+>>>>>>> exercisemanagement
 }
