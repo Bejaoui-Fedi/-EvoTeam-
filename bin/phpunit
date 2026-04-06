@@ -1,9 +1,6 @@
 #!/usr/bin/env php
 <?php
 
-<<<<<<< HEAD
-require dirname(__DIR__).'/vendor/phpunit/phpunit/phpunit';
-=======
 if (!ini_get('date.timezone')) {
     ini_set('date.timezone', 'UTC');
 }
@@ -24,4 +21,3 @@ if (is_file(dirname(__DIR__).'/vendor/phpunit/phpunit/phpunit')) {
 
     require dirname(__DIR__).'/vendor/symfony/phpunit-bridge/bin/simple-phpunit.php';
 }
->>>>>>> eabe32bd1d39cea1a5a722f0ae36928346b48e11

@@ -24,4 +24,28 @@ class DailyRoutineTaskRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findByUser($user): array
+    {
+        return $this->createQueryBuilder('t')
+            ->where('t.user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('t.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function searchByTitle($user, $searchTerm): array
+    {
+        return $this->createQueryBuilder('t')
+            ->leftJoin('t.user', 'u')
+            ->addSelect('u')
+            ->where('t.user = :user')
+            ->andWhere('t.title LIKE :search')
+            ->setParameter('user', $user)
+            ->setParameter('search', '%' . $searchTerm . '%')
+            ->orderBy('t.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }

@@ -35,9 +35,9 @@
         <a href="#" class="admin-nav-link">
             <i class="fa-solid fa-dumbbell"></i> Exercices
         </a>
-        <a href="#" class="admin-nav-link">
-            <i class="fa-solid fa-heart-pulse"></i> Bien-être
-        </a>
+<a href="{{ path('app_wellbeing_tracker_index') }}" class="admin-nav-link {{ app.request.get('_route') == 'app_wellbeing_tracker_index' ? 'active' : '' }}">
+    <i class="fa-solid fa-feather"></i> Bien-être
+</a>
         <a href="#" class="admin-nav-link">
             <i class="fa-solid fa-clipboard-list"></i> Consult-RDV
         </a>

@@ -1,52 +1,260 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Routine Task Details{% endblock %}
+{% block title %}Evolia — Détail de la tâche{% endblock %}
+
+{% block body_class %}user-theme{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('user_dashboard.css') }}">
+    <style>
+        body.user-theme {
+            display: block !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            overflow: hidden !important;
+            background: #f1f5f9 !important;
+        }
+        .user-scope {
+            display: flex !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            max-width: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        .user-main-content {
+            flex-grow: 1 !important;
+            width: calc(100vw - 280px) !important;
+            max-width: none !important;
+            overflow-y: auto !important;
+            padding: 2rem !important;
+        }
+        
+        .detail-container {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .detail-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .detail-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e4d6b;
+            margin-bottom: 0.5rem;
+        }
+        
+        .detail-info {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .detail-row {
+            display: flex;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            width: 40%;
+            font-weight: 600;
+            color: #1e4d6b;
+        }
+        
+        .detail-value {
+            width: 60%;
+            color: #334155;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .btn-back {
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            transition: transform 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-back:hover {
+            transform: translateY(-2px);
+            color: white;
+        }
+        
+        .btn-edit {
+            background: linear-gradient(135deg, #1e4d6b 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            transition: transform 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-edit:hover {
+            transform: translateY(-2px);
+            color: white;
+        }
+        
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+        
+        .btn-delete:hover {
+            transform: translateY(-2px);
+            background: #c82333;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e9ecef;
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
-    <h1 class="title">Routine <span>Details</span></h1>
-    <div class="hero-divider"></div>
-    <p class="subtitle" style="text-align: center; margin-bottom: 30px;">Viewing task details for {{ daily_routine_task.title }}</p>
 
-    <div class="card admin" style="width: 100%; max-width: 600px; margin: 0 auto 2rem; padding: 30px;">
-        <table class="table">
-            <tbody>
-                <tr>
-                    <th style="width: 30%;">Id</th>
-                    <td>{{ daily_routine_task.id }}</td>
-                </tr>
-                <tr>
-                    <th>Title</th>
-                    <td><span style="color: var(--green-light); font-weight: 500;">{{ daily_routine_task.title }}</span></td>
-                </tr>
-                <tr>
-                    <th>Assigned User</th>
-                    <td>{{ daily_routine_task.user ? daily_routine_task.user.nom : 'Unknown' }}</td>
-                </tr>
-                <tr>
-                    <th>Is Completed</th>
-                    <td>{{ daily_routine_task.isCompleted ? 'Yes' : 'No' }}</td>
-                </tr>
-                <tr>
-                    <th>Completed At</th>
-                    <td>{{ daily_routine_task.completedAt ? daily_routine_task.completedAt|date('Y-m-d H:i:s') : '-' }}</td>
-                </tr>
-                <tr>
-                    <th>Created At</th>
-                    <td>{{ daily_routine_task.createdAt ? daily_routine_task.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-                </tr>
-            </tbody>
-        </table>
+<div class="user-scope">
+    {% include 'user_nav_bar/index.html.twig' %}
 
-        <div style="display: flex; gap: 15px; margin-top: 25px; width: 100%;">
-            <a href="{{ path('app_daily_routine_task_edit', {'id': daily_routine_task.id}) }}" class="btn btn-admin" style="flex: 1;"><i class="fa fa-edit"></i> Edit</a>
-            <a href="{{ path('app_daily_routine_task_index') }}" class="btn btn-personal" style="flex: 1;"><i class="fa fa-arrow-left"></i> Back to list</a>
-        </div>
+    <div class="user-main-content">
+        <div class="dashboard-welcome">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div class="d-flex align-items-center gap-4">
+                    <div class="welcome-icon">
+                        <i class="fa-solid fa-list-check fs-2 text-primary"></i>
+                    </div>
+                    <div>
+                        <h1 class="mb-1">Détail de la tâche</h1>
+                        <p class="text-muted m-0">{{ daily_routine_task.title }}</p>
+                    </div>
+                </div>
+                <a href="{{ path('app_daily_routine_task_index') }}" class="btn-back">
+                    <i class="fa-solid fa-arrow-left"></i> Retour
+                </a>
+            </div>
 
-        <div style="margin-top: 20px; text-align: center;">
-            <form method="post" action="{{ path('app_daily_routine_task_delete', {'id': daily_routine_task.id}) }}" onsubmit="return confirm('Are you sure you want to delete this task?');">
-                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ daily_routine_task.id) }}">
-                <button class="btn" style="background: rgba(255,100,100,0.2); color: #ff8888; border: 1px solid rgba(255,100,100,0.5);"><i class="fa fa-trash"></i> Delete Task</button>
-            </form>
+            <div class="detail-container">
+                <div class="detail-header">
+                    <div class="detail-title">
+                        <i class="fa-regular fa-calendar-check me-2"></i>
+                        {{ daily_routine_task.title }}
+                    </div>
+                    <div class="mt-2">
+                        {% if daily_routine_task.isCompleted %}
+                            <span class="status-badge status-completed">
+                                <i class="fa-solid fa-check-circle"></i> Complété
+                            </span>
+                        {% else %}
+                            <span class="status-badge status-pending">
+                                <i class="fa-solid fa-clock"></i> En attente
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="detail-info">
+                    <div class="detail-row">
+                        <div class="detail-label">
+                            <i class="fa-solid fa-user me-2"></i> Utilisateur
+                        </div>
+                        <div class="detail-value">
+                            {{ daily_routine_task.user ? daily_routine_task.user.nom : 'Utilisateur inconnu' }}
+                        </div>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <div class="detail-label">
+                            <i class="fa-regular fa-calendar-alt me-2"></i> Date de création
+                        </div>
+                        <div class="detail-value">
+                            {{ daily_routine_task.createdAt ? daily_routine_task.createdAt|date('d/m/Y H:i') : '-' }}
+                        </div>
+                    </div>
+                    
+                    {% if daily_routine_task.completedAt %}
+                        <div class="detail-row">
+                            <div class="detail-label">
+                                <i class="fa-regular fa-check-circle me-2"></i> Date de complétion
+                            </div>
+                            <div class="detail-value">
+                                {{ daily_routine_task.completedAt|date('d/m/Y H:i') }}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="action-buttons">
+                    <form method="post" action="{{ path('app_daily_routine_task_delete', {'id': daily_routine_task.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?');" style="display:inline;">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ daily_routine_task.id) }}">
+                        <button type="submit" class="btn-delete">
+                            <i class="fa-solid fa-trash"></i> Supprimer
+                        </button>
+                    </form>
+                    <a href="{{ path('app_daily_routine_task_edit', {'id': daily_routine_task.id}) }}" class="btn-edit">
+                        <i class="fa-solid fa-edit"></i> Modifier
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}

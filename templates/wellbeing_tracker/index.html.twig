@@ -1,57 +1,563 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Wellbeing Tracker{% endblock %}
+{% block title %}Evolia — Journal Bien-être{% endblock %}
+
+{% block body_class %}user-theme{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('user_dashboard.css') }}">
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <style>
+        /* NUCLEAR FULL WIDTH FIX */
+        body.user-theme {
+            display: block !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            overflow: hidden !important;
+            background: #f1f5f9 !important;
+        }
+        .user-scope {
+            display: flex !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            max-width: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        .user-main-content {
+            flex-grow: 1 !important;
+            width: calc(100vw - 280px) !important;
+            max-width: none !important;
+            overflow-y: auto !important;
+            padding: 2rem !important;
+        }
+        
+        /* Journal specific styles */
+        .journal-header {
+            margin-bottom: 2rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        .stat-card .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1e4d6b;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-card .stat-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #6c757d;
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-card .stat-sub {
+            font-size: 0.8rem;
+            color: #adb5bd;
+        }
+        
+        .journal-entries {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .journal-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+        
+        .journal-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .journal-date {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e4d6b;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .metric {
+            background: #f8f9fa;
+            padding: 0.75rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .metric-label {
+            font-size: 0.75rem;
+            color: #6c757d;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+        
+        .metric-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e4d6b;
+        }
+        
+        .progress {
+            height: 4px;
+            margin-top: 0.5rem;
+            border-radius: 2px;
+        }
+        
+        .journal-note {
+            background: #fef9ec;
+            padding: 1rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            border-left: 4px solid #f59e0b;
+        }
+        
+        .journal-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .btn-sm {
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            border-radius: 8px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            background: white;
+            border-radius: 20px;
+            color: #6c757d;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #dee2e6;
+        }
+        
+        .btn-create {
+            background: linear-gradient(135deg, #1e4d6b 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 500;
+            transition: transform 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-create:hover {
+            transform: translateY(-2px);
+            color: white;
+        }
+        
+        .btn-routine {
+            background: linear-gradient(135deg, #2d6a4f 0%, #40916c 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 500;
+            transition: transform 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-routine:hover {
+            transform: translateY(-2px);
+            color: white;
+        }
+        
+        .header-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        /* Search Bar Styles */
+        .search-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .search-input-group {
+            display: flex;
+            gap: 0.5rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .search-input {
+            flex: 1;
+            border-radius: 50px;
+            border: 1px solid #dee2e6;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #1e4d6b;
+            box-shadow: 0 0 0 2px rgba(30, 77, 107, 0.2);
+        }
+        
+        .search-btn {
+            background: linear-gradient(135deg, #1e4d6b 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .search-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .clear-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .clear-btn:hover {
+            transform: translateY(-2px);
+            color: white;
+        }
+        
+        .search-results-info {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-bottom: 1rem;
+            padding: 0.5rem 0;
+            text-align: center;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            background: white;
+            border-radius: 20px;
+            color: #6c757d;
+        }
+        
+        .no-results i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #dee2e6;
+        }
+        
+        .highlight {
+            background: #fef9c3;
+            padding: 0 2px;
+            border-radius: 4px;
+        }
+        
+        .user-name {
+            font-size: 0.85rem;
+            font-weight: normal;
+            color: #6c757d;
+        }
+        
+        @media (max-width: 768px) {
+            .header-buttons {
+                flex-direction: column;
+            }
+            .journal-date {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .search-input-group {
+                max-width: 100%;
+            }
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
-    <h1 class="title">Wellbeing <span>Tracker</span></h1>
-    <div class="hero-divider"></div>
-    <p class="subtitle" style="text-align: center; margin-bottom: 30px;">Monitor sleep, stress, and mood</p>
 
-    <div class="card user" style="width: 100%; margin-bottom: 2rem; overflow-x: auto;">
-        <table>
-            <thead>
-                <tr>
-                    <th>Id</th>
-                    <th>Date</th>
-                    <th>User</th>
-                    <th>Task</th>
-                    <th>Mood</th>
-                    <th>Stress</th>
-                    <th>Energy</th>
-                    <th>Sleep</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for wellbeing_tracker in wellbeing_trackers %}
-                <tr>
-                    <td>{{ wellbeing_tracker.id }}</td>
-                    <td><span style="color: var(--teal-mid); font-weight: 500;">{{ wellbeing_tracker.date ? wellbeing_tracker.date|date('Y-m-d') : '' }}</span></td>
-                    <td>{{ wellbeing_tracker.user ? wellbeing_tracker.user.nom : 'Unknown User' }}</td>
-                    <td>{{ wellbeing_tracker.routineTask ? wellbeing_tracker.routineTask.title : 'Unknown Task' }}</td>
-                    <td>{{ wellbeing_tracker.mood }}/5</td>
-                    <td>{{ wellbeing_tracker.stress }}/5</td>
-                    <td>{{ wellbeing_tracker.energy }}/5</td>
-                    <td>{{ wellbeing_tracker.sleepHours }}h</td>
-                    <td>
-                        <div style="display: flex; gap: 10px;">
-                            <a href="{{ path('app_wellbeing_tracker_show', {'id': wellbeing_tracker.id}) }}" class="btn btn-personal" style="padding: 6px 14px; font-size: 0.8rem; width: auto;"><i class="fa fa-eye"></i> View</a>
-                            <a href="{{ path('app_wellbeing_tracker_edit', {'id': wellbeing_tracker.id}) }}" class="btn btn-admin" style="padding: 6px 14px; font-size: 0.8rem; width: auto;"><i class="fa fa-edit"></i> Edit</a>
+<div class="user-scope">
+    {% include 'user_nav_bar/index.html.twig' %}
+
+    <div class="user-main-content">
+        <div class="dashboard-welcome">
+            <div class="d-flex align-items-center justify-content-between mb-5 flex-wrap gap-3">
+                <div class="d-flex align-items-center gap-4">
+                    <div class="welcome-icon">
+                        <i class="fa-solid fa-feather fs-2 text-primary"></i>
+                    </div>
+                    <div>
+                        <h1 class="mb-1">Journal Bien-être</h1>
+                        <p class="text-muted m-0">Suivez votre humeur, stress, énergie et sommeil</p>
+                    </div>
+                </div>
+                <div class="header-buttons">
+                    <a href="{{ path('app_daily_routine_task_index') }}" class="btn-routine">
+                        <i class="fa-solid fa-dumbbell"></i> Mes routines
+                    </a>
+                    <a href="{{ path('app_wellbeing_tracker_new') }}" class="btn-create">
+                        <i class="fa-solid fa-plus"></i> Nouvelle entrée
+                    </a>
+                </div>
+            </div>
+
+            <!-- Search Bar Section -->
+            <div class="search-section">
+                <form method="get" action="{{ path('app_wellbeing_tracker_index') }}" class="search-input-group">
+                    <input type="text" 
+                           name="search" 
+                           class="search-input" 
+                           placeholder="🔍 Rechercher par utilisateur ou exercice..." 
+                           value="{{ searchTerm|default('') }}">
+                    <button type="submit" class="search-btn">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                    {% if searchTerm is defined and searchTerm %}
+                        <a href="{{ path('app_wellbeing_tracker_index') }}" class="clear-btn">
+                            <i class="fa-solid fa-times"></i> Effacer
+                        </a>
+                    {% endif %}
+                </form>
+                
+                <!-- Search Results Info -->
+                {% if searchTerm is defined and searchTerm %}
+                    <div class="search-results-info">
+                        <i class="fa-solid fa-search me-1"></i> 
+                        Résultats pour: "<strong>{{ searchTerm }}</strong>" 
+                        ({{ wellbeing_trackers|length }} entrée(s) trouvée(s))
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">{{ wellbeing_trackers|length }}</div>
+                    <div class="stat-label">Entrées totales</div>
+                    <div class="stat-sub">dans votre journal</div>
+                </div>
+                
+                {% if wellbeing_trackers|length > 0 %}
+                    {% set avgMood = 0 %}
+                    {% set avgStress = 0 %}
+                    {% set avgEnergy = 0 %}
+                    {% set avgSleep = 0 %}
+                    {% for entry in wellbeing_trackers %}
+                        {% set avgMood = avgMood + entry.mood %}
+                        {% set avgStress = avgStress + entry.stress %}
+                        {% set avgEnergy = avgEnergy + entry.energy %}
+                        {% set avgSleep = avgSleep + entry.sleepHours %}
+                    {% endfor %}
+                    {% set total = wellbeing_trackers|length %}
+                    
+                    <div class="stat-card">
+                        <div class="stat-number">{{ (avgMood / total)|number_format(1) }}/5</div>
+                        <div class="stat-label">Humeur moyenne</div>
+                        <div class="stat-sub">sur toutes vos entrées</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-number">{{ (avgStress / total)|number_format(1) }}/5</div>
+                        <div class="stat-label">Stress moyen</div>
+                        <div class="stat-sub">sur toutes vos entrées</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-number">{{ (avgSleep / total)|number_format(1) }}</div>
+                        <div class="stat-label">Sommeil moyen</div>
+                        <div class="stat-sub">heures par nuit</div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Journal Entries -->
+            <div class="recent-activity mt-4">
+                <h2 class="section-title mb-4">Mes Entrées</h2>
+                <div class="journal-entries">
+                    {% for entry in wellbeing_trackers %}
+                        <div class="journal-card">
+                            <div class="journal-date">
+                                <div>
+                                    <i class="fa-regular fa-calendar-alt me-2"></i>
+                                    {{ entry.date ? entry.date|date('l d F Y') : '' }}
+                                </div>
+                                {% if entry.user %}
+                                    <div class="user-name">
+                                        <i class="fa-regular fa-user me-1"></i>
+                                        {# Use only 'nom' since 'prenom' doesn't exist #}
+                                        {% if searchTerm is defined and searchTerm %}
+                                            {% set highlightedUser = entry.user.nom|replace({(searchTerm): '<span class="highlight">' ~ searchTerm ~ '</span>'})|raw %}
+                                            {{ highlightedUser|raw }}
+                                        {% else %}
+                                            {{ entry.user.nom }}
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="metrics-grid">
+                                <div class="metric">
+                                    <span class="metric-label">😊 Humeur</span>
+                                    <span class="metric-value">{{ entry.mood }}/5</span>
+                                    <div class="progress">
+                                        <div class="progress-bar bg-success" style="width: {{ (entry.mood / 5) * 100 }}%"></div>
+                                    </div>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-label">😰 Stress</span>
+                                    <span class="metric-value">{{ entry.stress }}/5</span>
+                                    <div class="progress">
+                                        <div class="progress-bar bg-warning" style="width: {{ (entry.stress / 5) * 100 }}%"></div>
+                                    </div>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-label">⚡ Énergie</span>
+                                    <span class="metric-value">{{ entry.energy }}/5</span>
+                                    <div class="progress">
+                                        <div class="progress-bar bg-info" style="width: {{ (entry.energy / 5) * 100 }}%"></div>
+                                    </div>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-label">😴 Sommeil</span>
+                                    <span class="metric-value">{{ entry.sleepHours }}h</span>
+                                </div>
+                            </div>
+                            
+                            {% if entry.routineTask %}
+                                <div class="mt-2 mb-2">
+                                    <small class="text-muted">
+                                        <i class="fa-solid fa-dumbbell me-1"></i> 
+                                        Exercice associé: 
+                                        {% if searchTerm is defined and searchTerm %}
+                                            {% set highlightedExercise = entry.routineTask.title|replace({(searchTerm): '<span class="highlight">' ~ searchTerm ~ '</span>'})|raw %}
+                                            {{ highlightedExercise|raw }}
+                                        {% else %}
+                                            {{ entry.routineTask.title }}
+                                        {% endif %}
+                                    </small>
+                                </div>
+                            {% endif %}
+                            
+                            {% if entry.note %}
+                                <div class="journal-note">
+                                    <small class="text-muted d-block mb-1">
+                                        <i class="fa-solid fa-pen me-1"></i> Note personnelle:
+                                    </small>
+                                    <p class="mb-0">{{ entry.note }}</p>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="journal-actions">
+                                <a href="{{ path('app_wellbeing_tracker_show', {'id': entry.id}) }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fa-solid fa-eye"></i> Voir
+                                </a>
+                                <a href="{{ path('app_wellbeing_tracker_edit', {'id': entry.id}) }}" class="btn btn-sm btn-outline-warning">
+                                    <i class="fa-solid fa-edit"></i> Modifier
+                                </a>
+                                <form method="post" action="{{ path('app_wellbeing_tracker_delete', {'id': entry.id}) }}" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette entrée ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ entry.id) }}">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="fa-solid fa-trash"></i> Supprimer
+                                    </button>
+                                </form>
+                            </div>
                         </div>
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="9" style="text-align: center; color: var(--green-pale); padding: 20px;">No wellbeing trackers found.</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                    {% else %}
+                        {% if searchTerm is defined and searchTerm %}
+                            <div class="no-results">
+                                <i class="fa-solid fa-face-frown fa-2x mb-3 d-block"></i>
+                                <h5>Aucune entrée trouvée pour "{{ searchTerm }}"</h5>
+                                <p class="text-muted">Essayez avec d'autres mots-clés (utilisateur ou exercice)</p>
+                                <a href="{{ path('app_wellbeing_tracker_index') }}" class="btn-create mt-2">
+                                    <i class="fa-solid fa-arrow-left"></i> Voir toutes les entrées
+                                </a>
+                            </div>
+                        {% else %}
+                            <div class="empty-state">
+                                <i class="fa-solid fa-book-open"></i>
+                                <h4>Aucune entrée dans votre journal</h4>
+                                <p class="text-muted">Commencez à suivre votre bien-être dès aujourd'hui !</p>
+                                <a href="{{ path('app_wellbeing_tracker_new') }}" class="btn-create mt-3">
+                                    <i class="fa-solid fa-plus"></i> Créer ma première entrée
+                                </a>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
     </div>
+</div>
 
-    <div style="text-align: center;">
-        <a href="{{ path('app_wellbeing_tracker_new') }}" class="btn btn-personal" style="max-width: 300px; margin: 0 auto;">
-            <i class="fa fa-plus"></i> Log Wellbeing Entry
-        </a>
-    </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Auto-submit on Enter key
+    document.querySelector('.search-input')?.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            this.closest('form').submit();
+        }
+    });
+</script>
 {% endblock %}

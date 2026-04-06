@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\DailyRoutineTaskRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: DailyRoutineTaskRepository::class)]
 class DailyRoutineTask
@@ -14,13 +15,21 @@ class DailyRoutineTask
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(nullable: true)]
-    #[ORM\NotFound(action: 'ignore')]
-    private ?User $user = null;
+
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Le titre de la tâche est requis.")]
+    #[Assert\Length(
+        min: 3,
+        max: 255,
+        minMessage: "Le titre doit faire au moins {{ limit }} caractères.",
+        maxMessage: "Le titre ne peut pas dépasser {{ limit }} caractères."
+    )]
     private ?string $title = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?User $user = null;
 
     #[ORM\Column]
     private ?bool $isCompleted = null;
@@ -36,16 +45,7 @@ class DailyRoutineTask
         return $this->id;
     }
 
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
 
-    public function setUser(?User $user): static
-    {
-        $this->user = $user;
-        return $this;
-    }
 
     public function getTitle(): ?string
     {
@@ -88,6 +88,17 @@ class DailyRoutineTask
     public function setCreatedAt(?string $createdAt): static
     {
         $this->createdAt = $createdAt;
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
         return $this;
     }
 }

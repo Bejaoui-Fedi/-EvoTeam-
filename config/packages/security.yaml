@@ -4,24 +4,15 @@ security:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
-<<<<<<< HEAD
-        users_in_memory: { memory: null }
-=======
         # used to reload user from session & other features (e.g. switch_user)
         app_user_provider:
             entity:
                 class: App\Entity\User
                 property: email
->>>>>>> eabe32bd1d39cea1a5a722f0ae36928346b48e11
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-<<<<<<< HEAD
-        main:
-            lazy: true
-            provider: users_in_memory
-=======
 
         admin:
             pattern: ^/admin
@@ -55,7 +46,6 @@ security:
                 secret: '%kernel.secret%'
                 lifetime: 604800
                 path: /
->>>>>>> eabe32bd1d39cea1a5a722f0ae36928346b48e11
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -66,15 +56,11 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-<<<<<<< HEAD
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-=======
         - { path: ^/admin/login, roles: PUBLIC_ACCESS }
         - { path: ^/admin/form, roles: PUBLIC_ACCESS }
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/user/dashboard, roles: [ROLE_PATIENT, ROLE_COACH, ROLE_PSYCHOLOGUE] }
         - { path: ^/user/profile, roles: [ROLE_PATIENT, ROLE_COACH, ROLE_PSYCHOLOGUE] }
->>>>>>> eabe32bd1d39cea1a5a722f0ae36928346b48e11
         # - { path: ^/profile, roles: ROLE_USER }
 
 when@test:

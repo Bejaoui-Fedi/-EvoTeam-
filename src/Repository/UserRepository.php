@@ -8,14 +8,11 @@ use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<User>
-<<<<<<< HEAD
-=======
  *
  * @method User|null find($id, $lockMode = null, $lockVersion = null)
  * @method User|null findOneBy(array $criteria, array $orderBy = null)
  * @method User[]    findAll()
  * @method User[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
->>>>>>> eabe32bd1d39cea1a5a722f0ae36928346b48e11
  */
 class UserRepository extends ServiceEntityRepository
 {
@@ -23,8 +20,6 @@ class UserRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, User::class);
     }
-<<<<<<< HEAD
-=======
 
     /**
      * @return User[] Returns an array of User objects
@@ -67,5 +62,4 @@ class UserRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
->>>>>>> eabe32bd1d39cea1a5a722f0ae36928346b48e11
 }

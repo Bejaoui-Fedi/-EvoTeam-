@@ -10,6 +10,8 @@
         </div>
         <h3 class="mb-1">{{ app.user.nom|default('Utilisateur') }}</h3>
         <p class="opacity-50">{{ app.user.email|default('') }}</p>
+        {% set userRoles = app.user.roles|join(', ') %}
+        <span class="badge bg-info mt-2">{{ userRoles }}</span>
     </div>
 
     <div class="user-sidebar-nav">
@@ -24,10 +26,21 @@
             <i class="fa-solid fa-dumbbell"></i> Exercices
         </a>
 
-        <div class="nav-section-title">Bien-être</div>
-        <a href="#" class="user-nav-link">
-            <i class="fa-solid fa-feather"></i> Journal bien-être
-        </a>
+        {# Journal bien-être - Different behavior based on role #}
+        {% set isProfessional = is_granted('ROLE_ADMIN') or is_granted('ROLE_COACH') or is_granted('ROLE_PSYCHOLOGUE') %}
+        
+        {% if isProfessional %}
+            {# Professionals see all entries #}
+            <a href="{{ path('app_wellbeing_tracker_index') }}" class="user-nav-link {{ app.request.get('_route') == 'app_wellbeing_tracker_index' ? 'active' : '' }}">
+                <i class="fa-solid fa-feather"></i> Journal bien-être (Tous)
+            </a>
+        {% else %}
+            {# Patients/Role simple see limited view #}
+            <a href="{{ path('app_wellbeing_tracker_patient') }}" class="user-nav-link {{ app.request.get('_route') == 'app_wellbeing_tracker_patient' ? 'active' : '' }}">
+                <i class="fa-solid fa-feather"></i> Journal bien-être
+            </a>
+        {% endif %}
+        
         <a href="#" class="user-nav-link">
             <i class="fa-solid fa-user-clock"></i> Mes rendez-vous
         </a>

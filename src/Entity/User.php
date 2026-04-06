@@ -6,12 +6,6 @@ use App\Repository\UserRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-<<<<<<< HEAD
-#[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: '`user`')]
-class User
-{
-=======
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -22,7 +16,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToOne(mappedBy: 'user', targetEntity: UserProfile::class, cascade: ['persist', 'remove'])]
     private ?UserProfile $userProfile = null;
 
->>>>>>> eabe32bd1d39cea1a5a722f0ae36928346b48e11
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -40,29 +33,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $role = null;
 
-<<<<<<< HEAD
-    #[ORM\Column(length: 20, nullable: true)]
-=======
     #[ORM\Column(length: 255, nullable: true)]
->>>>>>> eabe32bd1d39cea1a5a722f0ae36928346b48e11
     private ?string $telephone = null;
 
     #[ORM\Column]
     private ?bool $actif = null;
 
-<<<<<<< HEAD
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $dateCreation = null;
-
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $dateModification = null;
-=======
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $resetToken = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $tokenExpiry = null;
->>>>>>> eabe32bd1d39cea1a5a722f0ae36928346b48e11
 
     public function getId(): ?int
     {
@@ -77,10 +58,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setNom(string $nom): static
     {
         $this->nom = $nom;
-<<<<<<< HEAD
-=======
 
->>>>>>> eabe32bd1d39cea1a5a722f0ae36928346b48e11
         return $this;
     }
 
@@ -92,10 +70,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(string $email): static
     {
         $this->email = $email;
-<<<<<<< HEAD
-=======
 
->>>>>>> eabe32bd1d39cea1a5a722f0ae36928346b48e11
         return $this;
     }
 
@@ -107,10 +82,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): static
     {
         $this->password = $password;
-<<<<<<< HEAD
-=======
 
->>>>>>> eabe32bd1d39cea1a5a722f0ae36928346b48e11
         return $this;
     }
 
@@ -122,10 +94,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setRole(string $role): static
     {
         $this->role = $role;
-<<<<<<< HEAD
-=======
 
->>>>>>> eabe32bd1d39cea1a5a722f0ae36928346b48e11
         return $this;
     }
 
@@ -137,10 +106,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setTelephone(?string $telephone): static
     {
         $this->telephone = $telephone;
-<<<<<<< HEAD
-=======
 
->>>>>>> eabe32bd1d39cea1a5a722f0ae36928346b48e11
         return $this;
     }
 
@@ -152,30 +118,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setActif(bool $actif): static
     {
         $this->actif = $actif;
-<<<<<<< HEAD
-        return $this;
-    }
-
-    public function getDateCreation(): ?\DateTimeInterface
-    {
-        return $this->dateCreation;
-    }
-
-    public function setDateCreation(?\DateTimeInterface $dateCreation): static
-    {
-        $this->dateCreation = $dateCreation;
-        return $this;
-    }
-
-    public function getDateModification(): ?\DateTimeInterface
-    {
-        return $this->dateModification;
-    }
-
-    public function setDateModification(?\DateTimeInterface $dateModification): static
-    {
-        $this->dateModification = $dateModification;
-=======
 
         return $this;
     }
@@ -253,7 +195,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         $this->userProfile = $userProfile;
 
->>>>>>> eabe32bd1d39cea1a5a722f0ae36928346b48e11
         return $this;
     }
 }

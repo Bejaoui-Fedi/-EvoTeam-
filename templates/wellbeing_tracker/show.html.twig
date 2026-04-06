@@ -1,68 +1,269 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Wellbeing Details{% endblock %}
+{% block title %}Evolia — Détail de l'entrée{% endblock %}
+
+{% block body_class %}user-theme{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('user_dashboard.css') }}">
+    <style>
+        body.user-theme {
+            display: block !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            overflow: hidden !important;
+            background: #f1f5f9 !important;
+        }
+        .user-scope {
+            display: flex !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            max-width: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        .user-main-content {
+            flex-grow: 1 !important;
+            width: calc(100vw - 280px) !important;
+            max-width: none !important;
+            overflow-y: auto !important;
+            padding: 2rem !important;
+        }
+        
+        .detail-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .detail-header {
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .metric-detail {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 16px;
+            text-align: center;
+        }
+        
+        .metric-detail .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e4d6b;
+        }
+        
+        .progress {
+            height: 8px;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+        }
+        
+        .note-section {
+            background: #fef9ec;
+            padding: 1.25rem;
+            border-radius: 16px;
+            margin: 1.5rem 0;
+            border-left: 4px solid #f59e0b;
+        }
+        
+        .info-row {
+            display: flex;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .info-label {
+            width: 140px;
+            font-weight: 600;
+            color: #1e4d6b;
+        }
+        
+        .info-value {
+            flex: 1;
+            color: #334155;
+        }
+        
+        .btn-back {
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 24px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: transform 0.2s;
+        }
+        
+        .btn-back:hover {
+            transform: translateY(-2px);
+            color: white;
+        }
+        
+        .btn-edit {
+            background: linear-gradient(135deg, #1e4d6b 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 24px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: transform 0.2s;
+        }
+        
+        .btn-edit:hover {
+            transform: translateY(-2px);
+            color: white;
+        }
+        
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 24px;
+            font-weight: 500;
+            transition: transform 0.2s;
+        }
+        
+        .btn-delete:hover {
+            transform: translateY(-2px);
+            background: #c82333;
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
-    <h1 class="title">Wellbeing <span>Details</span></h1>
-    <div class="hero-divider"></div>
-    <p class="subtitle" style="text-align: center; margin-bottom: 30px;">Entry recorded on {{ wellbeing_tracker.date ? wellbeing_tracker.date|date('Y-m-d') : '' }}</p>
 
-    <div class="card user" style="width: 100%; max-width: 600px; margin: 0 auto 2rem; padding: 30px;">
-        <table class="table">
-            <tbody>
-                <tr>
-                    <th style="width: 30%;">Id</th>
-                    <td>{{ wellbeing_tracker.id }}</td>
-                </tr>
-                <tr>
-                    <th>Date</th>
-                    <td>{{ wellbeing_tracker.date ? wellbeing_tracker.date|date('Y-m-d') : '' }}</td>
-                </tr>
-                <tr>
-                    <th>User</th>
-                    <td>{{ wellbeing_tracker.user ? wellbeing_tracker.user.nom : 'Unknown' }}</td>
-                </tr>
-                <tr>
-                    <th>Routine Task</th>
-                    <td>{{ wellbeing_tracker.routineTask ? wellbeing_tracker.routineTask.title : 'None' }}</td>
-                </tr>
-                <tr>
-                    <th>Mood</th>
-                    <td>{{ wellbeing_tracker.mood }}/5</td>
-                </tr>
-                <tr>
-                    <th>Stress</th>
-                    <td>{{ wellbeing_tracker.stress }}/5</td>
-                </tr>
-                <tr>
-                    <th>Energy</th>
-                    <td>{{ wellbeing_tracker.energy }}/5</td>
-                </tr>
-                <tr>
-                    <th>Sleep Hours</th>
-                    <td>{{ wellbeing_tracker.sleepHours }} h</td>
-                </tr>
-                <tr>
-                    <th>Note</th>
-                    <td>{{ wellbeing_tracker.note }}</td>
-                </tr>
-                <tr>
-                    <th>Created At</th>
-                    <td>{{ wellbeing_tracker.createdAt ? wellbeing_tracker.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-                </tr>
-            </tbody>
-        </table>
+<div class="user-scope">
+    {% include 'user_nav_bar/index.html.twig' %}
 
-        <div style="display: flex; gap: 15px; margin-top: 25px; width: 100%;">
-            <a href="{{ path('app_wellbeing_tracker_edit', {'id': wellbeing_tracker.id}) }}" class="btn btn-personal" style="flex: 1;"><i class="fa fa-edit"></i> Edit</a>
-            <a href="{{ path('app_wellbeing_tracker_index') }}" class="btn btn-admin" style="flex: 1;"><i class="fa fa-arrow-left"></i> Back to list</a>
-        </div>
+    <div class="user-main-content">
+        <div class="dashboard-welcome">
+            <div class="d-flex align-items-center justify-content-between mb-5">
+                <div class="d-flex align-items-center gap-4">
+                    <div class="welcome-icon">
+                        <i class="fa-solid fa-eye fs-2 text-primary"></i>
+                    </div>
+                    <div>
+                        <h1 class="mb-1">Détail de l'entrée</h1>
+                        <p class="text-muted m-0">du {{ wellbeing_tracker.date ? wellbeing_tracker.date|date('l d F Y') : '' }}</p>
+                    </div>
+                </div>
+                <a href="{{ path('app_wellbeing_tracker_index') }}" class="btn-back">
+                    <i class="fa-solid fa-arrow-left"></i> Retour
+                </a>
+            </div>
 
-        <div style="margin-top: 20px; text-align: center;">
-            <form method="post" action="{{ path('app_wellbeing_tracker_delete', {'id': wellbeing_tracker.id}) }}" onsubmit="return confirm('Are you sure you want to delete this specific log?');">
-                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ wellbeing_tracker.id) }}">
-                <button class="btn" style="background: rgba(255,100,100,0.2); color: #ff8888; border: 1px solid rgba(255,100,100,0.5);"><i class="fa fa-trash"></i> Delete Log</button>
-            </form>
+            <div class="detail-card">
+                <div class="detail-header">
+                    <h3 class="mb-0">
+                        <i class="fa-regular fa-calendar-alt me-2 text-primary"></i>
+                        {{ wellbeing_tracker.date ? wellbeing_tracker.date|date('d/m/Y') : '' }}
+                    </h3>
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-detail">
+                        <div class="metric-value">{{ wellbeing_tracker.mood }}/5</div>
+                        <div class="metric-label">😊 Humeur</div>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" style="width: {{ (wellbeing_tracker.mood / 5) * 100 }}%"></div>
+                        </div>
+                    </div>
+                    <div class="metric-detail">
+                        <div class="metric-value">{{ wellbeing_tracker.stress }}/5</div>
+                        <div class="metric-label">😰 Stress</div>
+                        <div class="progress">
+                            <div class="progress-bar bg-warning" style="width: {{ (wellbeing_tracker.stress / 5) * 100 }}%"></div>
+                        </div>
+                    </div>
+                    <div class="metric-detail">
+                        <div class="metric-value">{{ wellbeing_tracker.energy }}/5</div>
+                        <div class="metric-label">⚡ Énergie</div>
+                        <div class="progress">
+                            <div class="progress-bar bg-info" style="width: {{ (wellbeing_tracker.energy / 5) * 100 }}%"></div>
+                        </div>
+                    </div>
+                    <div class="metric-detail">
+                        <div class="metric-value">{{ wellbeing_tracker.sleepHours }}h</div>
+                        <div class="metric-label">😴 Sommeil</div>
+                    </div>
+                </div>
+
+                {% if wellbeing_tracker.routineTask %}
+                    <div class="info-row">
+                        <div class="info-label">
+                            <i class="fa-solid fa-dumbbell me-2"></i> Exercice
+                        </div>
+                        <div class="info-value">{{ wellbeing_tracker.routineTask.title }}</div>
+                    </div>
+                {% endif %}
+
+                <div class="info-row">
+                    <div class="info-label">
+                        <i class="fa-regular fa-user me-2"></i> Utilisateur
+                    </div>
+                    <div class="info-value">{{ wellbeing_tracker.user ? wellbeing_tracker.user.nom : 'Non spécifié' }}</div>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-label">
+                        <i class="fa-regular fa-clock me-2"></i> Créé le
+                    </div>
+                    <div class="info-value">{{ wellbeing_tracker.createdAt ? wellbeing_tracker.createdAt|date('d/m/Y H:i') : '' }}</div>
+                </div>
+
+                {% if wellbeing_tracker.note %}
+                    <div class="note-section">
+                        <small class="text-muted d-block mb-2">
+                            <i class="fa-solid fa-pen me-1"></i> Note personnelle
+                        </small>
+                        <p class="mb-0">{{ wellbeing_tracker.note }}</p>
+                    </div>
+                {% endif %}
+
+                <div class="d-flex gap-3 justify-content-end mt-4 pt-3 border-top">
+                    <a href="{{ path('app_wellbeing_tracker_index') }}" class="btn-back">
+                        <i class="fa-solid fa-list"></i> Toutes les entrées
+                    </a>
+                    <a href="{{ path('app_wellbeing_tracker_edit', {'id': wellbeing_tracker.id}) }}" class="btn-edit">
+                        <i class="fa-solid fa-edit"></i> Modifier
+                    </a>
+                    <form method="post" action="{{ path('app_wellbeing_tracker_delete', {'id': wellbeing_tracker.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette entrée ?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ wellbeing_tracker.id) }}">
+                        <button type="submit" class="btn-delete">
+                            <i class="fa-solid fa-trash"></i> Supprimer
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}

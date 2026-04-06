@@ -5,8 +5,13 @@ namespace App\Entity;
 use App\Repository\WellbeingTrackerRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: WellbeingTrackerRepository::class)]
+#[ORM\Table(name: 'wellbeing_tracker')]
+#[ORM\Index(name: 'idx_date', columns: ['date'])]
+#[ORM\Index(name: 'idx_user_id', columns: ['user_id'])]
+#[ORM\Index(name: 'idx_daily_task_id', columns: ['daily_routine_task_id'])]
 class WellbeingTracker
 {
     #[ORM\Id]
@@ -14,30 +19,39 @@ class WellbeingTracker
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(nullable: true)]
-    #[ORM\NotFound(action: 'ignore')]
-    private ?User $user = null;
-
     #[ORM\ManyToOne(targetEntity: DailyRoutineTask::class)]
     #[ORM\JoinColumn(name: 'daily_routine_task_id', referencedColumnName: 'id', nullable: true)]
     #[ORM\NotFound(action: 'ignore')]
     private ?DailyRoutineTask $routineTask = null;
 
+    // CRITICAL CHANGE: Changed nullable: true to nullable: false
+    // Because your database requires a user_id (NOT NULL constraint)
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: false)]
+    private ?User $user = null;
+
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $date = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank(message: "Le score d'humeur est requis.")]
+    #[Assert\Range(min: 1, max: 5, notInRangeMessage: "L'humeur doit être entre {{ min }} et {{ max }}.")]
     private ?int $mood = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank(message: "Le score de stress est requis.")]
+    #[Assert\Range(min: 1, max: 5, notInRangeMessage: "Le stress doit être entre {{ min }} et {{ max }}.")]
     private ?int $stress = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank(message: "Le score d'énergie est requis.")]
+    #[Assert\Range(min: 1, max: 5, notInRangeMessage: "L'énergie doit être entre {{ min }} et {{ max }}.")]
     private ?int $energy = null;
 
     #[ORM\Column]
-    private ?float $sleepHours = null;
+    #[Assert\NotBlank(message: "Le nombre d'heures de sommeil est requis.")]
+    #[Assert\Range(min: 0, max: 24, notInRangeMessage: "Les heures de sommeil doivent être entre {{ min }} et {{ max }}.")]
+    private ?float $sleepHours = null;  // Changed from ?int to ?float to match getter/setter
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $note = null;
@@ -48,17 +62,6 @@ class WellbeingTracker
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): static
-    {
-        $this->user = $user;
-        return $this;
     }
 
     public function getRoutineTask(): ?DailyRoutineTask
@@ -146,6 +149,17 @@ class WellbeingTracker
     public function setCreatedAt(?string $createdAt): static
     {
         $this->createdAt = $createdAt;
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
         return $this;
     }
 }
