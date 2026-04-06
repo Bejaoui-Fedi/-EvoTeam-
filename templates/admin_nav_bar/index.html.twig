@@ -21,16 +21,19 @@
 
     <div class="admin-sidebar-nav">
         <div class="nav-section-title">Principal</div>
-        <a href="{{ path('app_admin_dashboard') }}" class="admin-nav-link active">
+        <a href="{{ path('app_admin_dashboard') }}" class="admin-nav-link {{ app.request.get('_route') == 'app_admin_dashboard' ? 'active' : '' }}">
             <i class="fa-solid fa-chart-line"></i> Tableau de bord
         </a>
-        <a href="{{ path('app_user_list') }}" class="admin-nav-link">
+        <a href="{{ path('app_user_list') }}" class="admin-nav-link {{ app.request.get('_route') == 'app_user_list' ? 'active' : '' }}">
             <i class="fa-solid fa-users"></i> Utilisateurs
         </a>
 
         <div class="nav-section-title mt-4">Gestion</div>
-        <a href="#" class="admin-nav-link">
+        <a href="{{ path('app_evenement_index') }}" class="admin-nav-link {{ app.request.get('_route') starts with 'app_evenement' ? 'active' : '' }}">
             <i class="fa-solid fa-calendar-days"></i> Événements
+        </a>
+        <a href="{{ path('app_review_index') }}" class="admin-nav-link {{ app.request.get('_route') starts with 'app_review' ? 'active' : '' }}">
+            <i class="fa-solid fa-star"></i> Avis
         </a>
         <a href="#" class="admin-nav-link">
             <i class="fa-solid fa-dumbbell"></i> Exercices
