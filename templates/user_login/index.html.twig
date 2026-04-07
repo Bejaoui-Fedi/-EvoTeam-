@@ -1,0 +1,457 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Evolia — Espace Utilisateur{% endblock %}
+
+{% block body_class %}user-theme{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <link rel="stylesheet" href="{{ asset('styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('user_login.css') }}">
+    <style>
+        :root {
+            --primary-navy: #1e4d6b;
+            --secondary-blue: #4a87a8;
+            --accent-azure: #f0f7fb;
+            --text-dark: #1a2a3a;
+            --premium-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden; /* We handle scrolling inside panels */
+            font-family: 'Inter', sans-serif;
+            background: #fff;
+        }
+
+        .split-container {
+            display: flex;
+            height: 100vh;
+            width: 100%;
+        }
+
+        /* Left Visual Panel */
+        .visual-panel {
+            flex: 1.2;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary-navy);
+        }
+
+        .visual-content {
+            position: relative;
+            z-index: 5;
+            text-align: center;
+            color: white;
+            padding: 40px;
+        }
+
+        .visual-content h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .visual-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, rgba(30, 77, 107, 0.8), rgba(30, 77, 107, 0.4));
+            z-index: 2;
+        }
+
+        /* Right Form Panel */
+        .form-panel {
+            flex: 1;
+            background: white;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding: 80px 60px; /* Increased vertical padding */
+            box-shadow: -10px 0 50px rgba(0,0,0,0.05);
+        }
+
+        .form-container {
+            max-width: 460px; /* Slightly wider */
+            margin: auto; /* Uses flex margin auto for safe centering */
+            width: 100%;
+        }
+
+        .brand-header {
+            text-align: left;
+            margin-bottom: 40px;
+        }
+
+        .card-icon-wrap {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 22px;
+            background: #e8f3f9;
+            color: var(--primary-navy);
+            box-shadow: 0 8px 20px rgba(30, 77, 107, 0.08);
+        }
+
+        h1 {
+            font-family: 'Cormorant Garamond', serif !important;
+            font-size: 2.6rem !important;
+            font-weight: 600 !important;
+            color: var(--primary-navy) !important;
+            margin-bottom: 4px !important;
+            line-height: 1.1 !important;
+        }
+
+        .subtitle {
+            font-family: 'Inter', sans-serif !important;
+            color: var(--secondary-blue) !important;
+            font-size: 1rem !important;
+            margin-top: 5px !important;
+            font-style: italic;
+            opacity: 0.85;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            font-weight: 600 !important;
+            font-size: 0.9rem !important;
+            color: var(--primary-navy) !important;
+            margin-bottom: 8px !important;
+            display: block;
+        }
+
+        .form-control {
+            border: 1.5px solid #e1e9f0 !important;
+            border-radius: 12px !important;
+            padding: 14px 20px !important;
+            font-size: 1rem !important;
+            background: #f8fafc !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-navy) !important;
+            background: white !important;
+            box-shadow: 0 0 0 4px rgba(30, 77, 107, 0.1) !important;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .password-toggle-btn {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            color: var(--secondary-blue);
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0 30px;
+            font-size: 0.9rem;
+        }
+
+        .form-options a {
+            color: var(--primary-navy);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .captcha-area {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 16px;
+            border: 1px solid #e1e9f0;
+        }
+
+        .btn-login {
+            width: 100%;
+            height: 56px;
+            background: var(--primary-navy) !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 12px !important;
+            font-weight: 700 !important;
+            font-size: 1.1rem !important;
+            box-shadow: 0 10px 25px rgba(30, 77, 107, 0.2) !important;
+            transition: all 0.3s ease !important;
+            cursor: pointer;
+        }
+
+        .btn-login:disabled {
+            background: #cbd5e0 !important;
+            box-shadow: none !important;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .premium-divider {
+            margin: 30px 0;
+            text-align: center;
+            position: relative;
+            color: #a0aec0;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+        }
+
+        .premium-divider::before {
+            content: "";
+            position: absolute;
+            top: 50%; left: 0; right: 0;
+            height: 1px; background: #e2e8f0;
+            z-index: 1;
+        }
+
+        .premium-divider span {
+            position: relative;
+            z-index: 2;
+            background: white;
+            padding: 0 15px;
+        }
+
+        .btn-google {
+            width: 100%;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            border: 1.5px solid #e2e8f0 !important;
+            border-radius: 12px !important;
+            background: white !important;
+            color: var(--primary-navy) !important;
+            text-decoration: none !important;
+            font-weight: 600 !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .btn-google:hover {
+            border-color: var(--primary-navy) !important;
+            background: #f8fafc !important;
+        }
+
+        .register-footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 0.95rem;
+            color: var(--secondary-blue);
+        }
+
+        .register-footer a {
+            color: var(--primary-navy);
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        @media (max-width: 992px) {
+            .visual-panel { display: none; }
+            .form-panel { padding: 40px 20px; }
+        }
+
+        .modern-alert {
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            font-size: 0.95rem;
+        }
+
+        .alert-error {
+            background: #fff5f5;
+            color: #c53030;
+            border: 1px solid #feb2b2;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+
+<div class="split-container">
+    
+    {# ——— LEFT PANEL: VISUALS ——— #}
+    <div class="visual-panel">
+        <div id="bgCarousel" class="carousel slide carousel-fade h-100 w-100" data-bs-ride="carousel" data-bs-interval="2500" style="position: absolute; top:0; left:0;">
+            <div class="carousel-inner h-100">
+                <div class="carousel-item active h-100">
+                    <img src="/images/bg-2.jpg" class="d-block w-100 h-100" alt="Bien-être 1" style="object-fit: cover;">
+                </div>
+                <div class="carousel-item h-100">
+                    <img src="/images/bg-3.jpg" class="d-block w-100 h-100" alt="Bien-être 2" style="object-fit: cover;">
+                </div>
+                <div class="carousel-item h-100">
+                    <img src="/images/bg-4.jpg" class="d-block w-100 h-100" alt="Bien-être 3" style="object-fit: cover;">
+                </div>
+            </div>
+        </div>
+        <div class="visual-overlay"></div>
+        <div class="visual-content">
+            <i class="fa-solid fa-heart-pulse mb-4" style="font-size: 4rem;"></i>
+            <h2>Evolia Healthy Life</h2>
+            <p class="lead">Votre bien-être commence ici. Rejoignez notre communauté dédiée à la santé mentale et physique.</p>
+        </div>
+    </div>
+
+    {# ——— RIGHT PANEL: FORM ——— #}
+    <div class="form-panel">
+        <div class="form-container">
+            
+            <div class="brand-header animate__animated animate__fadeInDown">
+                <div class="card-icon-wrap">
+                    <i class="fa-solid fa-heart-pulse"></i>
+                </div>
+                <h1>Espace Personnel</h1>
+                <p class="subtitle">Votre chemin vers le bien-être</p>
+            </div>
+
+            {% if error %}
+                <div class="modern-alert alert-error animate__animated animate__headShake">
+                    <i class="fa-solid fa-triangle-exclamation me-3"></i>
+                    <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                </div>
+            {% endif %}
+
+            {% if app.request.query.get('success') %}
+                <div class="modern-alert alert-success animate__animated animate__fadeInUp">
+                    <i class="fa-solid fa-circle-check me-3"></i>
+                    <div>{{ app.request.query.get('success') }}</div>
+                </div>
+            {% endif %}
+
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="modern-alert alert-{{ label == 'error' ? 'error' : 'success' }} animate__animated animate__fadeInUp">
+                        <i class="fa-solid fa-{{ label == 'error' ? 'circle-exclamation' : 'circle-check' }} me-3"></i>
+                        <div>{{ message }}</div>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            <form method="post" action="{{ path('app_user_login') }}" class="animate__animated animate__fadeInUp" style="animation-delay: 0.1s;">
+                
+                <div class="form-group">
+                    <label class="form-label" for="user_email">Email</label>
+                    <input type="email" id="user_email" name="_username" class="form-control" value="{{ last_username }}" placeholder="nom@exemple.com" required autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="user_password">Mot de passe</label>
+                    <div class="password-container">
+                        <input type="password" id="user_password" name="_password" class="form-control" value="" placeholder="Votre mot de passe" required autocomplete="off">
+                        <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('user_password', this)">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                </div>
+
+                <div class="form-options">
+                    <label class="d-flex align-items-center gap-2 m-0" style="cursor: pointer;">
+                        <input type="checkbox" name="_remember_me" style="width: 16px; height: 16px; accent-color: var(--primary-navy);"> 
+                        <span style="opacity: 0.8;">Rester connecté</span>
+                    </label>
+                    <a href="{{ path('app_forgot_password_request') }}">Oublié ?</a>
+                </div>
+
+                <div class="captcha-area">
+                    <div class="g-recaptcha" 
+                         data-sitekey="6LfgU3MsAAAAALa3FmghRtBIs0BnSFyIVMNvrxxA" 
+                         data-theme="light"
+                         data-callback="onCaptchaSuccess"
+                         data-expired-callback="onCaptchaExpired"></div>
+                </div>
+
+                <button type="submit" id="login-submit" class="btn-login" disabled>
+                    Se connecter
+                </button>
+
+                <div class="premium-divider"><span>OU</span></div>
+
+                <a href="{{ path('app_google_connect') }}" class="btn-google">
+                    <img src="https://www.gstatic.com/images/branding/product/1x/googleg_48dp.png" alt="Google" style="width: 20px;">
+                    Se connecter avec Google
+                </a>
+
+                <div class="register-footer">
+                    Pas encore membre ? <a href="{{ path('app_user_form') }}">Inscrivez-vous gratuitement</a>
+                </div>
+
+                <div class="text-center mt-5">
+                    <a href="{{ path('app_home') }}" class="btn btn-sm btn-outline-secondary rounded-pill px-4">
+                       <i class="fa-solid fa-house me-2"></i> Accueil
+                    </a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Global function to be sure it's accessible anywhere
+    window.togglePasswordVisibility = function(inputId, btn) {
+        const input = document.getElementById(inputId);
+        const icon = btn.querySelector('i');
+        
+        if (input) {
+            if (input.type === 'password') {
+                input.type = 'text';
+                if (icon) {
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                }
+            } else {
+                input.type = 'password';
+                if (icon) {
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            }
+            // Optional: input.focus(); 
+        }
+    };
+
+    window.onCaptchaSuccess = function() {
+        const btn = document.getElementById('login-submit');
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        btn.style.cursor = 'pointer';
+    };
+
+    window.onCaptchaExpired = function() {
+        const btn = document.getElementById('login-submit');
+        btn.disabled = true;
+        btn.style.opacity = '0.6';
+        btn.style.cursor = 'not-allowed';
+    };
+</script>
+{% endblock %}

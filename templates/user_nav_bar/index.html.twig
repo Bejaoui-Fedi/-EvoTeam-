@@ -1,0 +1,49 @@
+<div class="user-sidebar">
+
+    <div class="user-profile-header">
+        <div class="user-avatar mb-3 mx-auto d-flex align-items-center justify-content-center bg-white bg-opacity-10 rounded-circle" style="width: 80px; height: 80px; overflow: hidden;">
+            {% if app.user.userProfile and app.user.userProfile.avatar %}
+                <img src="{{ asset('uploads/avatars/' ~ app.user.userProfile.avatar) }}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+            {% else %}
+                <i class="fa-solid fa-user fs-1 text-white opacity-75"></i>
+            {% endif %}
+        </div>
+        <h3 class="mb-1">{{ app.user.nom|default('Utilisateur') }}</h3>
+        <p class="opacity-50">{{ app.user.email|default('') }}</p>
+    </div>
+
+    <div class="user-sidebar-nav">
+        <div class="nav-section-title">Mon Espace</div>
+        <a href="{{ path('app_user_dashboard') }}" class="user-nav-link {{ app.request.get('_route') == 'app_user_dashboard' ? 'active' : '' }}">
+            <i class="fa-solid fa-hotel"></i> Tableau de bord
+        </a>
+        <a href="#" class="user-nav-link">
+            <i class="fa-solid fa-calendar-check"></i> Événements
+        </a>
+        <a href="#" class="user-nav-link">
+            <i class="fa-solid fa-dumbbell"></i> Exercices
+        </a>
+
+        <div class="nav-section-title">Bien-être</div>
+        <a href="#" class="user-nav-link">
+            <i class="fa-solid fa-feather"></i> Journal bien-être
+        </a>
+        <a href="#" class="user-nav-link">
+            <i class="fa-solid fa-user-clock"></i> Mes rendez-vous
+        </a>
+
+        <div class="nav-section-title">Personnel</div>
+        <a href="{{ path('app_user_profile') }}" class="user-nav-link {{ app.request.get('_route') == 'app_user_profile' ? 'active' : '' }}">
+            <i class="fa-solid fa-user-circle"></i> Mon profil
+        </a>
+        <a href="#" class="user-nav-link">
+            <i class="fa-solid fa-bell"></i> Notifications
+        </a>
+    </div>
+
+    <div class="user-sidebar-footer">
+        <a href="{{ path('app_user_logout') }}" class="btn-logout">
+            <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
+        </a>
+    </div>
+</div>
