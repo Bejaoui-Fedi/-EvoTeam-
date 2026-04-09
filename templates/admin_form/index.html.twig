@@ -1,292 +1,305 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Evolia — Inscription Administrateur{% endblock %}
+{% block title %}Evolia — Inscription Admin{% endblock %}
 
 {% block body_class %}admin-theme{% endblock %}
 
 {% block stylesheets %}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('styles.css') }}">
-    <link rel="stylesheet" href="{{ asset('admin_form.css') }}">
+    <link rel="stylesheet" href="{{ asset('styles.css') }}?v={{ 'now'|date('U') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <style>
-        :root {
-            --admin-dark: #1a3a2e;
-            --admin-green: #2d5a4a;
-            --accent-green: #f0f4f2;
-            --text-dark: #1a2a3a;
-            --premium-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+        .admin-theme .full-split-container {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            width: 100%;
+            position: relative;
+            z-index: 10;
         }
 
-        body, html {
-            margin: 0; padding: 0; height: 100%;
-            overflow: hidden; font-family: 'Inter', sans-serif;
-            background: #fff;
+        .admin-theme .visual-side {
+            flex: 1.2;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            padding: 80px 100px;
         }
 
-        .split-container { display: flex; height: 100vh; width: 100%; }
-
-        .visual-panel {
-            flex: 1.2; position: relative; overflow: hidden;
-            display: flex; align-items: center; justify-content: center;
-            background: var(--admin-dark);
+        .admin-theme .form-side {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.98);
+            color: #1a202c;
+            display: flex;
+            flex-direction: column;
+            padding: 80px 100px;
+            box-shadow: -20px 0 60px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            position: relative;
         }
 
-        .visual-content {
-            position: relative; z-index: 5; text-align: center;
-            color: white; padding: 40px;
+        .admin-theme .form-container-inner {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
         }
 
-        .visual-content h2 {
+        .admin-theme .visual-content {
+            position: relative;
+            z-index: 15;
+            text-align: left;
+            max-width: 500px;
+            color: white;
+        }
+
+        .admin-theme .visual-content h2 {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 3rem; font-weight: 700; margin-bottom: 20px;
-            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            font-size: 3.5rem;
+            font-weight: 300;
+            line-height: 1.1;
+            margin-bottom: 24px;
         }
 
-        .visual-overlay {
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(135deg, rgba(26, 58, 46, 0.8), rgba(26, 58, 46, 0.4));
-            z-index: 2;
+        .admin-theme .visual-content h2 span {
+            display: block;
+            font-style: italic;
+            font-weight: 500;
+            color: var(--green-light);
         }
 
-        .form-panel {
-            flex: 1; background: white; overflow-y: auto;
-            display: flex; flex-direction: column; padding: 60px 80px;
-            justify-content: flex-start;
-            box-shadow: -10px 0 50px rgba(0,0,0,0.05);
-        }
-
-        .form-container { max-width: 440px; margin: 0 auto; width: 100%; }
-
-        .brand-header { text-align: left; margin-bottom: 40px; }
-        .brand-icon { font-size: 2.5rem; color: var(--admin-dark); margin-bottom: 15px; }
-
-        h1 {
+        .admin-theme h1 {
             font-family: 'Cormorant Garamond', serif !important;
-            font-size: 2.4rem !important;
-            font-weight: 700 !important; color: var(--admin-dark) !important;
-            margin: 0 !important;
+            font-size: 2.2rem !important;
+            font-weight: 600 !important;
+            color: var(--green-deep) !important;
+            margin-bottom: 8px !important;
         }
 
-        .subtitle {
-            color: var(--admin-green) !important;
-            font-size: 1rem !important; margin-top: 5px !important;
-            opacity: 0.8;
+        .admin-theme .form-control {
+            border: 1.5px solid #e1e9f0 !important;
+            border-radius: 12px !important;
+            padding: 14px 18px !important;
+            background: #f8fafc !important;
+            transition: all 0.3s ease;
         }
 
-        .section-badge {
-            font-size: 0.75rem; font-weight: 800; text-transform: uppercase;
-            letter-spacing: 1px; color: var(--admin-green);
-            padding: 4px 12px; background: var(--accent-green);
-            border-radius: 20px; display: inline-block;
+        .admin-theme .form-control:focus {
+            border-color: var(--green-mid) !important;
+            box-shadow: 0 0 0 4px rgba(29, 77, 63, 0.1) !important;
         }
 
-        .form-group { margin-bottom: 20px; width: 100%; }
-        .form-label {
-            font-weight: 700 !important; font-size: 0.85rem !important;
-            color: var(--admin-dark) !important; margin-bottom: 8px !important;
-            display: block; opacity: 0.9;
+        .admin-theme #toast-error { position: fixed; top: 30px; right: 30px; z-index: 9999; display: none; }
+
+        @media (max-width: 1200px) {
+            .admin-theme .form-side { padding: 60px 40px; }
         }
-
-        .form-control {
-            border: 1.5px solid #e1e9f0 !important; border-radius: 12px !important;
-            padding: 12px 18px !important; font-size: 0.95rem !important;
-            background: #f8fafc !important; transition: all 0.3s ease !important;
-        }
-
-        .form-control:focus {
-            border-color: var(--admin-dark) !important;
-            background: white !important;
-            box-shadow: 0 0 0 4px rgba(26, 58, 46, 0.1) !important;
-        }
-
-        .strength-bar {
-            height: 4px; background: #e2e8f0; border-radius: 2px;
-            overflow: hidden; width: 100%;
-        }
-
-        .strength-fill { height: 100%; width: 0; transition: all 0.3s; }
-
-        .btn-login {
-            width: 100%; height: 56px;
-            background: var(--admin-dark) !important; color: white !important;
-            border: none !important; border-radius: 12px !important;
-            font-weight: 700 !important; font-size: 1.1rem !important;
-            box-shadow: 0 10px 25px rgba(26, 58, 46, 0.2) !important;
-            transition: all 0.3s ease !important; cursor: pointer;
-        }
-
-        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(26, 58, 46, 0.3) !important; }
-
-        .register-footer { text-align: center; font-size: 0.9rem; color: var(--admin-green); }
-        .register-footer a { color: var(--admin-dark); font-weight: 700; text-decoration: none; }
-
-        .modern-alert {
-            padding: 14px 20px; border-radius: 12px; margin-bottom: 25px;
-            display: flex; align-items: center; font-size: 0.9rem;
-        }
-        .alert-error { background: #fff5f5; color: #c53030; border: 1px solid #feb2b2; }
 
         @media (max-width: 992px) {
-            .visual-panel { display: none; }
-            .form-panel { padding: 40px 20px; }
+            .admin-theme .full-split-container { flex-direction: column; }
+            .admin-theme .visual-side { display: none; }
+            .admin-theme .form-side { min-height: 100vh; }
         }
     </style>
 {% endblock %}
 
 {% block body %}
 
-<div class="split-container">
-    
-    {# ——— LEFT PANEL: VISUALS ——— #}
-    <div class="visual-panel">
-        <div id="bgCarousel" class="carousel slide carousel-fade h-100 w-100" data-bs-ride="carousel" data-bs-interval="3000" style="position: absolute; top:0; left:0;">
-            <div class="carousel-inner h-100">
-                <div class="carousel-item active h-100">
-                    <img src="/images/bg-2.jpg" class="d-block w-100 h-100" alt="Admin 1" style="object-fit: cover;">
-                </div>
-                <div class="carousel-item h-100">
-                    <img src="/images/bg-3.jpg" class="d-block w-100 h-100" alt="Admin 2" style="object-fit: cover;">
-                </div>
+{# --- GLOBAL BG FIXED --- #}
+<div id="bgCarousel" class="carousel slide carousel-fade bg-carousel" data-bs-ride="carousel" data-bs-interval="3500">
+    <div class="carousel-inner">
+        <div class="carousel-item active"><img src="/images/bg-2.jpg" class="d-block w-100" alt="BG"></div>
+        <div class="carousel-item"><img src="/images/bg-4.jpg" class="d-block w-100" alt="BG"></div>
+    </div>
+</div>
+<div class="bg-dark-overlay"></div>
+
+<div class="full-split-container">
+
+    {# ——— LEFT: VISUAL ——— #}
+    <div class="visual-side">
+        <div class="visual-content animate__animated animate__fadeInLeft">
+            <div class="logo-badge mb-4">
+                <i class="fa-solid fa-shield-halved me-2"></i> Administration
             </div>
-        </div>
-        <div class="visual-overlay"></div>
-        <div class="visual-content">
-            <i class="fa-solid fa-user-shield mb-4" style="font-size: 4rem;"></i>
-            <h2>Rejoignez l'Administration</h2>
-            <p class="lead">Créez votre accès sécurisé pour piloter l'écosystème Evolia.</p>
+            <h2>Pilotez avec <span>Excellence</span></h2>
+            <p class="subtitle mt-3">Créez votre accès administrateur sécurisé pour guider la communauté Evolia.</p>
         </div>
     </div>
 
-    {# ——— RIGHT PANEL: FORM ——— #}
-    <div class="form-panel">
-        <div class="form-container">
+    {# ——— RIGHT: FORM ——— #}
+    <div class="form-side animate__animated animate__fadeInRight">
+        
+        <div class="form-container-inner" style="max-width: 480px; width: 100%; margin: 0 auto;">
             
-            <div class="brand-header animate__animated animate__fadeInDown">
-                <i class="fa-solid fa-shield-plus brand-icon" style="color: var(--admin-dark);"></i>
+            <div class="brand-header mb-5">
                 <h1>Inscription Admin</h1>
-                <p class="subtitle">Création de compte administrateur sécurisé</p>
+                <p class="text-muted small">Accès restreint au personnel autorisé.</p>
             </div>
 
-            {% if error is defined and error %}
-                <div class="modern-alert alert-error animate__animated animate__headShake">
-                    <i class="fa-solid fa-triangle-exclamation me-3"></i>
-                    <div>{{ error }}</div>
-                </div>
-            {% endif %}
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ label == 'error' ? 'danger' : 'success' }} rounded-4 border-0 mb-4 animate__animated animate__fadeIn">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
 
-            <form method="post" action="{{ path('app_admin_form') }}" autocomplete="off" class="animate__animated animate__fadeInUp" style="animation-delay: 0.1s;">
-                <input type="hidden" name="_token" value="{{ csrf_token('registration') }}">
+            <form method="post" action="{{ path('app_admin_form') }}" novalidate autocomplete="off">
+                {% if error is defined and error %}
+                    <div class="alert alert-danger px-4 py-3 border-0 rounded-4 mb-4" style="background: rgba(229, 62, 62, 0.1); color: #e53e3e; font-size: 0.9rem;">
+                        <i class="fa-solid fa-circle-exclamation me-2"></i> {{ error }}
+                    </div>
+                {% endif %}
+                <input type="hidden" name="_token" value="{{ csrf_token('admin_registration') }}">
                 
-                <div class="section-badge mb-3">Sécurité & Autorisation</div>
-                
-                <div class="form-group">
-                    <label class="form-label">Code secret d'autorisation</label>
-                    <input type="text" class="form-control" name="auth_code" placeholder="Entrez le code administrateur" required>
-                </div>
-
-                <div class="section-badge mb-3 mt-4">Informations professionnelles</div>
-                
-                <div class="form-group">
-                    <label class="form-label">Nom complet</label>
-                    <input type="text" class="form-control" name="fullname" placeholder="Votre nom complet" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Email Professionnel</label>
-                    <input type="email" class="form-control" name="email" placeholder="admin@evolia.com" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Téléphone</label>
-                    <input type="tel" class="form-control" name="phone" placeholder="8 chiffres" pattern="[0-9]{8}" maxlength="8" required>
-                </div>
-
-                <div class="section-badge mb-3 mt-4">Sécurité du compte</div>
-                <div class="form-group">
-                    <label class="form-label">Mot de passe</label>
-                    <input type="password" class="form-control" name="password" placeholder="Min. 8 caractères" required autocomplete="new-password">
-                    <div class="strength-container mt-2">
-                        <div class="strength-bar"><div class="strength-fill"></div></div>
-                        <div class="strength-label mt-1" style="font-size: 0.75rem; font-weight: 700;"></div>
+                <div class="form-group mb-4">
+                    <label class="form-label fw-bold small text-uppercase">Code d'autorisation</label>
+                    <input type="password" id="a-code" class="form-control" name="auth_code"
+                        placeholder="Entrez le code secret admin"
+                        autocomplete="new-password"
+                        style="letter-spacing: 3px;">
+                    <div class="field-error-msg" id="err-code" style="display:none; color: #e53e3e; font-size: 0.75rem; margin-top: 5px;">
+                        <i class="fa-solid fa-circle-exclamation me-1"></i><span></span>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label">Confirmer</label>
-                    <input type="password" class="form-control" name="confirm_password" placeholder="Ressaisir le mot de passe" required autocomplete="new-password">
+                <div class="form-group mb-4">
+                    <label class="form-label fw-bold small text-uppercase">Nom complet</label>
+                    <input type="text" id="a-fullname" class="form-control" name="fullname" placeholder="Ex: Marc Lefebvre">
+                    <div class="field-error-msg" id="err-fullname" style="display:none; color: #e53e3e; font-size: 0.75rem; margin-top: 5px;">
+                        <i class="fa-solid fa-circle-exclamation me-1"></i><span></span>
+                    </div>
                 </div>
 
-                <div class="form-options mb-4">
-                    <label class="d-flex align-items-center gap-2 m-0" style="cursor: pointer; opacity: 0.8;">
-                        <input type="checkbox" name="terms" required style="width: 16px; height: 16px; accent-color: var(--admin-dark);"> 
-                        <span>J'accepte les <a href="#" class="text-decoration-none fw-bold" style="color: var(--admin-dark);">clauses de confidentialité</a></span>
-                    </label>
+                <div class="form-group mb-4">
+                    <label class="form-label fw-bold small text-uppercase">Email Professionnel</label>
+                    <input type="email" id="a-email" class="form-control" name="email" placeholder="admin@evolia.com" autocomplete="new-password">
+                    <div class="field-error-msg" id="err-email" style="display:none; color: #e53e3e; font-size: 0.75rem; margin-top: 5px;">
+                        <i class="fa-solid fa-circle-exclamation me-1"></i><span></span>
+                    </div>
                 </div>
 
-                <button type="submit" class="btn-login" style="width: 100%; background: var(--admin-dark) !important;">
+                <div class="form-group mb-4">
+                    <label class="form-label fw-bold small text-uppercase">Téléphone <span style="font-size:0.7rem;opacity:0.6;">(8 chiffres)</span></label>
+                    <input type="tel" id="a-phone" class="form-control" name="phone" placeholder="Ex: 22123456" maxlength="8" autocomplete="off" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                    <div class="field-error-msg" id="err-phone" style="display:none; color: #e53e3e; font-size: 0.75rem; margin-top: 5px;">
+                        <i class="fa-solid fa-circle-exclamation me-1"></i><span></span>
+                    </div>
+                </div>
+
+                <div class="form-group mb-4">
+                    <label class="form-label fw-bold small text-uppercase">Mot de passe</label>
+                    <input type="password" id="a-password" class="form-control" name="password" placeholder="8 caractères minimum" autocomplete="new-password">
+                    <div class="strength-bar mt-2" style="height: 4px; background: #edf2f7; border-radius: 10px; overflow: hidden;">
+                        <div class="strength-fill" style="height: 100%; width: 0; transition: width 0.3s; background: #e53e3e;"></div>
+                    </div>
+                </div>
+
+                <div class="form-group mb-4">
+                    <label class="form-label fw-bold small text-uppercase">Confirmation</label>
+                    <input type="password" id="a-confirm" class="form-control" name="confirm_password" placeholder="Répétez le mot de passe">
+                    <div class="field-error-msg" id="err-confirm" style="display:none; color: #e53e3e; font-size: 0.75rem; margin-top: 5px;">
+                        <i class="fa-solid fa-circle-exclamation me-1"></i><span></span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-admin w-100 py-3 rounded-4 shadow-sm mt-3">
                     Finaliser l'inscription
                 </button>
 
-                <div class="register-footer mt-4">
-                    Déjà un compte admin ? <a href="{{ path('app_admin_login') }}" style="color: var(--admin-dark);">Connectez-vous ici</a>
+                <div class="text-center mt-5">
+                    <span class="text-muted small">Déjà un compte ?</span>
+                    <a href="{{ path('app_admin_login') }}" class="fw-bold text-decoration-none ms-2" style="color: var(--green-deep);">Connexion Admin</a>
                 </div>
 
-                <div class="text-center mt-4">
-                    <a href="{{ path('app_home') }}" class="btn btn-sm btn-outline-secondary rounded-pill px-4" style="font-size: 0.8rem;">
-                       <i class="fa-solid fa-house me-1"></i> Accueil
+                 <div class="text-center mt-4 pt-4 border-top">
+                    <a href="{{ path('app_home') }}" class="text-muted text-decoration-none small" data-turbo="false">
+                        <i class="fa-solid fa-house me-2"></i> Accueil
                     </a>
                 </div>
-
             </form>
+
+            <footer class="mt-auto pt-5">
+                <div class="footer-copy small text-muted">© 2026 EVOLIA ADMIN CONSOLE</div>
+            </footer>
         </div>
     </div>
-
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<div id="toast-error" style="display: none; position: fixed; top: 20px; right: 20px; z-index: 9999;">
+    <div class="toast-card" style="background: white; border-radius: 16px; padding: 16px 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.05); display: flex; align-items: center; gap: 12px; animation: slideInRight 0.4s ease forwards;">
+        <div class="toast-icon" style="color: #e53e3e;"><i class="fa-solid fa-circle-exclamation"></i></div>
+        <div id="toast-text" style="color: #4a5568; font-size: 0.9rem; font-weight: 500;"></div>
+    </div>
+</div>
+
 <script>
 (function() {
-    const initStrength = () => {
-        const password = document.querySelector('input[name="password"]');
-        const strengthFill = document.querySelector('.strength-fill');
-        const strengthLabel = document.querySelector('.strength-label');
+    function init() {
+        const form = document.querySelector('form');
+        if (!form) return;
 
-        if (!password || !strengthFill || !strengthLabel) return;
+        const showToast = (msg) => {
+            const toast = document.getElementById('toast-error');
+            document.getElementById('toast-text').textContent = msg;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 4000);
+        };
 
-        password.addEventListener('input', function() {
-            const val = password.value;
-            let score = 0;
+        form.addEventListener('submit', function(e) {
+            const code = document.getElementById('a-code');
+            const fullname = document.getElementById('a-fullname');
+            const email = document.getElementById('a-email');
+            const phone = document.getElementById('a-phone');
+            const password = document.getElementById('a-password');
+            const confirm = document.getElementById('a-confirm');
 
-            if (!val) {
-                strengthFill.style.width = '0%';
-                strengthLabel.textContent = '';
-                return;
+            document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            document.querySelectorAll('.field-error-msg').forEach(el => el.style.display = 'none');
+
+            let valid = true;
+
+            const showError = (input, msgId, msg) => {
+                if(input) input.classList.add('is-invalid');
+                const errDiv = document.getElementById(msgId);
+                if (errDiv) {
+                    errDiv.style.display = 'block';
+                    errDiv.querySelector('span').textContent = msg;
+                }
+                valid = false;
+            };
+
+            if (!code.value.trim()) showError(code, 'err-code', 'Code requis.');
+            if (!fullname.value.trim()) showError(fullname, 'err-fullname', 'Le nom est requis.');
+            if (!email.value.trim() || !email.value.includes('@')) showError(email, 'err-email', 'Un email valide est requis.');
+            if (!phone || !phone.value.trim() || !/^[0-9]{8}$/.test(phone.value.trim())) showError(phone, 'err-phone', 'Téléphone : 8 chiffres requis.');
+            if (password.value.length < 8) showError(password, 'err-password', 'Mot de passe trop court.');
+            if (confirm && confirm.value !== password.value) showError(confirm, 'err-confirm', 'Les mots de passe ne correspondent pas.');
+
+            if (!valid) { 
+                e.preventDefault(); 
+                showToast('Veuillez remplir tous les champs correctement.'); 
             }
-
-            if (val.length >= 8) score += 25;
-            if (/[A-Z]/.test(val)) score += 25;
-            if (/[0-9]/.test(val)) score += 25;
-            if (/[^A-Za-z0-9]/.test(val)) score += 25;
-
-            let color = '#ff6b6b';
-            let label = 'Très Faible';
-
-            if (score === 25) { color = '#ff6b6b'; label = 'Faible'; }
-            else if (score === 50) { color = '#ffd166'; label = 'Moyen'; }
-            else if (score === 75) { color = '#06d6a0'; label = 'Fort'; }
-            else if (score === 100) { color = '#118ab2'; label = 'Excellent'; }
-
-            strengthFill.style.width = score + '%';
-            strengthFill.style.background = color;
-            strengthLabel.style.color = color;
-            strengthLabel.textContent = label;
         });
-    };
 
-    document.addEventListener('DOMContentLoaded', initStrength);
-    document.addEventListener('turbo:load', initStrength);
+        const pass = document.getElementById('a-password');
+        const fill = document.querySelector('.strength-fill');
+        if (pass && fill) {
+            pass.addEventListener('input', () => {
+                const v = pass.value;
+                let s = v.length >= 8 ? 40 : 10;
+                if (/[A-Z]/.test(v)) s += 30;
+                if (/[0-9]/.test(v)) s += 30;
+                fill.style.width = s + '%';
+                fill.style.background = s < 50 ? '#e53e3e' : s < 100 ? '#ecc94b' : '#48bb78';
+            });
+        }
+    }
+    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('turbo:load', init);
+    if (document.readyState !== 'loading') init();
 })();
 </script>
 {% endblock %}

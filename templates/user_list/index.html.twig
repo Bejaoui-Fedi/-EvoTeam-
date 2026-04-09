@@ -10,6 +10,104 @@
     <link rel="stylesheet" href="{{ asset('styles.css') }}">
     <link rel="stylesheet" href="{{ asset('admin_dashboard.css') }}">
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <style>
+        /* Advanced Search Bar Styling */
+        .advanced-search-container {
+            position: relative;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.03);
+            backdrop-filter: blur(10px);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            z-index: 10;
+        }
+
+        .advanced-search-container:focus-within {
+            box-shadow: 0 15px 50px rgba(30, 77, 107, 0.1);
+            transform: translateY(-2px);
+            border-color: rgba(30, 77, 107, 0.2);
+        }
+
+        .premium-search-input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            padding: 12px 20px 12px 50px;
+            font-size: 1.05rem;
+            color: var(--text-dark);
+            outline: none;
+        }
+
+        .premium-search-input::placeholder {
+            color: #a0aec0;
+            font-weight: 500;
+        }
+
+        .search-icon-anim {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-navy);
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .advanced-search-container:focus-within .search-icon-anim {
+            color: var(--green-deep);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .glow-effect {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 16px;
+            background: linear-gradient(120deg, rgba(74,135,168,0.1), rgba(37,106,143,0), rgba(72,187,120,0.1));
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .advanced-search-container:focus-within .glow-effect {
+            opacity: 1;
+        }
+
+        .premium-filter-select {
+            border: 2px solid transparent;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 10px 15px;
+            font-weight: 600;
+            color: var(--primary-navy);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .premium-filter-select:hover {
+            background: white;
+            border-color: rgba(30, 77, 107, 0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .premium-filter-select:focus {
+            outline: none;
+            border-color: var(--primary-navy);
+            background: white;
+        }
+        
+        /* Table Row Animation */
+        .table tbody tr {
+            transition: all 0.3s ease-in-out;
+        }
+        .table tbody tr.filtered-out {
+            opacity: 0;
+            visibility: hidden;
+            display: none;
+        }
+    </style>
 {% endblock %}
 
 {% block body %}
@@ -59,7 +157,7 @@
     </div>
 
     <div class="admin-sidebar-footer">
-        <a href="{{ path('app_home') }}" class="btn-logout">
+        <a href="{{ path('app_home') }}" class="btn-logout" data-turbo="false">
             <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
         </a>
     </div>
@@ -108,32 +206,33 @@
     </div>
 
     <div class="management-card">
-        <div class="card-header-actions">
-            <form action="{{ path('app_user_list') }}" method="get" class="search-filter-form m-0 w-100 d-flex flex-wrap gap-3 align-items-center">
-                <div class="search-box flex-grow-1" style="max-width: 500px;">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" name="q" value="{{ app.request.query.get('q') }}" placeholder="Rechercher par nom, email ou téléphone...">
+        <div class="card-header-actions mb-4">
+            <div class="advanced-search-container w-100 d-flex flex-wrap gap-3 align-items-center">
+                <div class="glow-effect"></div>
+                
+                <div class="position-relative flex-grow-1" style="max-width: 550px;">
+                    <i class="fa-solid fa-magnifying-glass search-icon-anim"></i>
+                    <input type="text" id="live-search" class="premium-search-input" placeholder="Recherche instantanée par nom, email ou téléphone...">
                 </div>
                 
                 <div class="filter-box">
-                    <select name="role" class="form-select custom-role-select" onchange="this.form.submit()">
+                    <select id="live-role-filter" class="form-select premium-filter-select">
                         <option value="">Tous les rôles</option>
-                        <option value="ROLE_ADMIN" {% if app.request.query.get('role') == 'ROLE_ADMIN' %}selected{% endif %}>Administrateurs</option>
-                        <option value="ROLE_PATIENT" {% if app.request.query.get('role') == 'ROLE_PATIENT' %}selected{% endif %}>Patients</option>
-                        <option value="PSY_COACH" {% if app.request.query.get('role') == 'PSY_COACH' %}selected{% endif %}>Psychologues & Coachs</option>
+                        <option value="Administrateur">Administrateurs</option>
+                        <option value="Patient">Patients</option>
+                        <option value="Psychologue/Coach">Psychologues & Coachs</option>
                     </select>
                 </div>
 
                 <div class="d-flex gap-2 ms-auto">
-
-                    <a href="{{ path('app_user_list') }}" class="btn-action" title="Réinitialiser">
+                    <button class="btn-action" title="Actualiser" onclick="window.location.reload();">
                         <i class="fa-solid fa-rotate"></i>
-                    </a>
-                    <a href="{{ path('app_admin_user_new') }}" class="btn-add ms-2 text-decoration-none d-flex align-items-center justify-content-center">
-                        <i class="fa-solid fa-plus me-2"></i> Nouvel Utilisateur
+                    </button>
+                    <a href="{{ path('app_admin_user_new') }}" class="btn-add ms-2 text-decoration-none d-flex align-items-center justify-content-center" style="transition: transform 0.2s;">
+                        <i class="fa-solid fa-user-plus me-2"></i> Nouvel Utilisateur
                     </a>
                 </div>
-            </form>
+            </div>
         </div>
 
         <div class="table-responsive">
@@ -202,4 +301,48 @@
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('turbo:load', initLiveSearch);
+    document.addEventListener('DOMContentLoaded', initLiveSearch);
+
+    function initLiveSearch() {
+        const searchInput = document.getElementById('live-search');
+        const roleFilter = document.getElementById('live-role-filter');
+        const tableRows = document.querySelectorAll('tbody tr');
+
+        if (!searchInput || !roleFilter) return;
+
+        function filterTable() {
+            const query = searchInput.value.toLowerCase().trim();
+            const role = roleFilter.value.toLowerCase();
+
+            tableRows.forEach(row => {
+                // Ignore the "Aucun utilisateur trouvé" row if it exists
+                if (row.cells.length === 1) return;
+
+                const name = row.cells[1].textContent.toLowerCase();
+                const email = row.cells[2].textContent.toLowerCase();
+                const rowRole = row.cells[3].textContent.toLowerCase();
+                const phone = row.cells[4].textContent.toLowerCase();
+
+                const matchesSearch = query === '' || 
+                                      name.includes(query) || 
+                                      email.includes(query) || 
+                                      phone.includes(query);
+                                      
+                const matchesRole = role === '' || rowRole.includes(role);
+
+                if (matchesSearch && matchesRole) {
+                    row.classList.remove('filtered-out');
+                } else {
+                    row.classList.add('filtered-out');
+                }
+            });
+        }
+
+        searchInput.addEventListener('input', filterTable);
+        roleFilter.addEventListener('change', filterTable);
+    }
+    initLiveSearch();
+</script>
 {% endblock %}

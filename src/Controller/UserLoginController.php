@@ -12,11 +12,15 @@ final class UserLoginController extends AbstractController
     #[Route('/user/login', name: 'app_user_login')]
     public function index(AuthenticationUtils $authenticationUtils): Response
     {
+        if ($this->getUser()) {
+            return $this->redirectToRoute('app_user_dashboard');
+        }
+
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
 
         // last username entered by the user
-        $lastUsername = '';
+        $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('user_login/index.html.twig', [
             'last_username' => $lastUsername,

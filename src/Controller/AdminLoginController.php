@@ -12,11 +12,15 @@ final class AdminLoginController extends AbstractController
     #[Route('/admin/login', name: 'app_admin_login')]
     public function index(AuthenticationUtils $authenticationUtils): Response
     {
+        if ($this->getUser()) {
+            return $this->redirectToRoute('app_admin_dashboard');
+        }
+        
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
 
         // last username entered by the user
-        $lastUsername = '';
+        $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('admin_login/index.html.twig', [
             'last_username' => $lastUsername,
