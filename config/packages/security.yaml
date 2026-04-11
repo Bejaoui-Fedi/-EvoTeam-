@@ -23,6 +23,7 @@ security:
                 check_path: app_admin_login
                 default_target_path: app_admin_dashboard
                 enable_csrf: true
+            access_denied_url: app_admin_login
             logout:
                 path: app_admin_logout
                 target: app_home

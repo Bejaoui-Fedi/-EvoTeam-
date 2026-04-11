@@ -19,7 +19,7 @@ final class UserProfileController extends AbstractController
             return $this->redirectToRoute('app_user_login');
         }
 
-        $userProfile = $userProfileService->findByUserId($user->getId());
+        $userProfile = $userProfileService->findOrCreateByUserId($user);
 
         return $this->render('user_profile/index.html.twig', [
             'user' => $user,
@@ -33,7 +33,7 @@ final class UserProfileController extends AbstractController
         $user = $this->getUser();
         if (!$user) return $this->redirectToRoute('app_user_login');
 
-        $userProfile = $userProfileService->findByUserId($user->getId());
+        $userProfile = $userProfileService->findOrCreateByUserId($user);
 
         return $this->render('user_profile/edit.html.twig', [
             'user' => $user,
@@ -53,7 +53,7 @@ final class UserProfileController extends AbstractController
         $user = $this->getUser();
         if (!$user) return $this->redirectToRoute('app_user_login');
 
-        $userProfile = $userProfileService->findByUserId($user->getId());
+        $userProfile = $userProfileService->findOrCreateByUserId($user);
 
         $nom = $request->request->get('nom');
         $phone = $request->request->get('phone');

@@ -52,6 +52,15 @@
         <p class="subtitle animate__animated animate__fadeInLeft" style="animation-delay: 0.4s;">
             Votre écosystème digital dédié à la croissance personnelle et à l'harmonie intérieure. Accédez à vos outils d'expertise en toute simplicité.
         </p>
+
+        {% if app.user %}
+            <div class="mt-4 animate__animated animate__fadeInUp" style="animation-delay: 0.6s;">
+                <p class="text-white opacity-75 mb-2">Connecté en tant que <strong>{{ app.user.nom }}</strong></p>
+                <a href="{{ path('app_user_logout') }}" class="btn btn-outline-light rounded-pill px-4" data-turbo="false">
+                    <i class="fa-solid fa-right-from-bracket me-2"></i> Se déconnecter pour changer de compte
+                </a>
+            </div>
+        {% endif %}
     </div>
 
     {# ——— PANEL 2: ACTION PANEL ——— #}
