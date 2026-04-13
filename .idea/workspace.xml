@@ -4,22 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9761c5c3-149c-4ec3-879e-07b94ef02267" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/packages/security.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/security.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/DailyRoutineTaskController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/DailyRoutineTaskController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/WellbeingTrackerController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/WellbeingTrackerController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/User.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/daily_routine_task/edit.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/daily_routine_task/edit.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/daily_routine_task/index.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/daily_routine_task/index.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/daily_routine_task/new.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/daily_routine_task/new.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/daily_routine_task/show.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/daily_routine_task/show.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/user_nav_bar/index.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/user_nav_bar/index.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/wellbeing_tracker/edit.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/wellbeing_tracker/edit.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/wellbeing_tracker/index.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/wellbeing_tracker/index.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/wellbeing_tracker/new.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/wellbeing_tracker/new.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/wellbeing_tracker/show.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/wellbeing_tracker/show.html.twig" afterDir="false" />
-    </list>
+    <list default="true" id="9761c5c3-149c-4ec3-879e-07b94ef02267" name="Changes" comment="Made corrections + M start (no ai added yet)" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -28,6 +13,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "InPainMan"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/Bejaoui-Fedi/-EvoTeam-.git",
+    "accountId": "fa256683-cad4-44a8-b468-2005a8dddde0"
+  }
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 1
@@ -45,6 +42,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "WBmanagement",
     "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/Mega-Pc/IdeaProjects/ProSynfOG - Copy",
     "settings.editor.selected.configurable": "preferences.lookFeel"
   }
 }]]></component>
@@ -63,6 +61,19 @@
       <option name="presentableId" value="Default" />
       <updated>1772714948722</updated>
     </task>
+    <task id="LOCAL-00001" summary="Made corrections + M start (no ai added yet)">
+      <option name="closed" value="true" />
+      <created>1776114059432</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1776114059432</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Made corrections + M start (no ai added yet)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Made corrections + M start (no ai added yet)" />
   </component>
 </project>
