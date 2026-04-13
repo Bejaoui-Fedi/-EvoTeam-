@@ -7,6 +7,7 @@ use App\Entity\WellbeingTracker;
 use App\Form\WellbeingTrackerType;
 use App\Repository\WellbeingTrackerRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Service\HabitAiService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -66,10 +67,13 @@ class WellbeingTrackerController extends AbstractController
     }
 
     #[Route('/new', name: 'app_wellbeing_tracker_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, HabitAiService $habitAiService): Response
     {
         // Allow only authenticated users
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        if ($this->isGranted('ROLE_PATIENT')) {
+            throw $this->createAccessDeniedException('Les patients ne peuvent pas créer d\'entrées.');
+        }
 
         /** @var User $user */
         $user = $this->getUser();
@@ -84,6 +88,13 @@ class WellbeingTrackerController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($wellbeingTracker);
             $entityManager->flush();
+
+            // Sync with Habit AI Journal
+            $habitAiService->logJournalEntry(
+                $wellbeingTracker->getNote() ?? 'Journal entry from Evolia',
+                $this->mapMoodToHabitAi($wellbeingTracker->getMood()),
+                $user->getHabitAiToken()
+            );
 
             $this->addFlash('success', 'Entrée créée avec succès !');
             return $this->redirectToRoute('app_wellbeing_tracker_index', [], Response::HTTP_SEE_OTHER);
@@ -122,6 +133,9 @@ class WellbeingTrackerController extends AbstractController
     {
         // Allow only authenticated users
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        if ($this->isGranted('ROLE_PATIENT')) {
+            throw $this->createAccessDeniedException('Les patients ne peuvent pas modifier d\'entrées.');
+        }
 
         /** @var User $user */
         $user = $this->getUser();
@@ -163,6 +177,9 @@ class WellbeingTrackerController extends AbstractController
     {
         // Allow only authenticated users
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        if ($this->isGranted('ROLE_PATIENT')) {
+            throw $this->createAccessDeniedException('Les patients ne peuvent pas supprimer d\'entrées.');
+        }
 
         /** @var User $user */
         $user = $this->getUser();
@@ -182,5 +199,17 @@ class WellbeingTrackerController extends AbstractController
         }
 
         return $this->redirectToRoute('app_wellbeing_tracker_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    private function mapMoodToHabitAi(?int $mood): string
+    {
+        return match ($mood) {
+            1 => 'sad',
+            2 => 'meh',
+            3 => 'neutral',
+            4 => 'happy',
+            5 => 'excited',
+            default => 'neutral',
+        };
     }
 }

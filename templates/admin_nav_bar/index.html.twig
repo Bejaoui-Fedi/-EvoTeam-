@@ -21,7 +21,7 @@
 
     <div class="admin-sidebar-nav">
         <div class="nav-section-title">Principal</div>
-        <a href="{{ path('app_admin_dashboard') }}" class="admin-nav-link active">
+        <a href="{{ path('app_admin_dashboard') }}" class="admin-nav-link {{ app.request.get('_route') == 'app_admin_dashboard' ? 'active' : '' }}">
             <i class="fa-solid fa-chart-line"></i> Tableau de bord
         </a>
         <a href="{{ path('app_user_list') }}" class="admin-nav-link">

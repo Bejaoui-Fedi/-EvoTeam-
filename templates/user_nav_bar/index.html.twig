@@ -19,6 +19,9 @@
         <a href="{{ path('app_user_dashboard') }}" class="user-nav-link {{ app.request.get('_route') == 'app_user_dashboard' ? 'active' : '' }}">
             <i class="fa-solid fa-hotel"></i> Tableau de bord
         </a>
+        <a href="{{ path('app_ai_coach_index') }}" class="user-nav-link {{ app.request.get('_route') == 'app_ai_coach_index' ? 'active' : '' }}">
+            <i class="fa-solid fa-robot"></i> AI Health Hub
+        </a>
         <a href="#" class="user-nav-link">
             <i class="fa-solid fa-calendar-check"></i> Événements
         </a>
@@ -36,7 +39,7 @@
             </a>
         {% else %}
             {# Patients/Role simple see limited view #}
-            <a href="{{ path('app_wellbeing_tracker_patient') }}" class="user-nav-link {{ app.request.get('_route') == 'app_wellbeing_tracker_patient' ? 'active' : '' }}">
+            <a href="{{ path('app_wellbeing_tracker_index') }}" class="user-nav-link {{ app.request.get('_route') == 'app_wellbeing_tracker_index' ? 'active' : '' }}">
                 <i class="fa-solid fa-feather"></i> Journal bien-être
             </a>
         {% endif %}

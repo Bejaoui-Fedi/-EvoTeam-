@@ -45,6 +45,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $tokenExpiry = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $habitAiToken = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -146,6 +149,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getHabitAiToken(): ?string
+    {
+        return $this->habitAiToken;
+    }
+
+    public function setHabitAiToken(?string $habitAiToken): static
+    {
+        $this->habitAiToken = $habitAiToken;
+
+        return $this;
+    }
+
     /**
      * A visual identifier that represents this user.
      *
@@ -166,6 +181,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $roles = ['ROLE_USER'];
         
         if ($role) {
+            // Fix potential typos where ROLE_ prefix is missing
+            if (strpos($role, 'ROLE_') !== 0) {
+                $role = 'ROLE_' . strtoupper($role);
+            }
             $roles[] = $role;
         }
 
