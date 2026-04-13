@@ -70,6 +70,9 @@ class WellbeingTrackerController extends AbstractController
     {
         // Allow only authenticated users
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        if ($this->isGranted('ROLE_PATIENT')) {
+            throw $this->createAccessDeniedException('Les patients ne peuvent pas créer d\'entrées.');
+        }
 
         /** @var User $user */
         $user = $this->getUser();
@@ -122,6 +125,9 @@ class WellbeingTrackerController extends AbstractController
     {
         // Allow only authenticated users
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        if ($this->isGranted('ROLE_PATIENT')) {
+            throw $this->createAccessDeniedException('Les patients ne peuvent pas modifier d\'entrées.');
+        }
 
         /** @var User $user */
         $user = $this->getUser();
@@ -163,6 +169,9 @@ class WellbeingTrackerController extends AbstractController
     {
         // Allow only authenticated users
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        if ($this->isGranted('ROLE_PATIENT')) {
+            throw $this->createAccessDeniedException('Les patients ne peuvent pas supprimer d\'entrées.');
+        }
 
         /** @var User $user */
         $user = $this->getUser();

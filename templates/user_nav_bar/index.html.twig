@@ -36,7 +36,7 @@
             </a>
         {% else %}
             {# Patients/Role simple see limited view #}
-            <a href="{{ path('app_wellbeing_tracker_patient') }}" class="user-nav-link {{ app.request.get('_route') == 'app_wellbeing_tracker_patient' ? 'active' : '' }}">
+            <a href="{{ path('app_wellbeing_tracker_index') }}" class="user-nav-link {{ app.request.get('_route') == 'app_wellbeing_tracker_index' ? 'active' : '' }}">
                 <i class="fa-solid fa-feather"></i> Journal bien-être
             </a>
         {% endif %}

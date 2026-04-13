@@ -95,6 +95,9 @@ class DailyRoutineTaskController extends AbstractController
     {
         // Allow only authenticated users
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        if ($this->isGranted('ROLE_PATIENT')) {
+            throw $this->createAccessDeniedException('Les patients ne peuvent pas créer de routines.');
+        }
 
         /** @var User $user */
         $user = $this->getUser();
@@ -151,6 +154,9 @@ class DailyRoutineTaskController extends AbstractController
     {
         // Allow only authenticated users
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        if ($this->isGranted('ROLE_PATIENT')) {
+            throw $this->createAccessDeniedException('Les patients ne peuvent pas modifier de routines.');
+        }
 
         /** @var User $user */
         $user = $this->getUser();
@@ -189,6 +195,9 @@ class DailyRoutineTaskController extends AbstractController
     {
         // Allow only authenticated users
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        if ($this->isGranted('ROLE_PATIENT')) {
+            throw $this->createAccessDeniedException('Les patients ne peuvent pas supprimer de routines.');
+        }
 
         /** @var User $user */
         $user = $this->getUser();
@@ -219,16 +228,45 @@ class DailyRoutineTaskController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        // Only the task owner can mark it as complete
-        if ($task->getUser()->getId() !== $user->getId()) {
+        $isProfessional = $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_COACH') || $this->isGranted('ROLE_PSYCHOLOGUE');
+
+        // Only the task owner or professional can mark it as complete
+        if (!$isProfessional && $task->getUser()->getId() !== $user->getId()) {
             throw $this->createAccessDeniedException('Vous ne pouvez pas modifier cette tâche.');
         }
 
-        $task->setIsCompleted(true);
-        $task->setCompletedAt(new \DateTime());
-        $entityManager->flush();
+        if ($this->isCsrfTokenValid('complete' . $task->getId(), $request->request->get('_token'))) {
+            $task->setIsCompleted(true);
+            $task->setCompletedAt(new \DateTime());
+            $entityManager->flush();
+            $this->addFlash('success', 'Tâche marquée comme complétée !');
+        }
 
-        $this->addFlash('success', 'Tâche marquée comme complétée !');
+        return $this->redirectToRoute('app_daily_routine_task_index');
+    }
+
+    #[Route('/{id}/uncomplete', name: 'app_daily_routine_task_uncomplete', methods: ['POST'])]
+    public function uncomplete(Request $request, DailyRoutineTask $task, EntityManagerInterface $entityManager): Response
+    {
+        // Allow only authenticated users
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        /** @var User $user */
+        $user = $this->getUser();
+        $isProfessional = $this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_COACH') || $this->isGranted('ROLE_PSYCHOLOGUE');
+
+        // Only the task owner or professional can mark it as uncomplete
+        if (!$isProfessional && $task->getUser()->getId() !== $user->getId()) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas modifier cette tâche.');
+        }
+
+        if ($this->isCsrfTokenValid('uncomplete' . $task->getId(), $request->request->get('_token'))) {
+            $task->setIsCompleted(false);
+            $task->setCompletedAt(null);
+            $entityManager->flush();
+            $this->addFlash('success', 'Tâche marquée comme non complétée.');
+        }
+
         return $this->redirectToRoute('app_daily_routine_task_index');
     }
 }

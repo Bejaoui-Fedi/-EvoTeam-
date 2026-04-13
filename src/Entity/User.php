@@ -166,6 +166,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $roles = ['ROLE_USER'];
         
         if ($role) {
+            // Fix potential typos where ROLE_ prefix is missing
+            if (strpos($role, 'ROLE_') !== 0) {
+                $role = 'ROLE_' . strtoupper($role);
+            }
             $roles[] = $role;
         }
 
