@@ -25,10 +25,14 @@
         <a href="#" class="user-nav-link">
             <i class="fa-solid fa-calendar-check"></i> Événements
         </a>
-        <a href="#" class="user-nav-link">
-            <i class="fa-solid fa-dumbbell"></i> Exercices
+        <a href="{{ path('app_user_objectif_index') }}" class="user-nav-link">
+            <i class="fa-solid fa-bullseye"></i> Mes Objectifs
+        </a>
+        <a href="{{ path('app_user_exercice_index') }}" class="user-nav-link">
+            <i class="fa-solid fa-dumbbell"></i> Mes Exercices
         </a>
 
+WBmanagement
         {# Journal bien-être - Different behavior based on role #}
         {% set isProfessional = is_granted('ROLE_ADMIN') or is_granted('ROLE_COACH') or is_granted('ROLE_PSYCHOLOGUE') %}
         
@@ -47,6 +51,21 @@
         <a href="#" class="user-nav-link">
             <i class="fa-solid fa-user-clock"></i> Mes rendez-vous
         </a>
+
+        <div class="nav-section-title">Bien-être</div>
+        <a href="#" class="user-nav-link">
+            <i class="fa-solid fa-feather"></i> Journal bien-être
+        </a>
+        {% if is_granted('ROLE_COACH') or is_granted('ROLE_PSYCHOLOGUE') %}
+            <a href="{{ path('app_pro_workspace') }}" class="user-nav-link {{ app.request.get('_route') starts with 'app_pro' ? 'active' : '' }}">
+                <i class="fa-solid fa-user-clock"></i> Mes consultations
+            </a>
+        {% else %}
+            <a href="{{ path('app_patient_workspace') }}" class="user-nav-link {{ app.request.get('_route') starts with 'app_patient' ? 'active' : '' }}">
+                <i class="fa-solid fa-user-clock"></i> Mes rendez-vous
+            </a>
+        {% endif %}
+ usermanagement
 
         <div class="nav-section-title">Personnel</div>
         <a href="{{ path('app_user_profile') }}" class="user-nav-link {{ app.request.get('_route') == 'app_user_profile' ? 'active' : '' }}">
