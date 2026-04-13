@@ -1,0 +1,4 @@
+<form method="post" action="{{ path('app_daily_routine_task_delete', {'id': daily_routine_task.id}) }}" onsubmit="return confirm('Are you sure you want to delete this item?');" style="display:inline;">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ daily_routine_task.id) }}">
+    <button class="btn btn-danger">Delete</button>
+</form>

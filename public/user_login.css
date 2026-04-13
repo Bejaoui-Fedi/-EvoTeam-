@@ -2,18 +2,15 @@
 html,
 body {
     height: 100%;
-    margin: 0;
+    overflow: hidden;
 }
 
 body {
     background: transparent;
-    font-family: 'Inter', sans-serif;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
-    padding: 60px 15px;
-    overflow-y: auto !important;
+    font-family: 'Inter', sans-serif;
 }
 
 /* ——— Card ——— */

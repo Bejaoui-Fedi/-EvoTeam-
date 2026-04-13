@@ -1,4 +1,4 @@
-<div class="admin-sidebar">
+<div class="pro-sidebar">
     <div class="sidebar-brand">
         <div class="logo-animation-wrapper mb-4" style="position: relative; width: 120px; height: 120px; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
             <div class="logo-animation-bg" style="position: absolute; inset: 10px; background: rgba(255, 255, 255, 0.08); border-radius: 50%; box-shadow: 0 8px 32px rgba(0,0,0,0.2);"></div>
@@ -14,37 +14,35 @@
         <div class="d-flex flex-column align-items-center justify-content-center gap-1">
             <h2 class="mb-0" style="font-size: 1.5rem; letter-spacing: 2px;">EVOLIA</h2>
             <div class="d-flex align-items-center justify-content-center">
-                <span class="sidebar-badge">Admin</span>
+                <span class="sidebar-badge">Coach / Psy</span>
             </div>
         </div>
     </div>
 
-    <div class="admin-sidebar-nav">
+    <div class="pro-sidebar-nav">
         <div class="nav-section-title">Principal</div>
-        <a href="{{ path('app_admin_dashboard') }}" class="admin-nav-link active">
+        <a href="{{ path('app_user_dashboard') }}" class="pro-nav-link active">
             <i class="fa-solid fa-chart-line"></i> Tableau de bord
         </a>
-        <a href="{{ path('app_user_list') }}" class="admin-nav-link">
-            <i class="fa-solid fa-users"></i> Utilisateurs
-        </a>
+        
 
         <div class="nav-section-title mt-4">Gestion</div>
-        <a href="#" class="admin-nav-link">
+        <a href="#" class="pro-nav-link">
             <i class="fa-solid fa-calendar-days"></i> Événements
         </a>
-        <a href="#" class="admin-nav-link">
+        <a href="#" class="pro-nav-link">
             <i class="fa-solid fa-dumbbell"></i> Exercices
         </a>
-<a href="{{ path('app_wellbeing_tracker_index') }}" class="admin-nav-link {{ app.request.get('_route') == 'app_wellbeing_tracker_index' ? 'active' : '' }}">
+<a href="{{ path('app_wellbeing_tracker_index') }}" class="pro-nav-link {{ app.request.get('_route') == 'app_wellbeing_tracker_index' ? 'active' : '' }}">
     <i class="fa-solid fa-feather"></i> Bien-être
 </a>
-        <a href="#" class="admin-nav-link">
+        <a href="#" class="pro-nav-link">
             <i class="fa-solid fa-clipboard-list"></i> Consult-RDV
         </a>
     </div>
 
-    <div class="admin-sidebar-footer">
-        <a href="{{ path('app_admin_logout') }}" class="btn-logout">
+    <div class="pro-sidebar-footer">
+        <a href="{{ path('app_user_logout') }}" class="btn-logout">
             <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
         </a>
     </div>
