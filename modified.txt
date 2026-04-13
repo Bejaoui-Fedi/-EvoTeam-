@@ -1,6 +1,0 @@
-public/admin_dashboard.css
-public/styles.css
-public/user_dashboard.css
-templates/admin_nav_bar/index.html.twig
-templates/base.html.twig
-templates/home/index.html.twig

@@ -7,7 +7,6 @@
 {% block stylesheets %}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<<<<<<< HEAD
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="{{ asset('styles.css') }}">
     <link rel="stylesheet" href="{{ asset('admin_login.css') }}">
@@ -106,20 +105,12 @@
             display: none !important;
         }
     </style>
-=======
-    <link rel="stylesheet" href="{{ asset('styles.css') }}">
-    <link rel="stylesheet" href="{{ asset('admin_login.css') }}">
->>>>>>> exercisemanagement
 {% endblock %}
 
 {% block body %}
 
 {# ——— BOOTSTRAP BACKGROUND CAROUSEL ——— #}
-<<<<<<< HEAD
 <div id="bgCarousel" class="carousel slide carousel-fade bg-carousel" data-bs-ride="carousel" data-bs-interval="1500">
-=======
-<div id="bgCarousel" class="carousel slide carousel-fade bg-carousel" data-bs-ride="carousel" data-bs-interval="3000">
->>>>>>> exercisemanagement
     <div class="carousel-inner">
         <div class="carousel-item active">
             <img src="/images/bg-2.jpg" class="d-block w-100" alt="Bien-être 1">
@@ -143,7 +134,6 @@
     <h1>Espace Administrateur</h1>
     <p class="subtitle">Connectez-vous à l'espace administration</p>
 
-<<<<<<< HEAD
     {% if error %}
         <div class="modern-alert alert-error animate__animated animate__shakeX">
             <div class="alert-icon-circle">
@@ -167,16 +157,12 @@
     {% endif %}
 
     <form method="post" action="{{ path('app_admin_login') }}">
-=======
-    <form method="post" action="{{ path('app_admin_dashboard') }}">
->>>>>>> exercisemanagement
 
         <div class="form-group">
             <label class="form-label" for="admin_email">Email</label>
             <input
                 type="email"
                 id="admin_email"
-<<<<<<< HEAD
                 name="_username"
                 class="form-control"
                 placeholder="admin@evolia.com"
@@ -185,18 +171,11 @@
                 readonly
                 onfocus="this.removeAttribute('readonly');"
                 onmousedown="this.removeAttribute('readonly');"
-=======
-                name="email"
-                class="form-control"
-                placeholder="admin@evolia.com"
-                required
->>>>>>> exercisemanagement
             >
         </div>
 
         <div class="form-group">
             <label class="form-label" for="admin_password">Mot de passe</label>
-<<<<<<< HEAD
             <div class="password-container" style="position: relative;">
                 <input
                     type="password"
@@ -215,40 +194,19 @@
                 </button>
             </div>
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-=======
-            <input
-                type="password"
-                id="admin_password"
-                name="password"
-                class="form-control"
-                placeholder="Votre mot de passe"
-                required
-            >
->>>>>>> exercisemanagement
         </div>
 
         <div class="form-options">
             <label>
-<<<<<<< HEAD
                 <input type="checkbox" name="_remember_me"> Se souvenir de moi
-=======
-                <input type="checkbox" name="remember"> Se souvenir de moi
->>>>>>> exercisemanagement
             </label>
             <a href="#">Mot de passe oublié ?</a>
         </div>
 
-<<<<<<< HEAD
         <button type="submit" class="btn-login" style="border: none; width: 100%;">
             <i class="fa-solid fa-seedling"></i>
             Se connecter
         </button>
-=======
-        <a href="{{ path('app_admin_dashboard') }}" class="btn-login" style="text-decoration: none;">
-            <i class="fa-solid fa-seedling"></i>
-            Se connecter
-        </a>
->>>>>>> exercisemanagement
 
     </form>
 
@@ -265,7 +223,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<<<<<<< HEAD
 <script>
     window.togglePasswordVisibility = function(inputId, btn) {
         const input = document.getElementById(inputId);
@@ -288,6 +245,4 @@
         }
     };
 </script>
-=======
->>>>>>> exercisemanagement
 {% endblock %}

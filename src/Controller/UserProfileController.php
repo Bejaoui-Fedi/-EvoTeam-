@@ -2,20 +2,15 @@
 
 namespace App\Controller;
 
-<<<<<<< HEAD
 use App\Service\UserProfileService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-=======
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
->>>>>>> exercisemanagement
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class UserProfileController extends AbstractController
 {
     #[Route('/user/profile', name: 'app_user_profile')]
-<<<<<<< HEAD
     public function index(UserProfileService $userProfileService): Response
     {
         $user = $this->getUser();
@@ -104,12 +99,4 @@ final class UserProfileController extends AbstractController
         $this->addFlash('success', 'Profil mis à jour avec succès !');
         return $this->redirectToRoute('app_user_profile');
     }
-=======
-    public function index(): Response
-    {
-        return $this->render('user_profile/index.html.twig', [
-            'controller_name' => 'UserProfileController',
-        ]);
-    }
->>>>>>> exercisemanagement
 }

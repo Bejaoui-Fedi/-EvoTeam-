@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9761c5c3-149c-4ec3-879e-07b94ef02267" name="Changes" comment="Made corrections + M start (no ai added yet)" />
+    <list default="true" id="9761c5c3-149c-4ec3-879e-07b94ef02267" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,18 +15,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "InPainMan"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;InPainMan&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/Bejaoui-Fedi/-EvoTeam-.git",
-    "accountId": "fa256683-cad4-44a8-b468-2005a8dddde0"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Bejaoui-Fedi/-EvoTeam-.git&quot;,
+    &quot;accountId&quot;: &quot;fa256683-cad4-44a8-b468-2005a8dddde0&quot;
   }
-}]]></component>
+}</component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 1
@@ -61,19 +63,23 @@
       <option name="presentableId" value="Default" />
       <updated>1772714948722</updated>
     </task>
-    <task id="LOCAL-00001" summary="Made corrections + M start (no ai added yet)">
+    <task id="LOCAL-00001" summary="Rated work For the start">
       <option name="closed" value="true" />
-      <created>1776114059432</created>
+      <created>1776123680602</created>
       <option name="number" value="00001" />
       <option name="presentableId" value="LOCAL-00001" />
       <option name="project" value="LOCAL" />
-      <updated>1776114059432</updated>
+      <updated>1776123680602</updated>
     </task>
     <option name="localTasksCounter" value="2" />
     <servers />
   </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.env" />
+  </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Made corrections + M start (no ai added yet)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Made corrections + M start (no ai added yet)" />
+    <MESSAGE value="Merge remote-tracking branch 'origin/WBmanagement' into WBmanagement&#10;&#10;# Conflicts:&#10;#&#9;.gitignore&#10;#&#9;config/packages/security.yaml&#10;#&#9;src/Entity/User.php&#10;#&#9;templates/admin_nav_bar/index.html.twig" />
+    <MESSAGE value="Rated work For the start" />
+    <option name="LAST_COMMIT_MESSAGE" value="Rated work For the start" />
   </component>
 </project>

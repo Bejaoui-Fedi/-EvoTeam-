@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-<<<<<<< HEAD
 use App\Entity\User;
 use App\Entity\UserProfile;
 use App\Service\UserService;
@@ -11,15 +10,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-=======
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
->>>>>>> exercisemanagement
 use Symfony\Component\Routing\Attribute\Route;
 
 final class AdminFormController extends AbstractController
 {
-<<<<<<< HEAD
     // C'est un code d'exemple, idéalement stocké en variable d'environnement ou en base
     private const ADMIN_AUTH_CODE = 'EVOLIA-ADMIN-2026';
 
@@ -77,7 +71,7 @@ final class AdminFormController extends AbstractController
             $user->setNom($fullname);
             $user->setEmail($email);
             $user->setTelephone($phone);
-            $user->setRole('ADMIN');
+            $user->setRole('ROLE_ADMIN');
             $user->setActif(true);
 
             // Hash password
@@ -87,21 +81,17 @@ final class AdminFormController extends AbstractController
             $userService->createUser($user);
 
             // Create UserProfile for admin (optional but good for consistency)
-            // $userProfile = new UserProfile();
-            // $userProfile->setUser($user);
-            // $userProfile->setDateCreation(new \DateTime());
-            // $userProfile->setNotificationsEmail(true);
-            // $userProfile->setNotificationsSms(false);
-            // $userProfileService->createUserProfile($userProfile);
+            $userProfile = new UserProfile();
+            $userProfile->setUser($user);
+            $userProfile->setDateCreation(new \DateTime());
+            $userProfile->setNotificationsEmail(true);
+            $userProfile->setNotificationsSms(false);
+            
+            $userProfileService->createUserProfile($userProfile);
 
             return $this->redirectToRoute('app_admin_login', ['success' => 'Compte Administrateur créé avec succès ! Veuillez vous connecter.']);
         }
 
-=======
-    #[Route('/admin/form', name: 'app_admin_form')]
-    public function index(): Response
-    {
->>>>>>> exercisemanagement
         return $this->render('admin_form/index.html.twig', [
             'controller_name' => 'AdminFormController',
         ]);

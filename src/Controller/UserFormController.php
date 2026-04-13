@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-<<<<<<< HEAD
 use App\Entity\User;
 use App\Entity\UserProfile;
 use App\Service\UserService;
@@ -11,15 +10,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-=======
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
->>>>>>> exercisemanagement
 use Symfony\Component\Routing\Attribute\Route;
 
 final class UserFormController extends AbstractController
 {
-<<<<<<< HEAD
     #[Route('/user/form', name: 'app_user_form', methods: ['GET', 'POST'])]
     public function index(
         Request $request, 
@@ -74,10 +68,11 @@ final class UserFormController extends AbstractController
                 ]);
             }
 
-            // Map role to valid DB Enum
+            // Map role
             $role = match($accountType) {
-                'coach', 'psychologue' => 'PSY_COACH',
-                default => 'PATIENT',
+                'coach' => 'ROLE_COACH',
+                'psychologue' => 'ROLE_PSYCHOLOGUE',
+                default => 'ROLE_PATIENT',
             };
 
             // Create User
@@ -95,22 +90,18 @@ final class UserFormController extends AbstractController
             $userService->createUser($user);
 
             // Create UserProfile
-            // $userProfile = new UserProfile();
-            // $userProfile->setUser($user);
-            // $userProfile->setDateCreation(new \DateTime());
-            // $userProfile->setNotificationsEmail(true);
-            // $userProfile->setNotificationsSms(false);
-            // $userProfileService->createUserProfile($userProfile);
+            $userProfile = new UserProfile();
+            $userProfile->setUser($user);
+            $userProfile->setDateCreation(new \DateTime());
+            $userProfile->setNotificationsEmail(true);
+            $userProfile->setNotificationsSms(false);
+            
+            $userProfileService->createUserProfile($userProfile);
 
             // Redirect to login or auto-login
             return $this->redirectToRoute('app_user_login', ['success' => 'Compte créé avec succès ! Veuillez vous connecter.']);
         }
 
-=======
-    #[Route('/user/form', name: 'app_user_form')]
-    public function index(): Response
-    {
->>>>>>> exercisemanagement
         return $this->render('user_form/index.html.twig', [
             'controller_name' => 'UserFormController',
         ]);

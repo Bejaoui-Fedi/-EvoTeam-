@@ -151,16 +151,9 @@ body {
     left: 0;
     top: 0;
     height: 100%;
-<<<<<<< HEAD
     width: 0%;
     background: #ff6b6b;
     transition: width 0.3s ease, background 0.3s ease;
-=======
-    width: 30%;
-    /* Mocked value */
-    background: #ff6b6b;
-    /* Faible */
->>>>>>> exercisemanagement
 }
 
 .strength-label {
