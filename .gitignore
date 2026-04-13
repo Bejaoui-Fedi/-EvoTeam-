@@ -1,0 +1,17 @@
+.gitignore
+# Symfony frameworks and files to ignore
+/.idea/
+/.vscode/
+/var/
+/vendor/
+/public/bundles/
+/.DS_Store
+*.log
+.Phpstorm.meta.php
+.phpunit.result.cache
+
+# Miscellaneous
+*.swp
+# Specific to Laravel
+Homestead.yaml
+Homestead.json
