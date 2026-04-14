@@ -23,8 +23,8 @@ body.admin-theme {
     display: block !important; /* Override global centering flex */
 }
 
-/* Hide scrollbar for a truly fixed look */
-::-webkit-scrollbar {
+/* Hide scrollbar for a truly fixed look (body only) */
+body::-webkit-scrollbar {
     width: 0px;
     background: transparent;
 }
@@ -389,13 +389,21 @@ body.admin-theme {
 
 .table th {
     background: #fbfcfb;
-    padding: 15px 30px;
+    padding: 15px 15px; /* Reduced vertical & horizontal padding */
     font-size: 0.8rem;
     font-weight: 700;
     color: #888;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     border-bottom: 2px solid #f0f0f0;
+    white-space: nowrap;
+}
+
+.table th:last-child {
+    position: sticky;
+    right: 0;
+    z-index: 2;
+    box-shadow: -4px 0 10px rgba(0,0,0,0.03);
 }
 
 .table tr {
@@ -409,12 +417,25 @@ body.admin-theme {
 }
 
 .table td {
-    padding: 24px 30px;
+    padding: 16px 15px; /* Reduced padding from 24px 30px to save space */
     vertical-align: middle;
     border-bottom: 1px solid #f0f4f2;
     font-size: 0.95rem;
     color: #2d3e35;
     transition: color 0.3s;
+    white-space: nowrap;
+}
+
+.table td:last-child {
+    position: sticky;
+    right: 0;
+    z-index: 1;
+    background: inherit;
+    box-shadow: -4px 0 10px rgba(0,0,0,0.03);
+}
+
+.table tbody tr {
+    background: #fff; /* Ensure rows have background for sticky columns */
 }
 
 .table tr:hover td {
