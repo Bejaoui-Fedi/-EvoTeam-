@@ -70,6 +70,12 @@ security:
 
         # Avis : utilisateurs connectés (les non-admin sont limités à leurs propres avis côté contrôleur)
         - { path: ^/review, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/participation/public, roles: PUBLIC_ACCESS }
+        - { path: ^/participation, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/calendar, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/admin/evenement/\d+/participants/export, roles: ROLE_ADMIN }
+        - { path: ^/admin/participation, roles: ROLE_ADMIN }
+        - { path: ^/admin/history, roles: ROLE_ADMIN }
 
         # Routes admin (back-office)
         - { path: ^/admin, roles: ROLE_ADMIN }

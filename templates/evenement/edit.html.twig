@@ -36,8 +36,13 @@
             {{ form_widget(form.maxParticipants) }}
             {{ form_errors(form.maxParticipants) }}
         </div>
-        <div>
-            {{ form_label(form.description) }}
+        <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                {{ form_label(form.description) }}
+                <button type="button" id="btn-generate-ai" class="btn btn-sm btn-outline-info">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Générer avec l'IA
+                </button>
+            </div>
             {{ form_widget(form.description) }}
             {{ form_errors(form.description) }}
         </div>
@@ -62,4 +67,52 @@
 
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const btnAi = document.getElementById('btn-generate-ai');
+    if (!btnAi) return;
+
+    btnAi.addEventListener('click', async function() {
+        const nameInput = document.getElementById('evenement_name');
+        const locationInput = document.getElementById('evenement_location');
+        const descInput = document.getElementById('evenement_description');
+
+        const name = nameInput ? nameInput.value : '';
+        const loc = locationInput ? locationInput.value : '';
+
+        if (!name) {
+            alert('Veuillez au moins saisir un nom d\'événement pour générer une description.');
+            return;
+        }
+
+        const originalText = btnAi.innerHTML;
+        btnAi.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Génération...';
+        btnAi.disabled = true;
+
+        try {
+            const response = await fetch('/admin/evenement/generate-description', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name: name, location: loc })
+            });
+
+            const data = await response.json();
+            
+            if (response.ok) {
+                descInput.value = data.description;
+            } else {
+                alert(data.description || 'Erreur lors de la génération.');
+            }
+        } catch (e) {
+            alert('Erreur réseau ou serveur.');
+        } finally {
+            btnAi.innerHTML = originalText;
+            btnAi.disabled = false;
+        }
+    });
+});
+</script>
 {% endblock %}

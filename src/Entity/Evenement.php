@@ -53,12 +53,19 @@ class Evenement
     /**
      * @var Collection<int, Review>
      */
-    #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'event')]
+    #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'event', orphanRemoval: true, cascade: ['remove'])]
     private Collection $reviews;
+
+    /**
+     * @var Collection<int, Participation>
+     */
+    #[ORM\OneToMany(mappedBy: 'event', targetEntity: Participation::class, orphanRemoval: true, cascade: ['remove'])]
+    private Collection $participations;
 
     public function __construct()
     {
         $this->reviews = new ArrayCollection();
+        $this->participations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -171,11 +178,33 @@ class Evenement
     public function removeReview(Review $review): static
     {
         if ($this->reviews->removeElement($review)) {
-            // set the owning side to null (unless already changed)
-            if ($review->getEvent() === $this) {
-                $review->setEvent(null);
-            }
+            // orphanRemoval handles deletion of child reviews
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Participation>
+     */
+    public function getParticipations(): Collection
+    {
+        return $this->participations;
+    }
+
+    public function addParticipation(Participation $participation): static
+    {
+        if (!$this->participations->contains($participation)) {
+            $this->participations->add($participation);
+            $participation->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParticipation(Participation $participation): static
+    {
+        $this->participations->removeElement($participation);
 
         return $this;
     }

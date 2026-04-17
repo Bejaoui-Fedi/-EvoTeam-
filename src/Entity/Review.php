@@ -48,8 +48,11 @@ class Review
     )]
     private ?string $title = null;
 
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $sentiment = null;
+
     #[ORM\ManyToOne(inversedBy: 'reviews')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     #[Assert\NotNull(message: "L'événement est obligatoire")]
     private ?Evenement $event = null;
 
@@ -71,6 +74,9 @@ class Review
     
     public function getTitle(): ?string { return $this->title; }
     public function setTitle(?string $title): static { $this->title = $title; return $this; }
+    
+    public function getSentiment(): ?string { return $this->sentiment; }
+    public function setSentiment(?string $sentiment): static { $this->sentiment = $sentiment; return $this; }
     
     public function getEvent(): ?Evenement { return $this->event; }
     public function setEvent(?Evenement $event): static { $this->event = $event; return $this; }

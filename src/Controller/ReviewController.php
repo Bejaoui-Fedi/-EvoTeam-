@@ -43,7 +43,7 @@ class ReviewController extends AbstractController
     public function new(Request $request, EntityManagerInterface $em, EvenementRepository $eventRepo): Response
     {
         $review = new Review();
-        
+
         // Read both eventId (from user's twig edit) and event_id
         $eventId = $request->query->get('eventId') ?? $request->query->get('event_id');
         if ($eventId) {
@@ -59,7 +59,7 @@ class ReviewController extends AbstractController
             'include_event' => $includeEvent,
         ]);
         $form->handleRequest($request);
-        
+
         if ($form->isSubmitted() && $form->isValid()) {
             $author = $this->getUser();
             if (!$author instanceof \App\Entity\User) {
@@ -76,7 +76,7 @@ class ReviewController extends AbstractController
 
             return $this->redirectToRoute('app_evenement_index');
         }
-        
+
         return $this->render('review/new.html.twig', [
             'form' => $form->createView(),
         ]);
@@ -103,7 +103,7 @@ class ReviewController extends AbstractController
             'include_event' => $this->isGranted('ROLE_ADMIN'),
         ]);
         $form->handleRequest($request);
-        
+
         if ($form->isSubmitted() && $form->isValid()) {
             $em->flush();
             $this->addFlash('success', 'Avis modifié avec succès.');
@@ -114,7 +114,7 @@ class ReviewController extends AbstractController
 
             return $this->redirectToRoute('app_evenement_index');
         }
-        
+
         return $this->render('review/edit.html.twig', [
             'review' => $review,
             'form' => $form->createView(),

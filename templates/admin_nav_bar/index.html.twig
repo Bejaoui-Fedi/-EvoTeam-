@@ -35,6 +35,12 @@
         <a href="{{ path('app_review_index') }}" class="admin-nav-link {{ app.request.get('_route') starts with 'app_review' ? 'active' : '' }}">
             <i class="fa-solid fa-star"></i> Avis
         </a>
+        <a href="{{ path('app_participation_index') }}" class="admin-nav-link {{ app.request.get('_route') starts with 'app_participation' ? 'active' : '' }}">
+            <i class="fa-solid fa-user-check"></i> Participations
+        </a>
+        <a href="{{ path('app_admin_history') }}" class="admin-nav-link {{ app.request.get('_route') starts with 'app_admin_history' ? 'active' : '' }}">
+            <i class="fa-solid fa-clock-rotate-left"></i> Historique
+        </a>
         <a href="#" class="admin-nav-link">
             <i class="fa-solid fa-dumbbell"></i> Exercices
         </a>

@@ -20,12 +20,14 @@
     <p><strong>Description :</strong> {{ evenement.description }}</p>
     <p><strong>Prix :</strong> {{ evenement.fee }} €</p>
     <p><strong>Lieu :</strong> {{ evenement.location }}</p>
+    <p><strong>Participants inscrits :</strong> {{ evenement.participations|filter(p => p.status == 'registered')|length }}</p>
     
     <br>
     <br>
     <a href="{{ path('app_evenement_index') }}" class="btn btn-secondary">← Retour à la liste</a>
     &nbsp;|&nbsp;
     <a href="{{ path('app_evenement_edit', {id: evenement.id}) }}" class="btn btn-primary">Modifier</a>
+    <a href="{{ path('app_evenement_participants_export', {id: evenement.id}) }}" class="btn btn-success">Exporter participants Excel</a>
 
     </div>
 </div>

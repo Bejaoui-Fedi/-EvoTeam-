@@ -46,6 +46,7 @@
             </form>
             <div style="margin-bottom: 20px;">
                 <a href="{{ path('app_evenement_new') }}">+ Créer un événement</a>
+                <a href="{{ path('app_admin_history') }}" class="btn btn-outline-dark ms-2">Historique</a>
             </div>
             
             <table class="table table-striped" border="1" cellpadding="10" cellspacing="0" style="background: white;">
@@ -70,6 +71,7 @@
                         <td>
                             <a href="{{ path('app_evenement_show', {id: event.id}) }}" class="btn btn-sm btn-info">Voir</a>
                             <a href="{{ path('app_evenement_edit', {id: event.id}) }}" class="btn btn-sm btn-warning">Modifier</a>
+                            <a href="{{ path('app_evenement_participants_export', {id: event.id}) }}" class="btn btn-sm btn-success">Exporter participants</a>
                             <form method="post" action="{{ path('app_evenement_delete', {id: event.id}) }}" style="display:inline" onsubmit="return confirm('Supprimer ?')">
                                 <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
                             </form>
@@ -112,6 +114,9 @@
                 <div class="col-md-3 d-flex gap-2"><button class="btn btn-primary w-100">Filtrer</button><a class="btn btn-outline-secondary" href="{{ path('app_evenement_index') }}">Reset</a></div>
             </form>
 <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+    <div class="mb-3 d-flex gap-2">
+        <a href="{{ path('app_participation_my') }}" class="btn btn-outline-primary">Mes participations</a>
+    </div>
     <h1 style="color: #2c3e50; margin-bottom: 30px; font-size: 2em; letter-spacing: 1px;">Événements à Découvrir</h1>
     
     {% for event in evenements %}
@@ -126,10 +131,32 @@
                     </div>
                     <p style="line-height: 1.6; color: #34495e;">{{ event.description }}</p>
                 </div>
-                <div style="margin-top: 10px;">
-                    <a href="{{ path('app_review_new', {'eventId': event.id}) }}" style="display: inline-block; padding: 10px 20px; background: linear-gradient(135deg, #3498db, #2980b9); color: white; text-decoration: none; border-radius: 30px; font-weight: 600; box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3); transition: all 0.3s;">
-                        ⭐ Laisser un avis
-                    </a>
+                <div style="margin-top: 15px; display: flex; flex-direction: column; gap: 15px; align-items: flex-end; min-width: 200px;">
+                    {% set myParticipation = event.participations|filter(p => p.user and app.user and p.user.id == app.user.id and p.status == 'registered')|first %}
+                    
+                    {% if myParticipation %}
+                        <a href="{{ path('app_participation_qr', {id: myParticipation.id}) }}" style="display: block; width: 100%; text-align: center; padding: 12px 20px; background: linear-gradient(135deg, #00b09b, #96c93d); color: white; text-decoration: none; border-radius: 50px; font-weight: bold; box-shadow: 0 8px 15px rgba(0, 176, 155, 0.3); transition: transform 0.2s;">
+                            <i class="fas fa-qrcode"></i> Mon QR Code d'Accès
+                        </a>
+                        
+                        <div class="d-flex gap-2 w-100 mt-1">
+                            <a href="{{ path('app_review_new', {'eventId': event.id}) }}" class="btn btn-outline-primary flex-grow-1" style="border-radius: 30px;">
+                                <i class="fas fa-star text-warning"></i> Laisser un avis
+                            </a>
+                            <form method="post" action="{{ path('app_participation_cancel', {id: myParticipation.id}) }}" onsubmit="return confirm('Annuler votre participation ?')" class="flex-grow-1">
+                                <input type="hidden" name="_token" value="{{ csrf_token('cancel_participation_' ~ myParticipation.id) }}">
+                                <button type="submit" class="btn btn-outline-danger w-100" style="border-radius: 30px;"><i class="fas fa-times"></i> Annuler</button>
+                            </form>
+                        </div>
+                    {% else %}
+                        <a href="{{ path('app_participation_new', {id: event.id}) }}" style="display: block; width: 100%; text-align: center; padding: 14px 20px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; text-decoration: none; border-radius: 50px; font-size: 1.1em; font-weight: bold; box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4); transition: transform 0.2s; animation: pulse 2s infinite;">
+                            <i class="fas fa-ticket-alt"></i> S'inscrire à l'événement
+                        </a>
+                        
+                        <a href="{{ path('app_review_new', {'eventId': event.id}) }}" class="btn btn-link text-muted mt-2" style="text-decoration: none; font-size: 0.9em;">
+                            Consulter les avis / Noter
+                        </a>
+                    {% endif %}
                 </div>
             </div>
 
