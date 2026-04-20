@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: 'Outfit', Arial, sans-serif; line-height: 1.6; color: #334155; }
+        .container { max-width: 600px; margin: 0 auto; padding: 40px; border: 1px solid #e2e8f0; border-radius: 24px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .status-badge { display: inline-block; padding: 10px 20px; background: #0f172a; color: white; border-radius: 50px; font-weight: bold; text-transform: uppercase; margin: 20px 0; }
+        .footer { margin-top: 40px; font-size: 12px; color: #94a3b8; text-align: center; }
+        .details { background: #f8fafc; padding: 25px; border-radius: 16px; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 style="color: #0f172a; letter-spacing: -1px;">Evolia Elite</h1>
+            <p>Mise à jour de votre rendez-vous</p>
+        </div>
+
+        <p>Bonjour <strong>{{ patient.nom }}</strong>,</p>
+        
+        <p>Nous vous informons que le statut de votre rendez-vous a été mis à jour par votre spécialiste :</p>
+
+        <div style="text-align: center;">
+            <div class="status-badge">{{ status }}</div>
+        </div>
+
+        <div class="details">
+            <p><strong>Détails du rendez-vous :</strong></p>
+            <ul style="list-style: none; padding: 0;">
+                <li>📅 Date : {{ appointment.dateRdv|date('d/m/Y') }}</li>
+                <li>⏰ Heure : {{ appointment.heureRdv|date('H:i') }}</li>
+                <li>👨‍⚕️ Spécialiste : {{ appointment.professionalName }}</li>
+            </ul>
+        </div>
+
+        <p>Vous pouvez consulter les détails complets sur votre <a href="http://localhost:8000/patient/workspace" style="color: #0369a1;">Espace Patient</a>.</p>
+
+        <div class="footer">
+            <p>&copy; 2026 Evolia Elite - Plateforme de Gestion Médicale Avancée</p>
+        </div>
+    </div>
+</body>
+</html>

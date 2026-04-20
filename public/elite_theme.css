@@ -1,0 +1,120 @@
+/* ——— Elite Design System Tokens ——— */
+:root {
+    --elite-navy: #0d2119;
+    --elite-slate: #1a3a2e;
+    --elite-accent: #2d6a4f;
+    --elite-secondary: #52796f;
+    --elite-glass: rgba(255, 255, 255, 0.7);
+    --elite-glass-dark: rgba(13, 33, 25, 0.8);
+    --elite-text: #1a3a2e;
+    --elite-border: rgba(45, 106, 79, 0.15);
+    --elite-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+    --elite-radius: 24px;
+}
+
+/* ——— Global Reset & Typography ——— */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f4f7f6;
+    color: var(--elite-text);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ——— Glassmorphism Cards ——— */
+.elite-glass-card {
+    background: var(--elite-glass);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--elite-border);
+    border-radius: var(--elite-radius);
+    box-shadow: var(--elite-shadow);
+    padding: 2.5rem;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+}
+
+.elite-glass-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.15);
+}
+
+/* ——— Elite Form Controls ——— */
+.elite-form-group {
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.elite-label {
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--elite-slate);
+    margin-bottom: 0.75rem;
+    display: block;
+    opacity: 0.8;
+}
+
+.elite-input, .elite-select, .elite-textarea {
+    width: 100%;
+    padding: 1.25rem 1.5rem;
+    background: #ffffff;
+    border: 2px solid transparent;
+    border-radius: 18px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--elite-navy);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.elite-input:focus, .elite-select:focus, .elite-textarea:focus {
+    outline: none;
+    background: #ffffff;
+    border-color: var(--elite-accent);
+    box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.15), 0 12px 24px rgba(0, 0, 0, 0.05);
+    transform: scale(1.01);
+}
+
+/* ——— Elite Buttons ——— */
+.btn-elite-primary {
+    background: linear-gradient(135deg, var(--elite-accent) 0%, var(--elite-secondary) 100%);
+    color: white;
+    border: none;
+    padding: 1.25rem 2.5rem;
+    border-radius: 18px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.9rem;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(129, 140, 248, 0.3);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.btn-elite-primary:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(129, 140, 248, 0.5);
+    filter: brightness(1.1);
+}
+
+.btn-elite-primary:active {
+    transform: translateY(0);
+}
+
+/* ——— Badges ——— */
+.elite-badge {
+    padding: 6px 16px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.badge-success { background: #dcfce7; color: #166534; }
+.badge-warning { background: #fee2e2; color: #991b1b; }
+.badge-info { background: #e0f2fe; color: #0369a1; }

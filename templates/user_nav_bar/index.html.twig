@@ -31,9 +31,15 @@
         <a href="#" class="user-nav-link">
             <i class="fa-solid fa-feather"></i> Journal bien-être
         </a>
-        <a href="#" class="user-nav-link">
-            <i class="fa-solid fa-user-clock"></i> Mes rendez-vous
-        </a>
+        {% if is_granted('ROLE_PRO') or is_granted('ROLE_PSYCHOLOGUE') or is_granted('ROLE_COACH') %}
+            <a href="{{ path('app_pro_workspace') }}" class="user-nav-link">
+                <i class="fa-solid fa-user-md"></i> Espace Pro
+            </a>
+        {% else %}
+            <a href="{{ path('app_patient_workspace') }}" class="user-nav-link">
+                <i class="fa-solid fa-user-clock"></i> Mes rendez-vous
+            </a>
+        {% endif %}
 
         <div class="nav-section-title">Personnel</div>
         <a href="{{ path('app_user_profile') }}" class="user-nav-link {{ app.request.get('_route') == 'app_user_profile' ? 'active' : '' }}">

@@ -4,6 +4,8 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    GROQ_API_KEY: '%env(GROQ_API_KEY)%'
+    GROQ_API_URL: '%env(GROQ_API_URL)%'
 
 services:
     # default configuration for services in *this* file
@@ -22,6 +24,7 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
     App\Service\GoogleCalendarService:
         arguments:
             $clientId: '%env(GOOGLE_CLIENT_ID)%'
@@ -29,3 +32,25 @@ services:
             $redirectUri: '%env(GOOGLE_REDIRECT_URI)%'
             $serviceAccountPath: '%env(default::GOOGLE_SERVICE_ACCOUNT_PATH)%'
             $serviceAccountCalendarId: '%env(default::GOOGLE_SERVICE_ACCOUNT_CALENDAR_ID)%'
+
+    App\Service\RecaptchaService:
+        arguments:
+            $secretKey: '%env(RECAPTCHA_SECRET_KEY)%'
+    
+    App\Service\WeatherService:
+        arguments:
+            $weatherApiKey: '%env(WEATHER_API_KEY)%'
+
+    App\Service\SmsService:
+        arguments:
+            $twilioSid: '%env(TWILIO_SID)%'
+            $twilioToken: '%env(TWILIO_TOKEN)%'
+            $twilioPhone: '%env(TWILIO_PHONE)%'
+
+    App\Service\AiService:
+        arguments:
+            $apiKey: '%env(GROQ_API_KEY)%'
+            $apiUrl: '%env(GROQ_API_URL)%'
+
+    # Alias to solve autowiring error in GoogleLoginController
+    Symfony\Component\Security\Http\Authenticator\FormLoginAuthenticator: '@security.authenticator.form_login.main'

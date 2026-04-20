@@ -59,6 +59,7 @@ security:
         # Routes publiques
         - { path: ^/admin/login, roles: PUBLIC_ACCESS }
         - { path: ^/admin/form, roles: PUBLIC_ACCESS }
+        - { path: ^/admin/debug, roles: PUBLIC_ACCESS }
         - { path: ^/$, roles: PUBLIC_ACCESS }
         - { path: ^/home, roles: PUBLIC_ACCESS }
 
@@ -81,16 +82,10 @@ security:
 
         # Routes admin (back-office)
         - { path: ^/admin, roles: ROLE_ADMIN }
-<<<<<<< HEAD
 
         # Routes utilisateurs
         - { path: ^/user/dashboard, roles: [ROLE_PATIENT, ROLE_COACH, ROLE_PSYCHOLOGUE] }
         - { path: ^/user/profile, roles: [ROLE_PATIENT, ROLE_COACH, ROLE_PSYCHOLOGUE] }
-=======
-        - { path: ^/user/dashboard, roles: [ROLE_PATIENT, ROLE_COACH, ROLE_PSYCHOLOGUE] }
-        - { path: ^/user/profile, roles: [ROLE_PATIENT, ROLE_COACH, ROLE_PSYCHOLOGUE] }
-        # - { path: ^/profile, roles: ROLE_USER }
->>>>>>> origin/!!!!!!!!!!!!!!!!!
 
 when@test:
     security:

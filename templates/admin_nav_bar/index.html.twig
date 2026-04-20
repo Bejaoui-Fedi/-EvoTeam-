@@ -13,8 +13,9 @@
         </div>
         <div class="d-flex flex-column align-items-center justify-content-center gap-1">
             <h2 class="mb-0" style="font-size: 1.5rem; letter-spacing: 2px;">EVOLIA</h2>
-            <div class="d-flex align-items-center justify-content-center">
-                <span class="sidebar-badge">Admin</span>
+            <div class="d-flex align-items-center justify-content-center gap-2 mt-1">
+                <span class="fw-bold opacity-75" style="font-size: 0.9rem;">{{ app.user ? app.user.nom : 'Admin' }}</span>
+                <span class="sidebar-badge">Super-Admin</span>
             </div>
         </div>
     </div>
@@ -44,10 +45,10 @@
         <a href="#" class="admin-nav-link">
             <i class="fa-solid fa-dumbbell"></i> Exercices
         </a>
-<a href="{{ path('app_wellbeing_tracker_index') }}" class="admin-nav-link {{ app.request.get('_route') == 'app_wellbeing_tracker_index' ? 'active' : '' }}">
-    <i class="fa-solid fa-feather"></i> Bien-être
-</a>
-        <a href="#" class="admin-nav-link">
+        <a href="{{ path('app_wellbeing_tracker_index') }}" class="admin-nav-link {{ app.request.get('_route') == 'app_wellbeing_tracker_index' ? 'active' : '' }}">
+            <i class="fa-solid fa-feather"></i> Bien-être
+        </a>
+        <a href="{{ path('app_admin_workspace') }}" class="admin-nav-link">
             <i class="fa-solid fa-clipboard-list"></i> Consult-RDV
         </a>
     </div>
