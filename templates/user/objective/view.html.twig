@@ -1,0 +1,252 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ objective.title }} — Evolia{% endblock %}
+{% block body_class %}user-theme{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('user_dashboard.css') }}">
+    <style>
+        body.user-theme { display:block !important; margin:0; padding:0; width:100vw; height:100vh; overflow:hidden; background:#f1f5f9; }
+        .user-scope { display:flex; width:100vw; height:100vh; }
+        .user-main-content { flex-grow:1; overflow-y:auto; }
+
+        /* Objective Banner */
+        .obj-banner { background:linear-gradient(135deg, #0c2b3e 0%, #1e4d6b 100%); padding:60px 50px; color:#fff; position:relative; z-index:1; }
+        .obj-banner h1 { font-size:2.2rem; font-weight:800; margin-bottom:12px; letter-spacing:-0.5px; }
+        .badge-level { font-size:0.75rem; font-weight:700; padding:5px 15px; border-radius:20px; text-transform:uppercase; }
+
+        /* Search & Filters Row */
+        .filters-row { display:flex; gap:15px; align-items:center; margin-top:30px; flex-wrap:wrap; }
+        .search-bar { background:rgba(255,255,255,0.1); border-radius:40px; padding:12px 25px; border:1px solid rgba(255,255,255,0.2); display:flex; align-items:center; gap:12px; min-width:300px; backdrop-filter:blur(10px); }
+        .search-bar input { border:none; outline:none; flex:1; background:transparent; color:#fff; font-size:0.95rem; }
+        .search-bar input::placeholder { color:rgba(255,255,255,0.5); }
+        .sort-select { background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); border-radius:40px; padding:12px 20px; font-size:0.85rem; cursor:pointer; color:#fff; outline:none; }
+        .sort-select option { background:#1e4d6b; }
+
+        /* Exercise Cards */
+        .ex-list { padding:0 50px 60px 50px; display:grid; grid-template-columns:repeat(auto-fill, minmax(340px,1fr)); gap:25px; }
+        .ex-card { background:#fff; border-radius:24px; padding:28px; border:1px solid #e2e8f0; display:flex; flex-direction:column; gap:15px; transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .ex-card:hover { transform:translateY(-8px); box-shadow:0 20px 40px rgba(30,77,107,0.12); }
+        
+        /* Dynamic Exercise Colors */
+        .ex-card.c-easy   { border-top:4px solid #27AE60; background:linear-gradient(180deg, #ffffff 0%, #f4fbf7 100%); }
+        .ex-card.c-medium { border-top:4px solid #F39C12; background:linear-gradient(180deg, #ffffff 0%, #fdf8f0 100%); }
+        .ex-card.c-hard   { border-top:4px solid #E74C3C; background:linear-gradient(180deg, #ffffff 0%, #fdf4f4 100%); }
+        
+        /* Dynamic Objective Banner Themes */
+        .obj-banner.theme-beginner { background:linear-gradient(135deg, #1e5a32 0%, #2ecc71 100%); }
+        .obj-banner.theme-intermediate { background:linear-gradient(135deg, #b9770e 0%, #f39c12 100%); }
+        .obj-banner.theme-advanced { background:linear-gradient(135deg, #922b21 0%, #e74c3c 100%); }
+        .obj-banner.theme-global { background:linear-gradient(135deg, #154360 0%, #3498db 100%); }
+
+        .badge-sm { font-size:0.7rem; font-weight:700; padding:3px 10px; border-radius:20px; text-transform:uppercase; }
+        .badge-diff-debutant { background:#E9F7EF; color:#27AE60; }
+        .badge-diff-moyen    { background:#FEF9E7; color:#F39C12; }
+        .badge-diff-avance   { background:#FDEDEC; color:#E74C3C; }
+        .badge-type          { background:#EAF2FB; color:#2980B9; }
+        .ex-title { font-size:0.96rem; font-weight:700; color:#1a202c; margin:0; }
+        .ex-desc  { font-size:0.82rem; color:#718096; flex:1; margin:0; }
+        .ex-meta  { font-size:0.76rem; color:#a0aec0; }
+        .card-actions { display:flex; gap:8px; flex-wrap:wrap; padding-top:12px; border-top:1px solid #f0f4f8; }
+        .btn-start { background:linear-gradient(135deg,#1e4d6b,#2980B9); color:#fff; border:none; border-radius:20px; padding:8px 20px; font-size:0.82rem; font-weight:700; cursor:pointer; transition:0.2s; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
+        .btn-start:hover { color:#fff; filter:brightness(1.15); }
+        .btn-video { background:#FDEDEC; color:#E74C3C; border:none; border-radius:20px; padding:8px 16px; font-size:0.82rem; font-weight:600; cursor:pointer; transition:0.2s; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
+        .btn-video:hover { background:#f5c6c2; color:#c0392b; }
+        .btn-video.disabled { opacity:0.4; pointer-events:none; }
+
+        .btn-qr { background:#EAF2FB; color:#9B59B6; border:1px solid #9B59B6; border-radius:20px; padding:8px 16px; font-size:0.82rem; font-weight:600; cursor:pointer; transition:0.2s; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
+        .btn-qr:hover { background:#9B59B6; color:#fff; }
+
+        .empty-state { text-align:center; padding:80px; color:#a0aec0; }
+        .empty-state i { font-size:3rem; margin-bottom:20px; display:block; opacity:0.4; }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="user-scope">
+    {% include 'user_nav_bar/index.html.twig' %}
+
+    <div class="user-main-content">
+
+        <div class="obj-banner theme-{{ objective.level|lower|default('default') }}">
+            <div class="mb-4">
+                <a href="{{ path('app_user_objective_list') }}" class="text-white opacity-50 text-decoration-none small hover-opacity-100 transition-all">
+                    <i class="fa-solid fa-arrow-left me-1"></i>Retour à Mes Objectifs
+                </a>
+            </div>
+            <div class="d-flex align-items-start justify-content-between flex-wrap gap-5">
+                <div style="flex: 1; min-width: 300px;">
+                    <div class="d-flex gap-2 mb-3 flex-wrap">
+                        <span class="badge-level badge-{{ objective.level|lower }} shadow-sm">{{ objective.level }}</span>
+                        <span class="badge-level" style="background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.9);backdrop-filter:blur(5px);">
+                            <i class="fa-solid fa-dumbbell me-1 text-info"></i>{{ exercises|length }} exercice{{ exercises|length != 1 ? 's' }}
+                        </span>
+                    </div>
+                    <h1>{{ objective.title }}</h1>
+                    <p class="opacity-75 mb-0" style="max-width:700px; font-size:1.05rem; line-height:1.6;">{{ objective.description }}</p>
+
+                    <form method="GET" class="filters-row">
+                        <div class="search-bar shadow-sm">
+                            <i class="fa-solid fa-magnifying-glass opacity-50"></i>
+                            <input type="text" name="q" value="{{ q }}" placeholder="Rechercher par titre..." id="searchInput" oninput="debounceSubmit()">
+                        </div>
+                        <select name="sort" class="sort-select shadow-sm" onchange="this.form.submit()">
+                            <option value="title_az" {{ sort == 'title_az' ? 'selected' }}>A → Z</option>
+                            <option value="title_za" {{ sort == 'title_za' ? 'selected' }}>Z → A</option>
+                            <option value="duration" {{ sort == 'duration' ? 'selected' }}>Durée ↑</option>
+                            <option value="difficulty"{{ sort == 'difficulty'? 'selected' }}>Difficulté</option>
+                        </select>
+                        <a href="{{ path('app_user_objective_pdf', {id: objective.id}) }}" class="btn btn-light rounded-pill px-4 py-2 fw-bold shadow-sm d-flex align-items-center gap-2" style="height:48px;" target="_blank">
+                            <i class="fa-solid fa-file-pdf text-danger fs-5"></i> Exporter PDF
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {# Predictive Insights Card #}
+        <div class="predictive-section">
+            <div class="card predictive-card">
+                <div class="card-body p-4 p-md-5">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <div class="p-3 bg-primary bg-opacity-10 rounded-4 text-primary fs-4">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                </div>
+                                <h4 class="fw-bold mb-0" style="color:#2c3e50;">Analyse Prédictive de Progression</h4>
+                            </div>
+                            <p class="text-muted mb-0 fs-6" style="line-height:1.6;">
+                                Basé sur votre activité des 7 derniers jours ({% if velocity > 0 %}<span class="text-primary fw-bold">{{ velocity|number_format(1) }} ex/jour</span>{% else %}<span class="badge bg-warning bg-opacity-10 text-warning px-2 py-1">activité insuffisante</span>{% endif %}), 
+                                nous estimons que vous terminerez cet objectif le : 
+                                <span class="fw-bold text-dark border-bottom border-primary border-2">{% if estimatedDate %}{{ estimatedDate|date('d F Y') }}{% else %}—{% endif %}</span>
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-md-end mt-4 mt-md-0">
+                            <div class="d-inline-block text-center px-5 py-3 bg-primary rounded-5 shadow-sm">
+                                <span class="d-block small text-uppercase fw-bold mb-1" style="font-size:0.65rem; letter-spacing:1px; color:rgba(255,255,255,0.7);">Série Actuelle</span>
+                                <span class="h2 fw-bold text-white mb-0">🔥 {{ app.user.currentStreak }} jours</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Exercise list #}
+        {% if exercises is empty %}
+            <div class="empty-state">
+                <i class="fa-solid fa-dumbbell"></i>
+                <p>{% if q %}Aucun résultat pour « {{ q }} ».{% else %}Aucun exercice disponible pour cet objectif.{% endif %}</p>
+            </div>
+        {% else %}
+            <div class="ex-list">
+                {% for ex in exercises %}
+                    <div class="ex-card c-{{ ex.difficulty|lower|default('medium') }}">
+                        <div class="d-flex gap-2 align-items-center flex-wrap">
+                            <span class="badge-sm badge-diff-{{ ex.difficulty|lower }}">{{ ex.difficulty }}</span>
+                            <span class="badge-sm badge-type">⚡ {{ ex.type }}</span>
+                        </div>
+                        <p class="ex-title">{{ ex.title }}</p>
+                        <p class="ex-desc">{{ ex.description|default('')|slice(0,90) }}{% if ex.description|length > 90 %}…{% endif %}</p>
+                        <div class="ex-meta">
+                            <i class="fa-regular fa-clock me-1"></i>{{ ex.durationMinutes }} min
+                        </div>
+                        <div class="card-actions">
+                            <a href="{{ path('app_user_exercise_detail', {id: ex.id}) }}" class="btn-start">
+                                <i class="fa-solid fa-play"></i> Démarrer
+                            </a>
+                            {% if ex.mediaUrl %}
+                                <a href="{{ ex.mediaUrl }}" target="_blank" class="btn-video">
+                                    <i class="fa-brands fa-youtube"></i> Vidéo
+                                </a>
+                            {% else %}
+                                <span class="btn-video disabled">
+                                    <i class="fa-brands fa-youtube"></i> Pas de vidéo
+                                </span>
+                            {% endif %}
+                            <button class="btn-qr" onclick="showQrCode({{ ex.id }}, '{{ ex.title|e('js') }}')">
+                                <i class="fa-solid fa-qrcode"></i> QR Validation
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- QR Code Modal -->
+<div class="modal fade" id="qrModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 24px; overflow: hidden;">
+            <div class="modal-header border-0 pb-0 pt-4 px-4">
+                <h5 class="modal-title fw-bold" id="qrModalLabel">Validation Mobile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center p-5">
+                <p class="text-muted small mb-4">Scannez ce QR Code avec votre téléphone pour valider votre séance instantanément !</p>
+                
+                <div id="qrPlaceholder" class="mb-4 d-flex justify-content-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Chargement...</span>
+                    </div>
+                </div>
+
+                <div class="p-3 bg-light rounded-4 text-start mb-0">
+                    <div class="d-flex gap-3 align-items-center">
+                        <div class="bg-white p-2 rounded-3 shadow-sm text-primary">
+                            <i class="fa-solid fa-mobile-screen-button fs-4"></i>
+                        </div>
+                        <div>
+                            <p class="mb-0 fw-bold small text-dark" id="qrExerciseTitle"></p>
+                            <p class="mb-0 x-small text-muted" style="font-size: 0.7rem;">Assurez-vous d'être connecté à internet.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+let timer;
+function debounceSubmit() {
+    clearTimeout(timer);
+    timer = setTimeout(() => document.getElementById('searchInput').form.submit(), 400);
+}
+
+const qrModal = new bootstrap.Modal(document.getElementById('qrModal'));
+
+function showQrCode(id, title) {
+    document.getElementById('qrExerciseTitle').innerText = title;
+    document.getElementById('qrPlaceholder').innerHTML = '<div class="spinner-border text-primary"></div>';
+    qrModal.show();
+
+    fetch(`/user/exercise/${id}/qr?t=${new Date().getTime()}`)
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => {
+                    throw new Error(`Erreur ${response.status}: ${text.substring(0, 100)}...`);
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.qrCode) {
+                document.getElementById('qrPlaceholder').innerHTML = `<img src="${data.qrCode}" class="img-fluid rounded-4 shadow-sm" alt="QR Code" style="max-height: 250px;">`;
+            } else {
+                document.getElementById('qrPlaceholder').innerHTML = '<p class="text-danger">Erreur de génération</p>';
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            document.getElementById('qrPlaceholder').innerHTML = `<p class="text-danger">Erreur: ${err.message}</p>`;
+        });
+}
+</script>
+{% endblock %}

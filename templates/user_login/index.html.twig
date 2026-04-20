@@ -155,42 +155,46 @@
             </div>
         </div>
     {% endif %}
-
-    <form method="post" action="{{ path('app_user_login') }}">
-
+    <form method="post" action="{{ path('app_user_login') }}" novalidate id="login-form">
         <div class="form-group">
-            <label class="form-label" for="user_email">Email</label>
-            <input
-                type="email"
-                id="user_email"
-                name="_username"
-                class="form-control"
-                placeholder="patient@email.com"
-                required
-                autocomplete="email"
-                readonly
-                onfocus="this.removeAttribute('readonly');"
-                onmousedown="this.removeAttribute('readonly');"
-            >
-        </div>
+                    <label class="form-label" for="user_email">Email</label>
+                    <input type="email" id="user_email" name="_username" class="form-control" value="{{ last_username }}" placeholder="nom@exemple.com" autocomplete="off" required>
+                    <div class="field-error-msg" id="err-email" style="display:none"><i class="fa-solid fa-circle-exclamation"></i><span></span></div>
+                </div>
 
-        <div class="form-group">
-            <label class="form-label" for="user_password">Mot de passe</label>
-            <div class="password-container" style="position: relative;">
-                <input
-                    type="password"
-                    id="user_password"
-                    name="_password"
-                    class="form-control"
-                    placeholder="Votre mot de passe"
-                    required
-                    autocomplete="current-password"
-                    readonly
-                    onfocus="this.removeAttribute('readonly');"
-                    onmousedown="this.removeAttribute('readonly');"
-                >
-                <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('user_password', this)" aria-label="Afficher/Masquer le mot de passe">
-                    <i class="fa-solid fa-eye"></i>
+                <div class="form-group">
+                    <label class="form-label" for="user_password">Mot de passe</label>
+                    <div class="password-container">
+                        <input type="password" id="user_password" name="_password" class="form-control" placeholder="Votre mot de passe" autocomplete="off" required>
+                        <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('user_password', this)">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="field-error-msg" id="err-password" style="display:none"><i class="fa-solid fa-circle-exclamation"></i><span></span></div>
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                </div>
+
+                <div class="form-options">
+                    <label class="d-flex align-items-center gap-2 m-0" style="cursor: pointer;">
+                        <input type="checkbox" name="_remember_me" style="width: 16px; height: 16px; accent-color: var(--primary-navy);"> 
+                        <span style="opacity: 0.8;">Rester connecté</span>
+                    </label>
+                    <a href="{{ path('app_forgot_password_request') }}" data-turbo="false">Oublié ?</a>
+                </div>
+
+                {% if recaptcha_site_key is defined and recaptcha_site_key != 'your_site_key' %}
+                <div class="captcha-area">
+                    <div id="captcha-container" class="g-recaptcha" 
+                         data-sitekey="{{ recaptcha_site_key }}" 
+                         data-theme="light"
+                         data-callback="onCaptchaSuccess"
+                         data-expired-callback="onCaptchaExpired"></div>
+                </div>
+                {% endif %}
+
+                <button type="submit" id="login-submit" class="btn-login" {{ (recaptcha_site_key is defined and recaptcha_site_key != 'your_site_key') ? 'disabled' : '' }}>
+                    <i class="fa-solid fa-heart-pulse"></i>
+                    Se connecter
                 </button>
             </div>
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">

@@ -3,6 +3,7 @@
 /.env.local
 /.env.local.php
 /.env.*.local
+/config/google_credentials.json
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
 /var/
@@ -23,7 +24,3 @@
 /public/assets/
 /assets/vendor/
 ###< symfony/asset-mapper ###
-.env
-.env.test
-.env.dev
-.env.prod

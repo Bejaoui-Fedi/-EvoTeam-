@@ -1,0 +1,294 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ma Progression — Evolia{% endblock %}
+{% block body_class %}user-theme{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('user_dashboard.css') }}">
+    <style>
+        body.user-theme { display:block !important; background:#f8fafc; }
+        .user-scope { display:flex; min-height:100vh; }
+        .user-main-content { flex-grow:1; padding:40px 60px; }
+
+        .progression-header { 
+            background: linear-gradient(135deg, #1e4d6b 0%, #2980b9 100%);
+            border-radius: 30px;
+            padding: 50px;
+            color: #fff;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        .progression-header::after {
+            content: '\f559';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            right: -20px;
+            top: -20px;
+            font-size: 15rem;
+            opacity: 0.1;
+            transform: rotate(-15deg);
+        }
+
+        .level-badge {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid rgba(255,255,255,0.3);
+            text-transform: uppercase;
+        }
+
+        .custom-progress {
+            height: 18px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 20px;
+            margin: 25px 0;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .custom-progress-bar {
+            background: linear-gradient(90deg, #FAD7A0 0%, #F39C12 100%);
+            height: 100%;
+            border-radius: 20px;
+            transition: width 1s ease-in-out;
+            box-shadow: 0 0 20px rgba(243, 156, 18, 0.5);
+        }
+
+        .stat-card {
+            background: #fff;
+            border-radius: 24px;
+            padding: 30px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s;
+        }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            border-radius: 20px;
+            background: #fff;
+            margin-bottom: 12px;
+            border: 1px solid #f1f5f9;
+            transition: 0.2s;
+        }
+        .activity-item:hover { border-color: #cbd5e1; }
+        .activity-icon { width:44px; height:44px; border-radius:12px; background:#f1f5f9; display:flex; align-items:center; justify-content:center; color:#64748b; }
+
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="user-scope">
+    {% include 'user_nav_bar/index.html.twig' %}
+
+    <div class="user-main-content">
+        <div class="progression-header shadow-lg">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <div class="level-badge mb-3">
+                        <i class="fa-solid fa-crown text-warning"></i> {{ app.user.level }}
+                    </div>
+                    <h1 class="display-5 fw-bold mb-3">Tableau de Chasse</h1>
+                    <p class="opacity-75 lead mb-0">Vous avez <span class="fw-bold">{{ app.user.xp }} XP</span> au total. Continuez ainsi !</p>
+                    
+                    <div class="custom-progress">
+                        <div class="custom-progress-bar" style="width: {{ stats.progressPercent }}%"></div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between small opacity-90 fw-bold">
+                        <span>{{ app.user.xp }} XP</span>
+                        <span>Objectif : {{ stats.xpNextLevel }} XP vers {{ stats.nextLevelName }}</span>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-center mt-4 mt-lg-0">
+                    <div class="streak-circle p-4 rounded-circle border border-white border-4 border-opacity-25 d-inline-block shadow-sm" style="background:rgba(255,255,255,0.1)">
+                        <span class="d-block" style="font-size:3rem">🔥</span>
+                        <span class="h1 fw-bold mb-0">{{ app.user.currentStreak }}</span>
+                        <span class="d-block small text-uppercase">Jours de Série</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-icon bg-success bg-opacity-10 text-success">
+                        <i class="fa-solid fa-check-double"></i>
+                    </div>
+                    <div>
+                        <span class="d-block small text-muted text-uppercase fw-bold">Complétés</span>
+                        <span class="h4 fw-bold mb-0">{{ stats.totalCompletions }} Exercices</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <div>
+                        <span class="d-block small text-muted text-uppercase fw-bold">Vélocité</span>
+                        <span class="h4 fw-bold mb-0">{{ stats.velocity|number_format(1) }} ex / jour</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                    <div>
+                        <span class="d-block small text-muted text-uppercase fw-bold">Niveau</span>
+                        <span class="h4 fw-bold mb-0">{{ app.user.level }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <h4 class="fw-bold mb-4">La Voie du Bien-être</h4>
+        <div class="card border-0 shadow-sm rounded-4 p-4 mb-5">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                {% set levels = [
+                    {'name': 'DEBUTANT', 'xp': 0, 'icon': 'fa-seedling', 'color': '#27AE60'},
+                    {'name': 'HABITUE', 'xp': 100, 'icon': 'fa-fire', 'color': '#2980B9'},
+                    {'name': 'ATHLETE', 'xp': 300, 'icon': 'fa-dumbbell', 'color': '#F39C12'},
+                    {'name': 'EXPERT', 'xp': 600, 'icon': 'fa-bolt', 'color': '#E74C3C'},
+                    {'name': 'MAITRE', 'xp': 1000, 'icon': 'fa-crown', 'color': '#8E44AD'}
+                ] %}
+
+                {% for level in levels %}
+                    <div class="text-center p-3 rounded-4 transition-all {{ app.user.xp >= level.xp ? 'bg-light shadow-sm' : 'opacity-40' }}" style="flex: 1; min-width: 140px; border: 2px solid {{ app.user.xp >= level.xp ? level.color : 'transparent' }}">
+                        <div class="mb-2 fs-3" style="color: {{ level.color }}">
+                            <i class="fa-solid {{ level.icon }}"></i>
+                        </div>
+                        <span class="d-block fw-bold small">{{ level.name }}</span>
+                        <span class="d-block text-muted" style="font-size:0.7rem">{{ level.xp }} XP</span>
+                        {% if app.user.xp >= level.xp %}
+                            <div class="mt-2 text-success small fw-bold">
+                                <i class="fa-solid fa-check-circle"></i> Débloqué
+                            </div>
+                        {% else %}
+                            <div class="mt-2 text-muted small">
+                                En attente...
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% if not loop.last %}
+                        <div class="d-none d-lg-block text-muted opacity-25">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-7">
+                <h4 class="fw-bold mb-4">Activité Récente</h4>
+                {% if recentActivity is empty %}
+                    <div class="text-center py-5 bg-white rounded-5 border border-dashed">
+                        <i class="fa-solid fa-calendar-alt opacity-25 fs-1 mb-3"></i>
+                        <p class="text-muted">Aucune activité enregistrée pour le moment.</p>
+                    </div>
+                {% else %}
+                    {% for item in recentActivity %}
+                        <div class="activity-item shadow-sm">
+                            <div class="activity-icon">
+                                <i class="fa-solid fa-dumbbell"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <span class="d-block fw-bold">{{ item.exercise.title }}</span>
+                                <span class="small text-muted">{{ item.completedAt|date('d F Y à H:i') }}</span>
+                            </div>
+                            <div class="text-success fw-bold">+50 XP</div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="col-lg-5">
+                <h4 class="fw-bold mb-4">Prochaines Étapes</h4>
+                <div class="card border-0 shadow-sm rounded-4 p-4">
+                    <div class="d-flex align-items-center gap-3 mb-4">
+                        <div class="p-3 bg-info bg-opacity-10 text-info rounded-circle">
+                            <i class="fa-solid fa-lightbulb"></i>
+                        </div>
+                        <div>
+                            <span class="d-block fw-bold">Conseil IA</span>
+                            <span class="small text-muted">Optimisez votre progression</span>
+                        </div>
+                    </div>
+                    <p class="small text-muted mb-4">
+                        {% if stats.velocity < 1 %}
+                            Essayez de compléter au moins un court exercice chaque matin pour augmenter votre vélocité.
+                        {% else %}
+                            Votre vitesse de progression est excellente ! À ce rythme, vous passerez au niveau supérieur très bientôt.
+                        {% endif %}
+                    </p>
+                    <a href="{{ path('app_user_objective_list') }}" class="btn btn-primary w-100 rounded-pill fw-bold py-3">
+                        Continuer ma routine
+                    </a>
+                </div>
+
+                <div class="mt-4">
+                    <h4 class="fw-bold mb-4">Espace Cadeau</h4>
+                    <div class="card border-0 shadow-lg rounded-4 overflow-hidden text-center p-5" 
+                         style="background: {{ app.user.xp >= 1000 ? 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)' : '#fff' }}; transition: all 0.5s;">
+                        
+                        {% if app.user.xp >= 1000 %}
+                            <div class="mb-4">
+                                <i class="fa-solid fa-gift text-white display-1 animate__animated animate__bounce animate__infinite"></i>
+                            </div>
+                            <h3 class="fw-bold text-white mb-3">Félicitations Maître !</h3>
+                            <p class="text-white opacity-90 mb-4 small">
+                                Votre dévouement a porté ses fruits. Téléchargez votre certificat officiel de réussite dès maintenant.
+                            </p>
+                            <a href="{{ path('app_user_gamification_certificate') }}" class="btn btn-white btn-lg rounded-pill fw-bold text-warning shadow" style="background:#fff;">
+                                <i class="fa-solid fa-file-certificate me-2"></i> Mon Certificat 
+                            </a>
+                        {% else %}
+                            <div class="mb-4 opacity-25">
+                                <i class="fa-solid fa-lock display-3 text-muted"></i>
+                            </div>
+                            <h5 class="fw-bold text-muted mb-2">Cadeau de Maître Scellé</h5>
+                            <p class="text-muted small mb-0">
+                                Atteignez le rang de <span class="fw-bold text-primary">MAITRE (1000 XP)</span> pour débloquer votre récompense exclusive.
+                            </p>
+                            <div class="mt-4 small fw-bold text-primary">
+                                Encore {{ stats.xpNextLevel }} XP à obtenir !
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

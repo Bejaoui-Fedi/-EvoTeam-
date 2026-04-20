@@ -18,7 +18,6 @@ security:
 
         admin:
             pattern: ^/admin
-            context: app_security
             lazy: true
             provider: app_user_provider
             context: shared_auth
@@ -36,7 +35,6 @@ security:
                 path: /admin
 
         main:
-            context: app_security
             lazy: true
             provider: app_user_provider
             context: shared_auth
@@ -82,10 +80,10 @@ security:
 
         # Routes admin (back-office)
         - { path: ^/admin, roles: ROLE_ADMIN }
-
         # Routes utilisateurs
         - { path: ^/user/dashboard, roles: [ROLE_PATIENT, ROLE_COACH, ROLE_PSYCHOLOGUE] }
         - { path: ^/user/profile, roles: [ROLE_PATIENT, ROLE_COACH, ROLE_PSYCHOLOGUE] }
+        - { path: ^/user/objectives, roles: [ROLE_PATIENT, ROLE_COACH, ROLE_PSYCHOLOGUE] }
 
 when@test:
     security:

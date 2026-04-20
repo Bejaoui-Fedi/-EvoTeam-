@@ -33,6 +33,9 @@
         <a href="{{ path('app_evenement_index') }}" class="admin-nav-link {{ app.request.get('_route') starts with 'app_evenement' ? 'active' : '' }}">
             <i class="fa-solid fa-calendar-days"></i> Événements
         </a>
+        <a href="{{ path('app_admin_objective_index') }}" class="admin-nav-link {{ app.request.get('_route') starts with 'app_admin_objective' or app.request.get('_route') starts with 'app_admin_exercise' ? 'active' : '' }}">
+            <i class="fa-solid fa-dumbbell"></i> Exercices
+        </a>
         <a href="{{ path('app_review_index') }}" class="admin-nav-link {{ app.request.get('_route') starts with 'app_review' ? 'active' : '' }}">
             <i class="fa-solid fa-star"></i> Avis
         </a>
@@ -41,9 +44,6 @@
         </a>
         <a href="{{ path('app_admin_history') }}" class="admin-nav-link {{ app.request.get('_route') starts with 'app_admin_history' ? 'active' : '' }}">
             <i class="fa-solid fa-clock-rotate-left"></i> Historique
-        </a>
-        <a href="#" class="admin-nav-link">
-            <i class="fa-solid fa-dumbbell"></i> Exercices
         </a>
         <a href="{{ path('app_wellbeing_tracker_index') }}" class="admin-nav-link {{ app.request.get('_route') == 'app_wellbeing_tracker_index' ? 'active' : '' }}">
             <i class="fa-solid fa-feather"></i> Bien-être

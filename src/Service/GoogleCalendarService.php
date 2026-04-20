@@ -2,79 +2,81 @@
 
 namespace App\Service;
 
-use App\Entity\Participation;
 use Google\Client;
 use Google\Service\Calendar;
 use Google\Service\Calendar\Event;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use App\Entity\Participation;
 
 class GoogleCalendarService
 {
-    public function __construct(
-        private readonly string $clientId,
-        private readonly string $clientSecret,
-        private readonly string $redirectUri,
-        private readonly ?string $serviceAccountPath = null,
-        private readonly ?string $serviceAccountCalendarId = null
-    ) {
+    private $serviceAccountPath;
+    private $serviceAccountCalendarId;
+
+    public function __construct(ParameterBagInterface $params)
+    {
+        $this->serviceAccountPath = $params->get('kernel.project_dir') . '/config/google_credentials.json';
+        // In a real app, this might come from .env or a config param
+        $this->serviceAccountCalendarId = 'evolia.wellness@gmail.com'; 
     }
 
-    public function createClient(): Client
+    /**
+     * For Exercises (from exercisemanagement branch)
+     */
+    public function createEvent(string $summary, string $description, \DateTimeInterface $start, \DateTimeInterface $end, string $calendarId = 'primary'): array
     {
-        $client = new Client();
-        $client->setClientId($this->clientId);
-        $client->setClientSecret($this->clientSecret);
-        $client->setRedirectUri($this->redirectUri);
-        $client->setAccessType('offline');
-        $client->setPrompt('consent');
-        $client->setScopes([Calendar::CALENDAR_EVENTS]);
+        try {
+            $client = new Client();
+            $client->setAuthConfig($this->serviceAccountPath);
+            $client->setScopes([Calendar::CALENDAR_EVENTS]);
 
-        return $client;
-    }
+            $service = new Calendar($client);
+            $calendarEvent = new Event([
+                'summary' => $summary,
+                'description' => $description,
+                'start' => ['dateTime' => $start->format(\DateTime::RFC3339)],
+                'end' => ['dateTime' => $end->format(\DateTime::RFC3339)],
+            ]);
 
-    public function addParticipationEvent(Participation $participation, array $accessToken): void
-    {
-        $event = $participation->getEvent();
-        if ($event === null) {
-            return;
+            $result = $service->events->insert($calendarId === 'primary' ? $this->serviceAccountCalendarId : $calendarId, $calendarEvent);
+            return ['success' => true, 'id' => $result->getId()];
+        } catch (\Exception $e) {
+            return ['success' => false, 'message' => $e->getMessage()];
         }
-
-        $client = $this->createClient();
-        $client->setAccessToken($accessToken);
-
-        $service = new Calendar($client);
-        $calendarEvent = new Event([
-            'summary' => '[EVOLIA] ' . $event->getName(),
-            'description' => (string) $event->getDescription(),
-            'location' => (string) $event->getLocation(),
-            'start' => ['date' => $event->getStartDate()?->format('Y-m-d')],
-            'end' => ['date' => $event->getEndDate()?->format('Y-m-d')],
-        ]);
-
-        $service->events->insert('primary', $calendarEvent);
     }
 
+    /**
+     * For Participations (from Integration branch)
+     */
     public function addParticipationEventWithServiceAccount(Participation $participation): bool
     {
         $event = $participation->getEvent();
-        if ($event === null || empty($this->serviceAccountPath) || empty($this->serviceAccountCalendarId) || !is_file($this->serviceAccountPath)) {
+        if ($event === null || !file_exists($this->serviceAccountPath)) {
             return false;
         }
 
-        $client = new Client();
-        $client->setAuthConfig($this->serviceAccountPath);
-        $client->setScopes([Calendar::CALENDAR_EVENTS]);
+        try {
+            $client = new Client();
+            $client->setAuthConfig($this->serviceAccountPath);
+            $client->setScopes([Calendar::CALENDAR_EVENTS]);
 
-        $service = new Calendar($client);
-        $calendarEvent = new Event([
-            'summary' => '[EVOLIA] ' . $event->getName(),
-            'description' => (string) $event->getDescription(),
-            'location' => (string) $event->getLocation(),
-            'start' => ['date' => $event->getStartDate()?->format('Y-m-d')],
-            'end' => ['date' => $event->getEndDate()?->format('Y-m-d')],
-        ]);
+            $service = new Calendar($client);
+            $calendarEvent = new Event([
+                'summary' => '[EVOLIA] ' . $event->getName(),
+                'description' => (string) $event->getDescription(),
+                'location' => (string) $event->getLocation(),
+                'start' => [
+                    'dateTime' => $event->getStartDate()?->format(\DateTime::RFC3339) ?? $event->getStartDate()?->format('Y-m-d\T00:00:00\Z')
+                ],
+                'end' => [
+                    'dateTime' => $event->getEndDate()?->format(\DateTime::RFC3339) ?? $event->getEndDate()?->format('Y-m-d\T23:59:59\Z')
+                ],
+            ]);
 
-        $service->events->insert($this->serviceAccountCalendarId, $calendarEvent);
-
-        return true;
+            $service->events->insert($this->serviceAccountCalendarId, $calendarEvent);
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 }
