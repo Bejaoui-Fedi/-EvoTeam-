@@ -1,0 +1,31 @@
+[notice] Migrating up to DoctrineMigrations\Version20260405152415
+[error] Migration DoctrineMigrations\Version20260314203945 failed during Execution. Error: "An exception occurred while executing a query: SQLSTATE[42S01]: Base table or view already exists: 1050 Table 'user' already exists"
+
+In ExceptionConverter.php line 38:
+                          
+  An exception occurred   
+  while executing a quer  
+  y: SQLSTATE[42S01]: Ba  
+  se table or view alrea  
+  dy exists: 1050 Table   
+  'user' already exists   
+                          
+
+In Exception.php line 24:
+                          
+  SQLSTATE[42S01]: Base   
+  table or view already   
+  exists: 1050 Table 'us  
+  er' already exists      
+                          
+
+In Connection.php line 57:
+                          
+  SQLSTATE[42S01]: Base   
+  table or view already   
+  exists: 1050 Table 'us  
+  er' already exists      
+                          
+
+doctrine:migrations:migrate [--write-sql [WRITE-SQL]] [--dry-run] [--query-time] [--allow-no-migration] [--all-or-nothing [ALL-OR-NOTHING]] [--no-all-or-nothing] [--configuration CONFIGURATION] [--em EM] [--conn CONN] [--] [<version>]
+

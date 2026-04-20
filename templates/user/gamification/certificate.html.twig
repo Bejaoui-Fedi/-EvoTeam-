@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Certificat de Réussite Evolia</title>
+    <style>
+        @page { margin: 0; }
+        body { font-family: 'Helvetica', 'Arial', sans-serif; color: #333; margin: 0; padding: 0; }
+        .cert-container { 
+            width: 100%; 
+            height: 100%; 
+            padding: 50px; 
+            box-sizing: border-box;
+            background: #fff;
+            border: 20px solid #1e4d6b;
+            position: relative;
+        }
+        .cert-inner-border {
+            border: 2px solid #F39C12;
+            height: 100%;
+            padding: 40px;
+            text-align: center;
+        }
+        .logo { font-size: 32px; font-weight: bold; color: #1e4d6b; margin-bottom: 20px; }
+        .title { font-size: 50px; color: #F39C12; text-transform: uppercase; margin: 40px 0; letter-spacing: 5px; }
+        .subtitle { font-size: 20px; font-style: italic; margin-bottom: 50px; }
+        .user-name { font-size: 40px; font-weight: bold; border-bottom: 2px solid #333; display: inline-block; padding: 0 50px; margin-bottom: 30px; }
+        .description { font-size: 18px; line-height: 1.6; max-width: 600px; margin: 0 auto 60px auto; }
+        .footer { margin-top: 80px; position: relative; }
+        .signature { display: inline-block; width: 200px; border-top: 1px solid #333; margin: 0 50px; padding-top: 10px; font-size: 14px; }
+        .seal { 
+            position: absolute; 
+            bottom: -30px; 
+            right: 170px; 
+            width: 100px; 
+            height: 100px; 
+            background: #F39C12; 
+            border-radius: 50%; 
+            color: #fff; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-weight: bold;
+            font-size: 12px;
+            transform: rotate(-15deg);
+            border: 4px double #fff;
+            line-height: 100px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="cert-container">
+        <div class="cert-inner-border">
+            <div class="logo">EVOLIA WELLNESS</div>
+            
+            <div class="title">Certificat de Réussite</div>
+            
+            <div class="subtitle">Ce document est fièrement décerné à</div>
+            
+            <div class="user-name">{{ user.prenom }} {{ user.nom }}</div>
+            
+            <div class="description">
+                Pour avoir atteint avec distinction le rang de <strong>MAÎTRE ÉVOLIA</strong>. 
+                Grâce à une discipline exemplaire et une persévérance remarquable dans son parcours de bien-être, 
+                cumulant plus de 1000 points d'expérience.
+            </div>
+            
+            <div class="footer">
+                <div class="signature">L'Équipe Evolia</div>
+                <div class="signature">Date : {{ "now"|date("d/m/Y") }}</div>
+                <div class="seal">OFFICIEL</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

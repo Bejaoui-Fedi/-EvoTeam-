@@ -1,0 +1,23 @@
+{# templates/emails/appointment_confirmation.html.twig #}
+<div style="font-family: 'Outfit', sans-serif; color: #1e293b; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden;">
+    <div style="background: linear-gradient(90deg, #396f5b, #4ade80); padding: 30px; text-align: center; color: white;">
+        <h1 style="margin: 0;">Evolia Santé</h1>
+        <p style="opacity: 0.9;">Confirmation de Réservation</p>
+    </div>
+    <div style="padding: 40px;">
+        <p>Bonjour <strong>{{ patient.nom }}</strong>,</p>
+        <p>Votre rendez-vous a bien été enregistré dans notre système.</p>
+        
+        <div style="background: #f8fafc; padding: 20px; border-radius: 12px; margin: 20px 0;">
+            <p style="margin: 5px 0;">📅 <strong>Date :</strong> {{ appointment.dateRdv|date('d/m/Y') }}</p>
+            <p style="margin: 5px 0;">⏰ <strong>Heure :</strong> {{ appointment.heureRdv|date('H:i') }}</p>
+            <p style="margin: 5px 0;">👨‍⚕️ <strong>Spécialiste :</strong> {{ appointment.professionalName }}</p>
+        </div>
+
+        <p>Vous pouvez consulter les détails de votre rendez-vous sur votre espace patient.</p>
+        <p>Merci de votre confiance.</p>
+    </div>
+    <div style="background: #f1f5f9; padding: 20px; text-align: center; font-size: 0.8rem; color: #64748b;">
+        © 2026 Evolia - Plateforme de Gestion de Santé
+    </div>
+</div>

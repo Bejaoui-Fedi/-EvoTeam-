@@ -1,0 +1,49 @@
+<!-- Chatbot Bubble -->
+<div id="chatbot-bubble" class="chatbot-bubble">
+    <lottie-player
+        src="{{ asset('ChatBot-Logo.json') }}"
+        background="transparent"
+        speed="1"
+        style="width:42px;height:42px;"
+        loop
+        autoplay>
+    </lottie-player>
+</div>
+
+<!-- Chat Window -->
+<div id="chat-window" class="chat-window">
+    <div class="chat-header">
+        <div class="d-flex align-items-center gap-2">
+            <lottie-player
+                src="{{ asset('ChatBot-Logo.json') }}"
+                background="transparent"
+                speed="1"
+                style="width:34px;height:34px;"
+                loop
+                autoplay>
+            </lottie-player>
+            <h4>Evolia AI</h4>
+        </div>
+        <div class="header-actions">
+            <i id="toggle-voice" class="fa-solid fa-volume-high me-3 status-icon" title="Désactiver le son"></i>
+            <div id="close-chat" class="close-btn">
+                <i class="fa-solid fa-xmark"></i>
+            </div>
+        </div>
+    </div>
+    <div id="chat-messages" class="chat-messages">
+        <div class="message bot">
+            Bonjour ! Je suis l'assistant AI d'Evolia. Comment puis-je vous aider aujourd'hui ?
+        </div>
+    </div>
+    <div class="chat-input-area">
+        <button id="start-stt" class="voice-btn" title="Parler">
+            <i class="fa-solid fa-microphone"></i>
+        </button>
+        <input type="text" id="chat-input" placeholder="Écrivez votre message..." autocomplete="off">
+        <button id="send-message" class="send-btn">
+            <i class="fa-solid fa-paper-plane"></i>
+        </button>
+    </div>
+
+</div>

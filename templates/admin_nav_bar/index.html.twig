@@ -13,8 +13,9 @@
         </div>
         <div class="d-flex flex-column align-items-center justify-content-center gap-1">
             <h2 class="mb-0" style="font-size: 1.5rem; letter-spacing: 2px;">EVOLIA</h2>
-            <div class="d-flex align-items-center justify-content-center">
-                <span class="sidebar-badge">Admin</span>
+            <div class="d-flex align-items-center justify-content-center gap-2 mt-1">
+                <span class="fw-bold opacity-75" style="font-size: 0.9rem;">{{ app.user ? app.user.nom : 'Admin' }}</span>
+                <span class="sidebar-badge">Super-Admin</span>
             </div>
         </div>
     </div>
@@ -24,21 +25,30 @@
         <a href="{{ path('app_admin_dashboard') }}" class="admin-nav-link {{ app.request.get('_route') == 'app_admin_dashboard' ? 'active' : '' }}">
             <i class="fa-solid fa-chart-line"></i> Tableau de bord
         </a>
-        <a href="{{ path('app_user_list') }}" class="admin-nav-link">
+        <a href="{{ path('app_user_list') }}" class="admin-nav-link {{ app.request.get('_route') == 'app_user_list' ? 'active' : '' }}">
             <i class="fa-solid fa-users"></i> Utilisateurs
         </a>
 
         <div class="nav-section-title mt-4">Gestion</div>
-        <a href="#" class="admin-nav-link">
+        <a href="{{ path('app_evenement_index') }}" class="admin-nav-link {{ app.request.get('_route') starts with 'app_evenement' ? 'active' : '' }}">
             <i class="fa-solid fa-calendar-days"></i> Événements
         </a>
-        <a href="#" class="admin-nav-link">
+        <a href="{{ path('app_admin_objective_index') }}" class="admin-nav-link {{ app.request.get('_route') starts with 'app_admin_objective' or app.request.get('_route') starts with 'app_admin_exercise' ? 'active' : '' }}">
             <i class="fa-solid fa-dumbbell"></i> Exercices
         </a>
-<a href="{{ path('app_wellbeing_tracker_index') }}" class="admin-nav-link {{ app.request.get('_route') == 'app_wellbeing_tracker_index' ? 'active' : '' }}">
-    <i class="fa-solid fa-feather"></i> Bien-être
-</a>
-        <a href="#" class="admin-nav-link">
+        <a href="{{ path('app_review_index') }}" class="admin-nav-link {{ app.request.get('_route') starts with 'app_review' ? 'active' : '' }}">
+            <i class="fa-solid fa-star"></i> Avis
+        </a>
+        <a href="{{ path('app_participation_index') }}" class="admin-nav-link {{ app.request.get('_route') starts with 'app_participation' ? 'active' : '' }}">
+            <i class="fa-solid fa-user-check"></i> Participations
+        </a>
+        <a href="{{ path('app_admin_history') }}" class="admin-nav-link {{ app.request.get('_route') starts with 'app_admin_history' ? 'active' : '' }}">
+            <i class="fa-solid fa-clock-rotate-left"></i> Historique
+        </a>
+        <a href="{{ path('app_wellbeing_tracker_index') }}" class="admin-nav-link {{ app.request.get('_route') == 'app_wellbeing_tracker_index' ? 'active' : '' }}">
+            <i class="fa-solid fa-feather"></i> Bien-être
+        </a>
+        <a href="{{ path('app_admin_workspace') }}" class="admin-nav-link">
             <i class="fa-solid fa-clipboard-list"></i> Consult-RDV
         </a>
     </div>

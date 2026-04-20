@@ -10,8 +10,6 @@
         </div>
         <h3 class="mb-1">{{ app.user.nom|default('Utilisateur') }}</h3>
         <p class="opacity-50">{{ app.user.email|default('') }}</p>
-        {% set userRoles = app.user.roles|join(', ') %}
-        <span class="badge bg-info mt-2">{{ userRoles }}</span>
     </div>
 
     <div class="user-sidebar-nav">
@@ -25,17 +23,23 @@
         <a href="#" class="user-nav-link">
             <i class="fa-solid fa-calendar-check"></i> Événements
         </a>
-        <a href="#" class="user-nav-link">
+        <a href="{{ path('app_user_objective_list') }}" class="user-nav-link {{ app.request.get('_route') starts with 'app_user_objective' or app.request.get('_route') starts with 'app_user_exercise' ? 'active' : '' }}">
             <i class="fa-solid fa-dumbbell"></i> Exercices
         </a>
+        <a href="{{ path('app_evenement_index') }}" class="user-nav-link {{ app.request.get('_route') starts with 'app_evenement' or app.request.get('_route') starts with 'app_review_new' ? 'active' : '' }}">
+            <i class="fa-solid fa-calendar-check"></i> Événements
+        </a>
+        <a href="{{ path('app_participation_my') }}" class="user-nav-link {{ app.request.get('_route') starts with 'app_participation' ? 'active' : '' }}">
+            <i class="fa-solid fa-user-check"></i> Mes participations
+        </a>
 
-        {# Journal bien-être - Different behavior based on role #}
-        {% set isProfessional = is_granted('ROLE_ADMIN') or is_granted('ROLE_COACH') or is_granted('ROLE_PSYCHOLOGUE') %}
-        
-        {% if isProfessional %}
-            {# Professionals see all entries #}
-            <a href="{{ path('app_wellbeing_tracker_index') }}" class="user-nav-link {{ app.request.get('_route') == 'app_wellbeing_tracker_index' ? 'active' : '' }}">
-                <i class="fa-solid fa-feather"></i> Journal bien-être (Tous)
+        <div class="nav-section-title">Bien-être</div>
+        <a href="#" class="user-nav-link">
+            <i class="fa-solid fa-feather"></i> Journal bien-être
+        </a>
+        {% if is_granted('ROLE_PRO') or is_granted('ROLE_PSYCHOLOGUE') or is_granted('ROLE_COACH') %}
+            <a href="{{ path('app_pro_workspace') }}" class="user-nav-link">
+                <i class="fa-solid fa-user-md"></i> Espace Pro
             </a>
         {% else %}
             {# Patients/Role simple see limited view #}
@@ -43,10 +47,6 @@
                 <i class="fa-solid fa-feather"></i> Journal bien-être
             </a>
         {% endif %}
-        
-        <a href="#" class="user-nav-link">
-            <i class="fa-solid fa-user-clock"></i> Mes rendez-vous
-        </a>
 
         <div class="nav-section-title">Personnel</div>
         <a href="{{ path('app_user_profile') }}" class="user-nav-link {{ app.request.get('_route') == 'app_user_profile' ? 'active' : '' }}">
@@ -58,7 +58,7 @@
     </div>
 
     <div class="user-sidebar-footer">
-        <a href="{{ path('app_user_logout') }}" class="btn-logout">
+        <a href="{{ path('app_user_logout') }}" class="btn-logout" data-turbo="false">
             <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
         </a>
     </div>

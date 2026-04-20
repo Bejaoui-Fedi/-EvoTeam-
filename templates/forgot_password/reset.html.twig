@@ -1,0 +1,329 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Evolia — Réinitialiser le mot de passe{% endblock %}
+
+{% block body_class %}user-theme{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="{{ asset('styles.css') }}?v={{ 'now'|date('U') }}">
+    <style>
+        :root {
+            --primary-navy: #1e4d6b;
+            --secondary-blue: #256a8f;
+        }
+
+        html, body { height: 100%; overflow: hidden; margin: 0; padding: 0; }
+
+        /* ── SPLIT CONTAINER ── */
+        .split-container {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ── LEFT: VISUAL PANEL ── */
+        .visual-panel {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        .visual-overlay {
+            position: absolute; inset: 0; z-index: 1;
+            background: linear-gradient(135deg, rgba(30, 77, 107, 0.75) 0%, rgba(10, 33, 24, 0.6) 100%);
+        }
+        .visual-content {
+            position: absolute; inset: 0; z-index: 2;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: flex-start;
+            padding: 60px; color: #fff;
+        }
+        .visual-content i { font-size: 3.5rem; color: rgba(168, 213, 186, 0.8); margin-bottom: 20px; }
+        .visual-content h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3.5rem; font-weight: 300; line-height: 1;
+            color: #fff; margin-bottom: 16px;
+        }
+        .visual-content h2 span { font-style: italic; color: #a8d5ba; display: block; }
+        .visual-content .lead {
+            font-size: 1rem; color: rgba(255,255,255,0.65);
+            max-width: 380px; line-height: 1.6;
+        }
+
+        /* ── RIGHT: FORM PANEL ── */
+        .form-panel {
+            flex: 1;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            overflow-y: auto;
+            height: 100vh;
+        }
+
+        .form-container { max-width: 460px; width: 100%; }
+
+        .card-icon-wrap {
+            width: 62px; height: 62px; border-radius: 20px;
+            background: #e8f3f9; color: var(--primary-navy);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.6rem; margin-bottom: 24px;
+            box-shadow: 0 8px 20px rgba(30, 77, 107, 0.1);
+        }
+
+        .form-panel h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.8rem; font-weight: 600;
+            color: var(--primary-navy); margin-bottom: 6px; line-height: 1.1;
+        }
+        .form-panel .subtitle {
+            color: #64748b; font-size: 0.92rem;
+            font-style: italic; margin-bottom: 28px; line-height: 1.5;
+        }
+
+        .form-label {
+            font-weight: 600; font-size: 0.82rem;
+            color: var(--primary-navy); text-transform: uppercase;
+            letter-spacing: 0.5px; margin-bottom: 8px; display: block;
+        }
+        .form-control {
+            border: 1.5px solid #e1e9f0 !important;
+            border-radius: 12px !important;
+            padding: 14px 20px !important;
+            font-size: 1rem !important;
+            background: #f8fafc !important;
+            transition: all 0.3s ease !important;
+            width: 100%;
+        }
+        .form-control:focus {
+            border-color: var(--primary-navy) !important;
+            background: white !important;
+            box-shadow: 0 0 0 4px rgba(30, 77, 107, 0.1) !important;
+            outline: none !important;
+        }
+        .form-control.is-invalid { border-color: #fc8181 !important; background: #fff5f5 !important; }
+
+        .code-input {
+            letter-spacing: 8px; text-align: center;
+            font-weight: 700; font-size: 1.4rem !important;
+        }
+
+        .strength-bar {
+            height: 4px; background: #edf2f7;
+            border-radius: 10px; overflow: hidden; margin-top: 8px;
+        }
+        .strength-fill {
+            height: 100%; width: 0; transition: width 0.3s; background: #e53e3e;
+        }
+
+        .btn-submit {
+            width: 100%; padding: 16px; border: none; border-radius: 14px;
+            background: linear-gradient(135deg, var(--primary-navy), var(--secondary-blue));
+            color: #fff; font-weight: 700; font-size: 0.95rem;
+            letter-spacing: 1px; cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            box-shadow: 0 10px 30px rgba(30, 77, 107, 0.3); margin-top: 8px;
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 40px rgba(30, 77, 107, 0.4);
+            filter: brightness(1.1);
+        }
+
+        .modern-alert {
+            display: flex; align-items: center; gap: 12px;
+            padding: 14px 18px; border-radius: 14px;
+            margin-bottom: 20px; font-size: 0.9rem;
+        }
+        .modern-alert.alert-error {
+            background: rgba(229, 62, 62, 0.08);
+            border: 1px solid rgba(229, 62, 62, 0.2); color: #c53030;
+        }
+        .modern-alert.alert-success {
+            background: rgba(72, 187, 120, 0.08);
+            border: 1px solid rgba(72, 187, 120, 0.2); color: #276749;
+        }
+
+        .field-err {
+            display: none; color: #c53030; font-size: 0.8rem;
+            margin-top: 6px; align-items: center; gap: 5px;
+        }
+        .field-err.show { display: flex; }
+
+        .back-link {
+            display: block; text-align: center; margin-top: 16px;
+            color: #94a3b8; font-size: 0.85rem; text-decoration: none;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--primary-navy); }
+
+        .divider-text {
+            display: flex; align-items: center; gap: 12px;
+            margin: 24px 0; color: #cbd5e0; font-size: 0.8rem;
+        }
+        .divider-text::before, .divider-text::after {
+            content: ''; flex: 1; height: 1px; background: #e2e8f0;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+
+{# ── BACKGROUND CAROUSEL ── #}
+<div id="bgCarousel" class="carousel slide carousel-fade bg-carousel" data-bs-ride="carousel" data-bs-interval="2500">
+    <div class="carousel-inner">
+        <div class="carousel-item active"><img src="/images/bg-2.jpg" class="d-block w-100" alt="BG"></div>
+        <div class="carousel-item"><img src="/images/bg-3.jpg" class="d-block w-100" alt="BG"></div>
+        <div class="carousel-item"><img src="/images/bg-4.jpg" class="d-block w-100" alt="BG"></div>
+    </div>
+</div>
+<div class="bg-dark-overlay"></div>
+
+<div class="split-container">
+
+    {# ── LEFT PANEL ── #}
+    <div class="visual-panel">
+        <div class="visual-overlay"></div>
+        <div class="visual-content animate__animated animate__fadeInLeft">
+            <i class="fa-solid fa-key"></i>
+            <h2>Nouveau <span>mot de passe</span></h2>
+            <p class="lead">Entrez le code reçu par email et définissez un nouveau mot de passe sécurisé pour votre compte.</p>
+        </div>
+    </div>
+
+    {# ── RIGHT PANEL: FORM ── #}
+    <div class="form-panel animate__animated animate__fadeInRight">
+        <div class="form-container">
+
+            <div class="card-icon-wrap">
+                <i class="fa-solid fa-key"></i>
+            </div>
+
+            <h1>Réinitialiser</h1>
+            <p class="subtitle">
+                Code envoyé à <strong>{{ email }}</strong>. Entrez-le ci-dessous avec votre nouveau mot de passe.
+            </p>
+
+            {# Flash messages #}
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="modern-alert alert-{{ label == 'danger' ? 'error' : 'success' }} animate__animated animate__fadeInDown">
+                        <i class="fa-solid fa-{{ label == 'danger' ? 'circle-exclamation' : 'circle-check' }}"></i>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            <form method="post" action="{{ path('app_forgot_password_reset') }}" novalidate data-turbo="false">
+                <input type="hidden" name="email" value="{{ email }}">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('reset_password') }}">
+
+                {# Code #}
+                <div class="mb-4">
+                    <label class="form-label" for="r-code">Code de validation (6 chiffres)</label>
+                    <input type="text" id="r-code" name="code" class="form-control code-input"
+                        maxlength="6" placeholder="000000"
+                        autocomplete="one-time-code" readonly
+                        onfocus="this.removeAttribute('readonly');"
+                        onmousedown="this.removeAttribute('readonly');">
+                    <div class="field-err" id="err-code">
+                        <i class="fa-solid fa-circle-exclamation"></i><span></span>
+                    </div>
+                </div>
+
+                {# New password #}
+                <div class="mb-4">
+                    <label class="form-label" for="r-password">Nouveau mot de passe</label>
+                    <input type="password" id="r-password" name="password" class="form-control"
+                        placeholder="8 caractères minimum" autocomplete="new-password">
+                    <div class="strength-bar">
+                        <div class="strength-fill" id="strength-fill"></div>
+                    </div>
+                    <div class="field-err" id="err-password">
+                        <i class="fa-solid fa-circle-exclamation"></i><span></span>
+                    </div>
+                </div>
+
+                {# Confirm password #}
+                <div class="mb-4">
+                    <label class="form-label" for="r-confirm">Confirmer le mot de passe</label>
+                    <input type="password" id="r-confirm" name="confirm_password" class="form-control"
+                        placeholder="Répétez le mot de passe" autocomplete="new-password">
+                    <div class="field-err" id="err-confirm">
+                        <i class="fa-solid fa-circle-exclamation"></i><span></span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    <i class="fa-solid fa-check"></i> Réinitialiser le mot de passe
+                </button>
+
+            </form>
+
+            <div class="divider-text">ou</div>
+
+            <a href="{{ path('app_forgot_password_request') }}" class="back-link" data-turbo="false">
+                <i class="fa-solid fa-arrow-left me-1"></i> Retour
+            </a>
+            <a href="{{ path('app_home') }}" class="back-link" data-turbo="false">
+                <i class="fa-solid fa-house me-1"></i> Retour à l'accueil
+            </a>
+
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// Password strength bar
+var pass = document.getElementById('r-password');
+var fill = document.getElementById('strength-fill');
+if (pass && fill) {
+    pass.addEventListener('input', function() {
+        var v = pass.value;
+        var s = v.length >= 8 ? 40 : 10;
+        if (/[A-Z]/.test(v)) s += 30;
+        if (/[0-9]/.test(v)) s += 30;
+        fill.style.width = s + '%';
+        fill.style.background = s < 50 ? '#e53e3e' : s < 100 ? '#ecc94b' : '#48bb78';
+    });
+}
+
+// Form validation
+document.querySelector('form').addEventListener('submit', function(e) {
+    var code = document.getElementById('r-code');
+    var password = document.getElementById('r-password');
+    var confirm = document.getElementById('r-confirm');
+    var valid = true;
+
+    // Reset
+    [code, password, confirm].forEach(function(el) {
+        el.classList.remove('is-invalid');
+    });
+    document.querySelectorAll('.field-err').forEach(function(el) { el.classList.remove('show'); });
+
+    function showErr(input, errId, msg) {
+        input.classList.add('is-invalid');
+        var d = document.getElementById(errId);
+        d.querySelector('span').textContent = msg;
+        d.classList.add('show');
+        valid = false;
+    }
+
+    if (!code.value.trim() || code.value.trim().length !== 6) showErr(code, 'err-code', 'Le code doit contenir 6 chiffres.');
+    if (password.value.length < 8) showErr(password, 'err-password', 'Mot de passe trop court (8 caractères min).');
+    if (confirm.value !== password.value) showErr(confirm, 'err-confirm', 'Les mots de passe ne correspondent pas.');
+
+    if (!valid) e.preventDefault();
+});
+</script>
+
+{% endblock %}

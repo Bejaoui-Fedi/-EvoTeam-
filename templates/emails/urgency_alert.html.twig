@@ -1,0 +1,22 @@
+{# templates/emails/urgency_alert.html.twig #}
+<div style="font-family: 'Outfit', sans-serif; color: #1e293b; max-width: 600px; margin: 0 auto; border: 2px solid #ef4444; border-radius: 16px; overflow: hidden;">
+    <div style="background: #ef4444; padding: 30px; text-align: center; color: white;">
+        <h1 style="margin: 0;">⚠️ ALERTE URGENCE</h1>
+        <p style="opacity: 0.9;">Un nouveau rendez-vous critique nécessite votre attention</p>
+    </div>
+    <div style="padding: 40px;">
+        <p>Bonjour <strong>{{ pro.nom }}</strong>,</p>
+        <p>Notre système d'analyse automatique a détecté un motif de consultation critique pour le rendez-vous suivant :</p>
+        
+        <div style="background: #fef2f2; padding: 20px; border-radius: 12px; margin: 20px 0; border-left: 5px solid #ef4444;">
+            <p style="margin: 5px 0;">👤 <strong>Patient :</strong> {{ patient.nom }}</p>
+            <p style="margin: 5px 0;">📅 <strong>Le :</strong> {{ appointment.dateRdv|date('d/m/Y') }} à {{ appointment.heureRdv|date('H:i') }}</p>
+            <p style="margin: 15px 0; font-style: italic;">"{{ appointment.motif }}"</p>
+        </div>
+
+        <p>Veuillez consulter votre <strong>Tableau de Bord Professionnel</strong> immédiatement pour gérer cette urgence.</p>
+    </div>
+    <div style="background: #f1f5f9; padding: 20px; text-align: center; font-size: 0.8rem; color: #64748b;">
+        Système de Surveillance Evolia - Priorité Haute
+    </div>
+</div>

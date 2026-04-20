@@ -12,6 +12,10 @@ final class AdminLoginController extends AbstractController
     #[Route('/admin/login', name: 'app_admin_login')]
     public function index(AuthenticationUtils $authenticationUtils): Response
     {
+        if ($this->getUser()) {
+            return $this->redirectToRoute('app_admin_dashboard');
+        }
+        
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
 

@@ -1,0 +1,132 @@
+<style>
+    /* FULLCALENDAR PREMIUM OVERRIDES - Isolated in ProCalendarBundle */
+    #calendar { background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(15px); border-radius: 30px; padding: 25px; border: 1px solid rgba(255,255,255,0.3); box-shadow: 0 20px 60px rgba(0,0,0,0.05); }
+    .fc { font-family: 'Outfit', sans-serif !important; border: none !important; }
+    .fc-theme-standard td, .fc-theme-standard th { border: 1px solid rgba(0,0,0,0.03) !important; }
+    .fc-col-header-cell { background: transparent !important; padding: 15px 0 !important; color: var(--elite-navy) !important; font-weight: 700 !important; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; }
+    .fc-scrollgrid { border-radius: 24px !important; border: none !important; overflow: hidden; }
+    .fc-button-primary { background: white !important; border: 1px solid rgba(0,0,0,0.08) !important; color: var(--elite-navy) !important; border-radius: 12px !important; font-weight: 700 !important; padding: 8px 16px !important; text-transform: capitalize !important; transition: all 0.3s ease !important; box-shadow: 0 4px 12px rgba(0,0,0,0.04) !important; }
+    .fc-button-primary:hover { background: var(--elite-navy) !important; color: white !important; transform: translateY(-2px); }
+    .fc-button-active { background: var(--elite-navy) !important; color: white !important; border-color: var(--elite-navy) !important; }
+    .fc-event { border: none !important; border-radius: 12px !important; padding: 5px 10px !important; transition: all 0.3s ease !important; cursor: pointer !important; box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important; }
+    .fc-event:hover { transform: scale(1.03) translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important; }
+    
+    /* STANDARD APPOINTMENTS */
+    .fc-appointment { background: linear-gradient(135deg, #1e4d6b, #4a87a8) !important; }
+    .fc-event-urgent { background: linear-gradient(135deg, #e11d48, #fb7185) !important; animation: glowPulse 2s infinite alternate; }
+    
+    /* HOLIDAYS */
+    .fc-event-holiday { background: linear-gradient(135deg, #f59e0b, #d97706) !important; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4) !important; }
+    .fc-event-holiday:hover { transform: scale(1.02); box-shadow: 0 6px 20px rgba(245, 158, 11, 0.6) !important; }
+
+    /* CONGÉS (ABSENCE PRO) */
+    .fc-event-absence { 
+        background: repeating-linear-gradient(45deg, #f1f5f9, #f1f5f9 10px, #e2e8f0 10px, #e2e8f0 20px) !important; 
+        color: #475569 !important; 
+        display: flex; align-items: center; justify-content: center;
+        opacity: 0.9;
+    }
+
+    @keyframes glowPulse { from { box-shadow: 0 0 5px rgba(225, 29, 72, 0.4); } to { box-shadow: 0 0 20px rgba(225, 29, 72, 0.7); } }
+    .fc-timegrid-slot { height: 60px !important; }
+    .fc-timegrid-axis-cushion { color: var(--elite-navy) !important; font-weight: 600 !important; font-size: 0.8rem !important; }
+    .fc-toolbar-title { color: var(--elite-navy) !important; font-weight: 800 !important; font-size: 1.5rem !important; }
+</style>
+
+<div id="calendar"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ical.js/1.5.0/ical.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/icalendar@6.1.10/index.global.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const calendarEl = document.getElementById('calendar');
+        if (calendarEl) {
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'timeGridWeek',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek'
+                },
+                locale: 'fr',
+                slotMinTime: '08:00:00',
+                slotMaxTime: '19:00:00',
+                expandRows: true,
+                allDaySlot: true,
+                allDayText: 'Fériés',
+                nowIndicator: true,
+                
+                // MULTIPLE EVENT SOURCES
+                eventSources: [
+                    // Source 1: Appointments from the database
+                    {
+                        url: '{{ path("app_pro_calendar_events") }}',
+                        className: 'fc-appointment'
+                    },
+                    // Source 2: Dynamic Tunisian Holidays (ICS via Proxy)
+                    {
+                        url: '{{ path("app_pro_calendar_holidays") }}',
+                        format: 'ics',
+                        className: 'fc-event-holiday',
+                        display: 'block', // Show as standard block to read the title
+                        editable: false,
+                        interactive: true // Allow hover for title
+                    }
+                ],
+                
+                eventContent: function(arg) {
+                    // Custom HTML for Holidays and Absences
+                    if (arg.event.allDay) {
+                        let div = document.createElement('div');
+                        let isAbsence = arg.event.extendedProps && arg.event.extendedProps.statut === 'Congé';
+                        let textColorClass = isAbsence ? 'text-dark' : 'text-white';
+                        let iconClass = isAbsence ? 'fa-plane-slash' : 'fa-flag';
+                        
+                        div.innerHTML = `
+                            <div class="d-flex align-items-center gap-2 w-100" style="padding: 2px;">
+                                <i class="fa-solid ${iconClass} ${textColorClass}" style="font-size: 0.8rem; opacity: 0.9;"></i>
+                                <span class="fw-bold ${textColorClass} text-truncate" style="font-size: 0.8rem; letter-spacing: 0.5px;">${arg.event.title}</span>
+                            </div>
+                        `;
+                        return { domNodes: [div] };
+                    }
+
+                    let italicEl = document.createElement('div');
+                    let isUrgent = arg.event.title.includes('⚠️');
+                    
+                    italicEl.innerHTML = `
+                        <div class="fc-event-main-frame d-flex flex-column" style="overflow: hidden; padding: 2px;">
+                            <div class="d-flex align-items-center gap-1 mb-1">
+                                ${isUrgent ? '<i class="fa-solid fa-triangle-exclamation text-white" style="font-size: 0.7rem;"></i>' : '<i class="fa-solid fa-user text-white opacity-75" style="font-size: 0.7rem;"></i>'}
+                                <span class="fw-bold" style="font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${arg.event.title.replace('⚠️ URGENT: ', '')}</span>
+                            </div>
+                            <div style="font-size: 0.65rem; opacity: 0.9;"><i class="fa-regular fa-clock me-1"></i>${arg.timeText}</div>
+                        </div>
+                    `;
+                    return { domNodes: [italicEl] };
+                },
+                eventDidMount: function(info) {
+                    if (info.event.title.includes('⚠️')) {
+                        info.el.classList.add('fc-event-urgent');
+                    }
+                },
+                eventClick: function(info) {
+                    // Ignore holidays (allDay events)
+                    if (info.event.allDay) return;
+                    
+                    if (typeof showRdvDetails === 'function') {
+                        showRdvDetails({
+                            id: info.event.id,
+                            dateRdv: info.event.startStr.split('T')[0],
+                            heureRdv: info.event.startStr.split('T')[1].substring(0,5),
+                            statut: info.event.extendedProps.statut,
+                            motif: info.event.extendedProps.motif
+                        });
+                    }
+                }
+            });
+            calendar.render();
+        }
+    });
+</script>

@@ -1,0 +1,392 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Exercices — {{ objective.title }} — Admin Evolia{% endblock %}
+{% block body_class %}admin-theme{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin_dashboard.css') }}">
+    <style>
+        body.admin-theme { background: #f0f4f8; color: #1a202c; }
+        .admin-main { margin-left: 260px; padding: 36px; flex: 1; }
+        .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 16px; }
+        .page-header h1 { font-size: 1.4rem; font-weight: 700; color: #1a202c; margin: 0; }
+        .search-bar { background:#fff; border-radius:40px; padding:8px 20px; border:1px solid #e2e8f0; display:flex; align-items:center; gap:10px; min-width:260px; }
+        .search-bar input { border:none; outline:none; flex:1; font-size:0.9rem; }
+        .sort-select { background:#fff; border:1px solid #e2e8f0; border-radius:40px; padding:8px 18px; font-size:0.875rem; cursor:pointer; }
+        /* Cards */
+        .ex-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
+        .ex-card { background:#fff; border-radius:16px; padding:20px; border:1px solid #e2e8f0; transition:all 0.25s; display:flex; flex-direction:column; gap:10px; }
+        .ex-card:hover { transform:translateY(-4px); box-shadow:0 12px 32px rgba(0,0,0,0.1); border-color:#3A7D6B; }
+        .badge-diff-debutant { background:#E9F7EF; color:#27AE60; }
+        .badge-diff-moyen    { background:#FEF9E7; color:#F39C12; }
+        .badge-diff-avance   { background:#FDEDEC; color:#E74C3C; }
+        .badge-type          { background:#EAF2FB; color:#2980B9; }
+        .badge-pub  { background:#E8F8F0; color:#27AE60; }
+        .badge-draft{ background:#FFF3E0; color:#E67E22; }
+        .badge-sm { font-size:0.7rem; font-weight:700; padding:3px 10px; border-radius:20px; text-transform:uppercase; }
+        .ex-title { font-size:0.95rem; font-weight:700; color:#1a202c; }
+        .ex-desc { font-size:0.82rem; color:#718096; flex:1; }
+        .ex-meta { font-size:0.75rem; color:#a0aec0; }
+        .card-actions { display:flex; gap:8px; align-items:center; margin-top:12px; padding-top:12px; border-top:1px solid #f0f4f8; }
+        .btn-action { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; transition:all 0.2s; text-decoration:none; font-size:0.9rem; }
+        .btn-edit    { background:#EAF2FB; color:#2980b9; }
+        .btn-edit:hover { background:#2980b9; color:#fff; }
+        .btn-del     { background:#FDEDEC; color:#e74c3c; }
+        .btn-del:hover { background:#e74c3c; color:#fff; }
+        .btn-toggle  { background:#F4F6F7; color:#718096; }
+        .btn-yt      { background:rgba(255,0,0,0.1); color:#cc0000; width:auto; padding:0 12px; height:36px; border-radius:10px; font-weight:700; font-size:0.75rem; display:flex; gap:6px; }
+        .btn-yt:hover{ background:#cc0000; color:#fff; }
+        .btn-yt.loading { opacity:0.6; pointer-events:none; }
+        .fab-new { position:fixed; bottom:36px; right:36px; width:58px; height:58px; background:linear-gradient(135deg,#3A7D6B,#27AE60); color:#fff; border:none; border-radius:50%; font-size:1.6rem; cursor:pointer; box-shadow:0 8px 24px rgba(58,125,107,0.5); display:flex; align-items:center; justify-content:center; text-decoration:none; transition:transform 0.2s; z-index:200; }
+        .fab-new:hover { transform:scale(1.1); color:#fff; }
+        .empty-state { text-align:center; padding:80px 20px; color:#a0aec0; }
+        .empty-state i { font-size:3rem; margin-bottom:16px; display:block; }
+        .flash-msg { padding:12px 20px; border-radius:12px; margin-bottom:20px; font-size:0.875rem; font-weight:500; }
+        .flash-success { background:#E8F8F0; color:#27AE60; border:1px solid #A9DFBF; }
+        .flash-error   { background:#FDEDEC; color:#E74C3C; border:1px solid #F5B7B1; }
+        .obj-banner { background:linear-gradient(135deg, #0a2118, #1a3a2e); color:#fff; border-radius:16px; padding:24px 28px; margin-bottom:28px; }
+        .obj-banner .level-badge { font-size:0.7rem; font-weight:700; padding:4px 12px; border-radius:20px; text-transform:uppercase; }
+        .badge-debutant { background:rgba(39,174,96,0.2); color:#A9DFBF; }
+        .badge-moyen    { background:rgba(243,156,18,0.2); color:#F9E79F; }
+        .badge-avance   { background:rgba(231,76,60,0.2); color:#F5B7B1; }
+        .badge-global   { background:rgba(41,128,185,0.2); color:#AED6F1; }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div style="display:flex;min-height:100vh;">
+    {% include 'admin_nav_bar/index.html.twig' %}
+    <main class="admin-main">
+        {% for msg in app.flashes('success') %}
+            <div class="flash-msg flash-success"><i class="fa-solid fa-check-circle me-2"></i>{{ msg }}</div>
+        {% endfor %}
+        {% for msg in app.flashes('error') %}
+            <div class="flash-msg flash-error"><i class="fa-solid fa-triangle-exclamation me-2"></i>{{ msg }}</div>
+        {% endfor %}
+
+        {# Back nav #}
+        <div class="mb-4">
+            <a href="{{ path('app_admin_objective_index') }}" class="text-decoration-none text-muted">
+                <i class="fa-solid fa-arrow-left me-2"></i>Retour aux objectifs
+            </a>
+        </div>
+
+        {# Objective Banner #}
+        <div class="obj-banner">
+            <div class="d-flex align-items-start justify-content-between gap-3">
+                <div>
+                    <div class="d-flex gap-2 mb-2">
+                        <span class="level-badge badge-{{ objective.level|lower }}">{{ objective.level }}</span>
+                        <span class="level-badge {{ objective.isPublished ? 'badge-debutant' : '' }}" style="{{ not objective.isPublished ? 'background:rgba(230,126,34,0.2);color:#FAD7A0' : '' }}">
+                            {{ objective.isPublished ? '✓ Publié' : 'Brouillon' }}
+                        </span>
+                    </div>
+                    <h1 class="h3 fw-bold mb-1">{{ objective.title }}</h1>
+                    <p class="mb-0 opacity-75 small">{{ objective.description|default('Aucune description.')|slice(0,150) }}</p>
+                </div>
+                <div class="d-flex gap-2 align-items-center">
+                    <a href="{{ path('app_admin_objective_pdf', {id: objective.id}) }}" class="btn btn-light btn-sm rounded-pill px-3 fw-bold" style="white-space:nowrap; color:#1a3a2e;" target="_blank" title="Générer un rapport PDF">
+                        <i class="fa-solid fa-file-pdf text-danger me-1"></i>Exporter en PDF
+                    </a>
+                    
+                    <button type="button" class="btn btn-warning btn-sm rounded-pill px-3 fw-bold" style="white-space:nowrap; background:#F1C40F; border:none; color:#7D6608;" id="aiGenBtn" onclick="generateAiPreview({{ objective.id }})">
+                        <i class="fa-solid fa-wand-magic-sparkles me-1"></i>Générer par l'IA
+                    </button>
+
+                    <a href="{{ path('app_admin_objective_edit', {id: objective.id}) }}" class="btn btn-outline-light btn-sm rounded-pill px-3" style="white-space:nowrap">
+                        <i class="fa-solid fa-pen me-1"></i>Modifier
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        {# Page header with search/sort #}
+        <div class="page-header">
+            <h1><i class="fa-solid fa-dumbbell me-2" style="color:#3A7D6B"></i>Exercices <span style="color:#3A7D6B">({{ exercises|length }})</span></h1>
+            <form method="GET" class="d-flex gap-2 align-items-center flex-wrap">
+                <div class="search-bar">
+                    <i class="fa-solid fa-magnifying-glass" style="color:#a0aec0"></i>
+                    <input type="text" name="q" value="{{ q }}" placeholder="Rechercher…" id="searchInput" oninput="debounceSubmit()">
+                </div>
+                <select name="sort" class="sort-select" onchange="this.form.submit()">
+                    <option value="title_az"  {{ sort == 'title_az'  ? 'selected' }}>Titre A → Z</option>
+                    <option value="title_za"  {{ sort == 'title_za'  ? 'selected' }}>Titre Z → A</option>
+                    <option value="duration"  {{ sort == 'duration'  ? 'selected' }}>Durée ↑</option>
+                    <option value="difficulty"{{ sort == 'difficulty'? 'selected' }}>Difficulté</option>
+                    <option value="published" {{ sort == 'published' ? 'selected' }}>Publiés d'abord</option>
+                </select>
+            </form>
+        </div>
+
+        {# Stats #}
+        <div class="d-flex gap-3 mb-4 flex-wrap">
+            <div class="px-3 py-2 rounded-3" style="background:rgba(39,174,96,0.1);color:#27AE60;font-size:0.85rem;">
+                <i class="fa-solid fa-eye me-1"></i>{{ exercises|filter(e => e.isPublished)|length }} publiés
+            </div>
+            <div class="px-3 py-2 rounded-3" style="background:rgba(230,126,34,0.1);color:#E67E22;font-size:0.85rem;">
+                <i class="fa-solid fa-pencil me-1"></i>{{ exercises|filter(e => not e.isPublished)|length }} brouillons
+            </div>
+            <div class="px-3 py-2 rounded-3" style="background:rgba(255,0,0,0.08);color:#cc0000;font-size:0.85rem;">
+                <i class="fa-brands fa-youtube me-1"></i>{{ exercises|filter(e => e.mediaUrl is not empty)|length }} avec vidéo
+            </div>
+        </div>
+
+        {# Grid #}
+        {% if exercises is empty %}
+            <div class="empty-state">
+                <i class="fa-solid fa-dumbbell"></i>
+                <p>Aucun exercice trouvé{% if q %} pour « {{ q }} »{% endif %}.</p>
+                <a href="{{ path('app_admin_exercise_new', {objective_id: objective.id}) }}" class="btn btn-success rounded-pill mt-2">
+                    <i class="fa-solid fa-plus me-1"></i>Ajouter un exercice
+                </a>
+            </div>
+        {% else %}
+            <div class="ex-grid">
+                {% for ex in exercises %}
+                    <div class="ex-card" id="ex-card-{{ ex.id }}">
+                        <div class="d-flex gap-2 align-items-center flex-wrap">
+                            <span class="badge-sm badge-diff-{{ ex.difficulty|lower }}">{{ ex.difficulty }}</span>
+                            <span class="badge-sm badge-type">⚡ {{ ex.type }}</span>
+                            <span class="badge-sm {{ ex.isPublished ? 'badge-pub' : 'badge-draft' }}">
+                                {{ ex.isPublished ? '✓ Publié' : 'Brouillon' }}
+                            </span>
+                            {% if ex.mediaUrl is empty %}
+                                <span class="badge-sm" style="background:#f0f4f8;color:#a0aec0;">Sans vidéo</span>
+                            {% else %}
+                                <span class="badge-sm" style="background:#FDEDEC;color:#cc0000;"><i class="fa-brands fa-youtube me-1"></i>Vidéo</span>
+                            {% endif %}
+                        </div>
+
+                        <p class="ex-title">{{ ex.title }}</p>
+                        <p class="ex-desc">{{ ex.description|default('Pas de description.')|slice(0,90) }}{% if ex.description|length > 90 %}…{% endif %}</p>
+
+                        <div class="ex-meta">
+                            <i class="fa-regular fa-clock me-1"></i>{{ ex.durationMinutes }} min
+                            &nbsp;·&nbsp;
+                            <i class="fa-regular fa-calendar me-1"></i>{{ ex.createdAt|date('d/m/Y') }}
+                        </div>
+
+                        <div class="card-actions">
+                            <a href="{{ path('app_admin_exercise_edit', {id: ex.id}) }}" class="btn-action btn-edit" title="Modifier">
+                                <i class="fa-solid fa-pen"></i>
+                            </a>
+                            <button class="btn-action btn-toggle" onclick="toggleExercisePublish({{ ex.id }}, this)"
+                                title="{{ ex.isPublished ? 'Dépublier' : 'Publier' }}">
+                                <i class="fa-solid {{ ex.isPublished ? 'fa-eye-slash' : 'fa-eye' }}"></i>
+                            </button>
+                            {% if ex.mediaUrl is empty %}
+                                <button class="btn-action btn-yt" id="yt-btn-{{ ex.id }}" 
+                                    data-url="{{ path('app_admin_exercise_fetch_video', {id: ex.id}) }}"
+                                    onclick="fetchYoutube({{ ex.id }})">
+                                    <i class="fa-brands fa-youtube"></i> Chercher vidéo
+                                </button>
+                            {% endif %}
+                            <div class="ms-auto">
+                                <button class="btn-action btn-del" data-bs-toggle="modal" data-bs-target="#delEx{{ ex.id }}" title="Supprimer">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        {# Delete Modal #}
+                        <div class="modal fade" id="delEx{{ ex.id }}" tabindex="-1">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content rounded-4 border-0 shadow">
+                                    <div class="modal-header border-0 pb-0">
+                                        <h5 class="modal-title text-danger"><i class="fa-solid fa-triangle-exclamation me-2"></i>Confirmer</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Supprimer <strong>{{ ex.title }}</strong> ? Cette action est irréversible.
+                                    </div>
+                                    <div class="modal-footer border-0">
+                                        <button class="btn btn-light rounded-pill" data-bs-dismiss="modal">Annuler</button>
+                                        <form method="POST" action="{{ path('app_admin_exercise_delete', {id: ex.id}) }}" style="display:inline">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete_ex_' ~ ex.id) }}">
+                                            <button type="submit" class="btn btn-danger rounded-pill">
+                                                <i class="fa-solid fa-trash me-1"></i>Supprimer
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </main>
+</div>
+
+<!-- AI Review Modal -->
+<div class="modal fade" id="aiReviewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 24px; overflow: hidden;">
+            <div class="modal-header border-0 bg-warning bg-opacity-10 py-4 px-4">
+                <h5 class="modal-title fw-bold" style="color: #7D6608;">
+                    <i class="fa-solid fa-wand-magic-sparkles me-2"></i>Suggestions de l'IA
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p class="text-muted small mb-4">L'IA a généré ces exercices pour votre objectif. Sélectionnez ceux que vous souhaitez conserver.</p>
+                
+                <div id="aiSuggestionsContainer" class="d-flex flex-column gap-3">
+                    {# Dynamic content here #}
+                </div>
+            </div>
+            <div class="modal-footer border-0 p-4">
+                <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-warning rounded-pill px-4 fw-bold" id="aiSaveBtn" onclick="saveSelectedExercises({{ objective.id }})" style="background:#F1C40F; border:none; color:#7D6608;">
+                    Enregistrer les exercices sélectionnés
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<a href="{{ path('app_admin_exercise_new', {objective_id: objective.id}) }}" class="fab-new" title="Ajouter un exercice">
+    <i class="fa-solid fa-plus"></i>
+</a>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+let timer;
+function debounceSubmit() {
+    clearTimeout(timer);
+    timer = setTimeout(() => document.getElementById('searchInput').form.submit(), 400);
+}
+
+function toggleExercisePublish(id, btn) {
+    fetch(`/admin/exercises/${id}/toggle-publish`, {method:'POST'})
+        .then(r => r.json()).then(data => {
+            const card = document.getElementById('ex-card-'+id);
+            const pubBadge = card.querySelectorAll('.badge-sm')[2];
+            const icon = btn.querySelector('i');
+            if (data.published) {
+                pubBadge.className = 'badge-sm badge-pub'; pubBadge.textContent = '✓ Publié';
+                icon.className = 'fa-solid fa-eye-slash'; btn.title = 'Dépublier';
+            } else {
+                pubBadge.className = 'badge-sm badge-draft'; pubBadge.textContent = 'Brouillon';
+                icon.className = 'fa-solid fa-eye'; btn.title = 'Publier';
+            }
+        });
+}
+
+function fetchYoutube(id) {
+    const btn = document.getElementById('yt-btn-'+id);
+    if (!btn) return;
+    const url = btn.getAttribute('data-url');
+    btn.classList.add('loading');
+    btn.innerHTML = '<i class="fa-solid fa-rotate fa-spin"></i> Recherche…';
+
+    fetch(url, {method:'POST'})
+        .then(r => r.json()).then(data => {
+            if (data.url) {
+                btn.innerHTML = '✅ Vidéo trouvée !';
+                btn.style.background = '#27AE60';
+                setTimeout(() => location.reload(), 1200);
+            } else {
+                btn.innerHTML = '❌ ' + (data.error || 'Erreur');
+                btn.classList.remove('loading');
+                btn.style.background = '#718096';
+            }
+        }).catch(() => {
+            btn.innerHTML = '❌ Erreur réseau';
+            btn.classList.remove('loading');
+        });
+}
+
+const aiReviewModal = new bootstrap.Modal(document.getElementById('aiReviewModal'));
+let currentSuggestions = [];
+
+function generateAiPreview(id) {
+    const btn = document.getElementById('aiGenBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-rotate fa-spin me-1"></i> Analyse en cours...';
+
+    fetch(`/admin/objectives/${id}/preview-ai`, {method:'POST'})
+        .then(r => r.json())
+        .then(data => {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles me-1"></i>Générer par l\'IA';
+            
+            if (data.success) {
+                currentSuggestions = data.exercises;
+                renderAiSuggestions();
+                aiReviewModal.show();
+            } else {
+                alert('Erreur : ' + (data.error || 'Erreur inconnue'));
+            }
+        });
+}
+
+function renderAiSuggestions() {
+    const container = document.getElementById('aiSuggestionsContainer');
+    container.innerHTML = '';
+
+    currentSuggestions.forEach((ex, index) => {
+        const card = document.createElement('div');
+        card.className = 'p-3 rounded-4 border bg-light d-flex gap-3 align-items-start';
+        card.innerHTML = `
+            <div class="pt-1">
+                <input type="checkbox" class="form-check-input ai-check" id="ai-check-${index}" checked style="width:20px; height:20px;">
+            </div>
+            <div class="flex-grow-1">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h6 class="fw-bold mb-0">${ex.title}</h6>
+                    <span class="badge rounded-pill bg-primary bg-opacity-10 text-primary small" style="font-size:0.6rem;">${ex.type.toUpperCase()}</span>
+                </div>
+                <p class="small text-muted mb-2">${ex.description}</p>
+                <div class="d-flex gap-3 align-items-center mb-3">
+                    <span class="small fw-bold text-success"><i class="fa-regular fa-clock me-1"></i>${ex.duration} min</span>
+                    <span class="small fw-bold text-warning"><i class="fa-solid fa-gauge-high me-1"></i>${ex.difficulty}</span>
+                </div>
+                ${ex.mediaUrl ? `
+                    <a href="${ex.mediaUrl}" target="_blank" class="btn btn-danger btn-sm rounded-pill px-3" style="font-size:0.75rem;">
+                        <i class="fa-brands fa-youtube me-1"></i>Voir tutoriel vidéo
+                    </a>
+                ` : ''}
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+function saveSelectedExercises(id) {
+    const saveBtn = document.getElementById('aiSaveBtn');
+    const selectedIndexes = Array.from(document.querySelectorAll('.ai-check'))
+        .map((cb, index) => cb.checked ? index : null)
+        .filter(idx => idx !== null);
+
+    if (selectedIndexes.length === 0) {
+        alert('Veuillez sélectionner au moins un exercice.');
+        return;
+    }
+
+    const selectedExercises = selectedIndexes.map(idx => currentSuggestions[idx]);
+
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<i class="fa-solid fa-rotate fa-spin me-1"></i> Enregistrement...';
+
+    fetch(`/admin/objectives/${id}/save-ai`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ exercises: selectedExercises })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Erreur : ' + data.error);
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = 'Enregistrer les exercices sélectionnés';
+        }
+    });
+}
+</script>
+{% endblock %}

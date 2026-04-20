@@ -30,49 +30,55 @@ final class UserFormController extends AbstractController
             $password = $request->request->get('password');
             $confirmPassword = $request->request->get('confirm_password');
 
+            $formData = [
+                'fullname'     => $fullname,
+                'email'        => $email,
+                'phone'        => $phone,
+                'account_type' => $accountType,
+            ];
+
             if (empty($fullname) || empty($email) || empty($phone) || empty($password)) {
-                return $this->render('user_form/index.html.twig', [
+                return $this->render('user_form/index.html.twig', array_merge($formData, [
                     'error' => 'Tous les champs sont obligatoires.',
-                ]);
+                ]));
             }
 
             // Validation du numéro de téléphone tunisien (exactement 8 chiffres)
             if (!preg_match('/^[0-9]{8}$/', $phone)) {
-                return $this->render('user_form/index.html.twig', [
+                return $this->render('user_form/index.html.twig', array_merge($formData, [
                     'error' => 'Le numéro de téléphone doit contenir exactement 8 chiffres.',
-                ]);
+                ]));
             }
 
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                return $this->render('user_form/index.html.twig', [
+                return $this->render('user_form/index.html.twig', array_merge($formData, [
                     'error' => 'L\'adresse email n\'est pas valide.',
-                ]);
+                ]));
             }
 
             if (strlen($password) < 8) {
-                return $this->render('user_form/index.html.twig', [
+                return $this->render('user_form/index.html.twig', array_merge($formData, [
                     'error' => 'Le mot de passe doit faire au moins 8 caractères.',
-                ]);
+                ]));
             }
 
             if ($password !== $confirmPassword) {
-                return $this->render('user_form/index.html.twig', [
+                return $this->render('user_form/index.html.twig', array_merge($formData, [
                     'error' => 'Les mots de passe ne correspondent pas.',
-                ]);
+                ]));
             }
 
             // Check if user exists
             if ($userService->findByEmail($email)) {
-                return $this->render('user_form/index.html.twig', [
+                return $this->render('user_form/index.html.twig', array_merge($formData, [
                     'error' => 'Un utilisateur avec cet email existe déjà.',
-                ]);
+                ]));
             }
 
-            // Map role
+            // Map role to valid DB Enum
             $role = match($accountType) {
-                'coach' => 'ROLE_COACH',
-                'psychologue' => 'ROLE_PSYCHOLOGUE',
-                default => 'ROLE_PATIENT',
+                'coach', 'psychologue' => 'PSY_COACH',
+                default => 'PATIENT',
             };
 
             // Create User
@@ -90,13 +96,12 @@ final class UserFormController extends AbstractController
             $userService->createUser($user);
 
             // Create UserProfile
-            $userProfile = new UserProfile();
-            $userProfile->setUser($user);
-            $userProfile->setDateCreation(new \DateTime());
-            $userProfile->setNotificationsEmail(true);
-            $userProfile->setNotificationsSms(false);
-            
-            $userProfileService->createUserProfile($userProfile);
+            // $userProfile = new UserProfile();
+            // $userProfile->setUser($user);
+            // $userProfile->setDateCreation(new \DateTime());
+            // $userProfile->setNotificationsEmail(true);
+            // $userProfile->setNotificationsSms(false);
+            // $userProfileService->createUserProfile($userProfile);
 
             // Redirect to login or auto-login
             return $this->redirectToRoute('app_user_login', ['success' => 'Compte créé avec succès ! Veuillez vous connecter.']);
