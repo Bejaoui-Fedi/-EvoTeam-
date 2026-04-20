@@ -1,0 +1,16 @@
+# Environnement
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints
+.pytest_cache/
+
+# VS Code
+.vscode/
+
+# Build
+bin/
+lib/

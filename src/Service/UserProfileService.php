@@ -66,6 +66,27 @@ class UserProfileService
     }
     
     /**
+     * Find UserProfile by User ID, creating it if it doesn't exist
+     */
+    public function findOrCreateByUserId(\App\Entity\User $user): UserProfile
+    {
+        $userProfile = $this->findByUserId($user->getId());
+        
+        if (!$userProfile) {
+            $userProfile = new UserProfile();
+            $userProfile->setUser($user);
+            $userProfile->setDateCreation(new \DateTime());
+            $userProfile->setNotificationsEmail(true);
+            $userProfile->setNotificationsSms(false);
+            
+            $this->entityManager->persist($userProfile);
+            $this->entityManager->flush();
+        }
+        
+        return $userProfile;
+    }
+
+    /**
      * Find UserProfile by User ID
      */
     public function findByUserId(int $userId): ?UserProfile

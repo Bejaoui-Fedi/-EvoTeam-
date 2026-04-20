@@ -2,6 +2,7 @@ security:
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+    
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
         # used to reload user from session & other features (e.g. switch_user)
@@ -9,6 +10,7 @@ security:
             entity:
                 class: App\Entity\User
                 property: email
+    
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -16,8 +18,10 @@ security:
 
         admin:
             pattern: ^/admin
+            context: app_security
             lazy: true
             provider: app_user_provider
+            context: shared_auth
             form_login:
                 login_path: app_admin_login
                 check_path: app_admin_login
@@ -32,8 +36,10 @@ security:
                 path: /admin
 
         main:
+            context: app_security
             lazy: true
             provider: app_user_provider
+            context: shared_auth
             form_login:
                 login_path: app_user_login
                 check_path: app_user_login
@@ -47,22 +53,39 @@ security:
                 lifetime: 604800
                 path: /
 
-            # activate different ways to authenticate
-            # https://symfony.com/doc/current/security.html#the-firewall
-
-            # https://symfony.com/doc/current/security/impersonating_user.html
-            # switch_user: true
-
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
+        # Routes publiques
         - { path: ^/admin/login, roles: PUBLIC_ACCESS }
         - { path: ^/admin/form, roles: PUBLIC_ACCESS }
         - { path: ^/admin/debug, roles: PUBLIC_ACCESS }
+        - { path: ^/$, roles: PUBLIC_ACCESS }
+        - { path: ^/home, roles: PUBLIC_ACCESS }
+
+        # Événements : création / édition / suppression réservées à l'admin
+        - { path: ^/evenement/new, roles: ROLE_ADMIN }
+        - { path: ^/evenement/\d+/edit, roles: ROLE_ADMIN }
+        - { path: ^/evenement/\d+$, roles: ROLE_ADMIN, methods: [POST] }
+        # Liste et détail : patients, coachs, psychologues et admin
+        - { path: ^/evenement$, roles: [ROLE_ADMIN, ROLE_PATIENT, ROLE_COACH, ROLE_PSYCHOLOGUE] }
+        - { path: ^/evenement/\d+$, roles: [ROLE_ADMIN, ROLE_PATIENT, ROLE_COACH, ROLE_PSYCHOLOGUE], methods: [GET] }
+
+        # Avis : utilisateurs connectés (les non-admin sont limités à leurs propres avis côté contrôleur)
+        - { path: ^/review, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/participation/public, roles: PUBLIC_ACCESS }
+        - { path: ^/participation, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/calendar, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/admin/evenement/\d+/participants/export, roles: ROLE_ADMIN }
+        - { path: ^/admin/participation, roles: ROLE_ADMIN }
+        - { path: ^/admin/history, roles: ROLE_ADMIN }
+
+        # Routes admin (back-office)
         - { path: ^/admin, roles: ROLE_ADMIN }
-        - { path: ^/user/dashboard, roles: ROLE_USER }
-        - { path: ^/user/profile, roles: ROLE_USER }
-        # - { path: ^/profile, roles: ROLE_USER }
+
+        # Routes utilisateurs
+        - { path: ^/user/dashboard, roles: [ROLE_PATIENT, ROLE_COACH, ROLE_PSYCHOLOGUE] }
+        - { path: ^/user/profile, roles: [ROLE_PATIENT, ROLE_COACH, ROLE_PSYCHOLOGUE] }
 
 when@test:
     security:

@@ -19,7 +19,7 @@ final class UserProfileController extends AbstractController
             return $this->redirectToRoute('app_user_login');
         }
 
-        $userProfile = $userProfileService->findByUserId($user->getId());
+        $userProfile = $userProfileService->findOrCreateByUserId($user);
 
         return $this->render('user_profile/index.html.twig', [
             'user' => $user,
@@ -33,7 +33,7 @@ final class UserProfileController extends AbstractController
         $user = $this->getUser();
         if (!$user) return $this->redirectToRoute('app_user_login');
 
-        $userProfile = $userProfileService->findByUserId($user->getId());
+        $userProfile = $userProfileService->findOrCreateByUserId($user);
 
         return $this->render('user_profile/edit.html.twig', [
             'user' => $user,
@@ -45,14 +45,15 @@ final class UserProfileController extends AbstractController
     public function update(
         Request $request, 
         UserProfileService $userProfileService,
-        \App\Service\UserService $userService
+        \App\Service\UserService $userService,
+        \Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface $passwordHasher
     ): Response
     {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
         if (!$user) return $this->redirectToRoute('app_user_login');
 
-        $userProfile = $userProfileService->findByUserId($user->getId());
+        $userProfile = $userProfileService->findOrCreateByUserId($user);
 
         $nom = $request->request->get('nom');
         $phone = $request->request->get('phone');
@@ -62,6 +63,21 @@ final class UserProfileController extends AbstractController
         if (empty($nom) || empty($phone)) {
             $this->addFlash('error', 'Le nom et le téléphone sont obligatoires.');
             return $this->redirectToRoute('app_user_profile_edit');
+        }
+
+        $newPassword = $request->request->get('new_password');
+        $confirmPassword = $request->request->get('confirm_password');
+
+        if (!empty($newPassword)) {
+            if ($newPassword !== $confirmPassword) {
+                $this->addFlash('error', 'Les mots de passe ne correspondent pas.');
+                return $this->redirectToRoute('app_user_profile_edit');
+            }
+            if (strlen($newPassword) < 8) {
+                $this->addFlash('error', 'Le mot de passe doit contenir au moins 8 caractères.');
+                return $this->redirectToRoute('app_user_profile_edit');
+            }
+            $user->setPassword($passwordHasher->hashPassword($user, $newPassword));
         }
 
         // Update User info
