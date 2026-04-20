@@ -77,7 +77,7 @@ final class AdminFormController extends AbstractController
             $user->setNom($fullname);
             $user->setEmail($email);
             $user->setTelephone($phone);
-            $user->setRole('ROLE_ADMIN');
+            $user->setRole('ADMIN');
             $user->setActif(true);
 
             // Hash password
@@ -87,13 +87,12 @@ final class AdminFormController extends AbstractController
             $userService->createUser($user);
 
             // Create UserProfile for admin (optional but good for consistency)
-            $userProfile = new UserProfile();
-            $userProfile->setUser($user);
-            $userProfile->setDateCreation(new \DateTime());
-            $userProfile->setNotificationsEmail(true);
-            $userProfile->setNotificationsSms(false);
-            
-            $userProfileService->createUserProfile($userProfile);
+            // $userProfile = new UserProfile();
+            // $userProfile->setUser($user);
+            // $userProfile->setDateCreation(new \DateTime());
+            // $userProfile->setNotificationsEmail(true);
+            // $userProfile->setNotificationsSms(false);
+            // $userProfileService->createUserProfile($userProfile);
 
             return $this->redirectToRoute('app_admin_login', ['success' => 'Compte Administrateur créé avec succès ! Veuillez vous connecter.']);
         }

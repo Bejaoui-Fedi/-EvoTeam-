@@ -19,12 +19,12 @@
 <div class="user-main-content">
     <div class="profile-card">
         <div class="profile-hero">
-            <div class="d-flex align-items-center gap-4" style="position: relative; z-index: 10;">
-                <a href="{{ path('app_user_profile') }}" class="p-3 bg-white rounded-circle shadow-sm text-primary text-decoration-none" style="display: flex; align-items: center; justify-content: center; width: 50px; height: 50px;">
+            <div class="d-flex align-items-center gap-4">
+                <a href="{{ path('app_user_profile') }}" class="d-inline-flex align-items-center justify-content-center bg-white rounded-circle shadow-sm text-primary text-decoration-none" style="width: 48px; height: 48px; position: relative; z-index: 10; transition: all 0.3s ease;">
                     <i class="fa-solid fa-arrow-left"></i>
                 </a>
                 <div>
-                    <h1 style="color: #ffffff !important;">Modifier mon Profil</h1>
+                    <h1>Modifier mon Profil</h1>
                     <p class="m-0 opacity-75">Personnalisez votre espace personnel.</p>
                 </div>
             </div>
@@ -82,29 +82,6 @@
                                 <h5 class="text-primary mb-3"><i class="fa-solid fa-pencil me-2"></i> Ma Biographie</h5>
                                 <textarea name="bio" class="form-control rounded-4 p-3 shadow-sm border-light" rows="5" placeholder="Parlez-nous un peu de vous...">{{ userProfile.bio }}</textarea>
                             </div>
-
-                            <div class="col-12 mb-4 mt-4">
-                                <h5 class="text-primary mb-3"><i class="fa-solid fa-lock me-2"></i> Sécurité (Optionnel)</h5>
-                                <p class="text-muted small mb-3">Laissez ces champs vides si vous ne souhaitez pas modifier votre mot de passe.</p>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3 position-relative">
-                                        <label class="form-label fw-bold">Nouveau Mot de Passe</label>
-                                        <div class="position-relative">
-                                            <input type="password" id="new_password" name="new_password" class="form-control rounded-4 p-3 shadow-sm border-light pe-5" placeholder="Minimum 8 caractères">
-                                            <i class="fa-solid fa-eye text-muted" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; z-index: 10;" onclick="togglePass('new_password', this)"></i>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 mb-3 position-relative">
-                                        <label class="form-label fw-bold">Confirmer Mot de Passe</label>
-                                        <div class="position-relative">
-                                            <input type="password" id="confirm_password" name="confirm_password" class="form-control rounded-4 p-3 shadow-sm border-light pe-5" placeholder="Confirmer le choix">
-                                            <i class="fa-solid fa-eye text-muted" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; z-index: 10;" onclick="togglePass('confirm_password', this)"></i>
-                                        </div>
-                                    </div>
-                                    <div class="col-12 text-danger small mt-1" id="password-error" style="display:none;"></div>
-                                </div>
-                            </div>
-
 
                             <div class="col-12 mt-5 pt-4 border-top d-flex justify-content-end gap-3">
                                 <a href="{{ path('app_user_profile') }}" class="btn-secondary-custom">Annuler</a>
@@ -223,41 +200,6 @@ document.getElementById('avatarInput').addEventListener('change', function(event
         };
         reader.readAsDataURL(file);
     }
-});
-
-function togglePass(inputId, icon) {
-    const input = document.getElementById(inputId);
-    if (input.type === 'password') {
-        input.type = 'text';
-        icon.classList.remove('fa-eye');
-        icon.classList.add('fa-eye-slash');
-    } else {
-        input.type = 'password';
-        icon.classList.remove('fa-eye-slash');
-        icon.classList.add('fa-eye');
-    }
-}
-
-document.querySelector('form').addEventListener('submit', function(e) {
-    const np = document.getElementById('new_password').value;
-    const cp = document.getElementById('confirm_password').value;
-    const err = document.getElementById('password-error');
-    
-    if (np || cp) {
-        if (np !== cp) {
-            e.preventDefault();
-            err.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> Les mots de passe ne correspondent pas.';
-            err.style.display = 'block';
-            return;
-        }
-        if (np.length < 8) {
-            e.preventDefault();
-            err.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> Le mot de passe doit contenir au moins 8 caractères.';
-            err.style.display = 'block';
-            return;
-        }
-    }
-    err.style.display = 'none';
 });
 </script>
 

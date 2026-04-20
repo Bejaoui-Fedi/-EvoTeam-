@@ -68,9 +68,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: ExerciseCompletion::class, orphanRemoval: true)]
     private Collection $completions;
 
+    /**
+     * @var Collection<int, Participation>
+     */
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Participation::class, orphanRemoval: true)]
+    private Collection $participations;
+
     public function __construct()
     {
         $this->completions = new ArrayCollection();
+        $this->participations = new ArrayCollection();
         $this->xp = 0;
         $this->level = 'DEBUTANT';
         $this->currentStreak = 0;
@@ -193,12 +200,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getRoles(): array
     {
-        $role = $this->role;
-        // guarantee every user at least has ROLE_USER
         $roles = ['ROLE_USER'];
         
-        if ($role) {
-            $roles[] = $role;
+        if ($this->role === 'ADMIN') {
+            $roles[] = 'ROLE_ADMIN';
+        } elseif ($this->role === 'PSY_COACH') {
+            $roles[] = 'ROLE_COACH';
+            $roles[] = 'ROLE_PSYCHOLOGUE';
+        } elseif ($this->role === 'PATIENT') {
+            $roles[] = 'ROLE_PATIENT';
         }
 
         return array_unique($roles);
@@ -320,6 +330,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setGoogleRefreshToken(?string $googleRefreshToken): self
     {
         $this->googleRefreshToken = $googleRefreshToken;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Participation>
+     */
+    public function getParticipations(): Collection
+    {
+        return $this->participations;
+    }
+
+    public function addParticipation(Participation $participation): static
+    {
+        if (!$this->participations->contains($participation)) {
+            $this->participations->add($participation);
+            $participation->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParticipation(Participation $participation): static
+    {
+        if ($this->participations->removeElement($participation)) {
+            if ($participation->getUser() === $this) {
+                $participation->setUser(null);
+            }
+        }
+
         return $this;
     }
 }

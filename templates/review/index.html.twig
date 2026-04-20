@@ -1,0 +1,130 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('styles.css') }}">
+    {% if is_granted('ROLE_ADMIN') %}
+        <link rel="stylesheet" href="{{ asset('admin_dashboard.css') }}">
+    {% else %}
+        <link rel="stylesheet" href="{{ asset('user_dashboard.css') }}">
+        <style>
+            body { display: block !important; padding: 0 !important; margin: 0 !important; width: 100vw !important; height: 100vh !important; overflow: hidden !important; background: #f1f5f9 !important; }
+            .user-scope { display: flex !important; width: 100vw !important; height: 100vh !important; max-width: none !important; margin: 0 !important; padding: 0 !important; }
+            .user-main-content { flex-grow: 1 !important; width: calc(100vw - 280px) !important; max-width: none !important; overflow-y: auto !important; padding: 20px; }
+        </style>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    {% if is_granted('ROLE_ADMIN') %}
+    <div class="admin-scope">
+        {% include 'admin_nav_bar/index.html.twig' %}
+        <div class="admin-main-content p-4">
+    {% else %}
+    <div class="user-scope">
+        {% include 'user_nav_bar/index.html.twig' %}
+        <div class="user-main-content p-4">
+    {% endif %}
+
+    <h1 class="mb-4">{{ is_granted('ROLE_ADMIN') ? 'Gestion des avis' : 'Mes avis' }}</h1>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">{{ message }}</div>
+    {% endfor %}
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted small">Nombre d'avis</div>
+                    <div class="fs-3 fw-bold">{{ stats.totalReviews }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted small">Note moyenne</div>
+                    <div class="fs-3 fw-bold text-warning">{{ stats.avgRating }}/5</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted small">Evenements notes</div>
+                    <div class="fs-3 fw-bold">{{ stats.totalEventsRated }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form method="get" class="row g-2 mb-4">
+        <div class="col-md-5">
+            <input type="text" name="q" value="{{ q|default('') }}" class="form-control" placeholder="Rechercher par titre, commentaire ou evenement">
+        </div>
+        <div class="col-md-4">
+            <select name="sort" class="form-select">
+                <option value="date_desc" {{ sort == 'date_desc' ? 'selected' : '' }}>Plus recents</option>
+                <option value="date_asc" {{ sort == 'date_asc' ? 'selected' : '' }}>Plus anciens</option>
+                <option value="rating_desc" {{ sort == 'rating_desc' ? 'selected' : '' }}>Meilleure note</option>
+                <option value="rating_asc" {{ sort == 'rating_asc' ? 'selected' : '' }}>Plus faible note</option>
+                <option value="title_asc" {{ sort == 'title_asc' ? 'selected' : '' }}>Titre A-Z</option>
+            </select>
+        </div>
+        <div class="col-md-3 d-flex gap-2">
+            <button class="btn btn-primary w-100">Filtrer</button>
+            <a href="{{ path('app_review_index') }}" class="btn btn-outline-secondary">Reset</a>
+        </div>
+    </form>
+
+    <div class="mb-3 d-flex justify-content-between align-items-center">
+        <span class="text-muted">{{ reviews|length }} resultat(s)</span>
+        <a href="{{ path('app_review_new') }}" class="btn btn-primary">+ Créer un avis</a>
+    </div>
+
+    <div class="table-responsive bg-white p-3 rounded-3 shadow-sm">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Titre</th>
+                    <th>Note</th>
+                    <th>Commentaire</th>
+                    <th>Date</th>
+                    <th>Evenement</th>
+                    {% if is_granted('ROLE_ADMIN') %}<th>Auteur</th>{% endif %}
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for review in reviews %}
+                    <tr>
+                        <td class="fw-semibold">{{ review.title }}</td>
+                        <td><span class="badge bg-warning text-dark">{{ review.rating }}/5</span></td>
+                        <td>{{ review.comment ? review.comment|slice(0, 70) ~ (review.comment|length > 70 ? '...' : '') : '-' }}</td>
+                        <td>{{ review.reviewDate|date('d/m/Y') }}</td>
+                        <td>{{ review.event.name }}</td>
+                        {% if is_granted('ROLE_ADMIN') %}<td>{{ review.author ? review.author.nom : 'N/A' }}</td>{% endif %}
+                        <td class="d-flex gap-1">
+                            <a href="{{ path('app_review_show', {id: review.id}) }}" class="btn btn-sm btn-info">Voir</a>
+                            <a href="{{ path('app_review_edit', {id: review.id}) }}" class="btn btn-sm btn-warning">Modifier</a>
+                            <form method="post" action="{{ path('app_review_delete', {id: review.id}) }}" onsubmit="return confirm('Supprimer cet avis ?')">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete_review_' ~ review.id) }}">
+                                <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="{{ is_granted('ROLE_ADMIN') ? 7 : 6 }}" class="text-center py-4">Aucun avis trouvé.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    </div>
+</div>
+{% endblock %}

@@ -23,14 +23,26 @@
         <a href="{{ path('app_user_objective_list') }}" class="user-nav-link {{ app.request.get('_route') starts with 'app_user_objective' or app.request.get('_route') starts with 'app_user_exercise' ? 'active' : '' }}">
             <i class="fa-solid fa-dumbbell"></i> Exercices
         </a>
+        <a href="{{ path('app_evenement_index') }}" class="user-nav-link {{ app.request.get('_route') starts with 'app_evenement' or app.request.get('_route') starts with 'app_review_new' ? 'active' : '' }}">
+            <i class="fa-solid fa-calendar-check"></i> Événements
+        </a>
+        <a href="{{ path('app_participation_my') }}" class="user-nav-link {{ app.request.get('_route') starts with 'app_participation' ? 'active' : '' }}">
+            <i class="fa-solid fa-user-check"></i> Mes participations
+        </a>
 
         <div class="nav-section-title">Bien-être</div>
         <a href="#" class="user-nav-link">
             <i class="fa-solid fa-feather"></i> Journal bien-être
         </a>
-        <a href="#" class="user-nav-link">
-            <i class="fa-solid fa-user-clock"></i> Mes rendez-vous
-        </a>
+        {% if is_granted('ROLE_PRO') or is_granted('ROLE_PSYCHOLOGUE') or is_granted('ROLE_COACH') %}
+            <a href="{{ path('app_pro_workspace') }}" class="user-nav-link">
+                <i class="fa-solid fa-user-md"></i> Espace Pro
+            </a>
+        {% else %}
+            <a href="{{ path('app_patient_workspace') }}" class="user-nav-link">
+                <i class="fa-solid fa-user-clock"></i> Mes rendez-vous
+            </a>
+        {% endif %}
 
         <div class="nav-section-title">Personnel</div>
         <a href="{{ path('app_user_profile') }}" class="user-nav-link {{ app.request.get('_route') == 'app_user_profile' ? 'active' : '' }}">

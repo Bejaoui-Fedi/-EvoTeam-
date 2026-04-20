@@ -8,399 +8,239 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <link rel="stylesheet" href="{{ asset('styles.css') }}?v={{ 'now'|date('U') }}">
+    <link rel="stylesheet" href="{{ asset('styles.css') }}">
     <link rel="stylesheet" href="{{ asset('admin_login.css') }}">
     <style>
-        :root {
-            --admin-dark: #1a3a2e;
-            --admin-green: #2d5a4a;
-            --accent-green: #f0f4f2;
-            --text-dark: #1a2a3a;
-            --premium-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+        .modern-alert {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border-radius: 1.25rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
         }
-
-        body, html {
-            margin: 0; padding: 0; height: 100vh;
-            overflow: hidden;
-            font-family: 'Inter', sans-serif;
-            background: #fff;
+        .alert-error {
+            background: #842029 !important;
+            border: 1px solid #721c24 !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 15px rgba(114, 28, 36, 0.3) !important;
+            opacity: 1 !important;
         }
-
-        .split-container { display: flex; height: 100vh; width: 100%; }
-
-        .visual-panel {
-            flex: 1.2; position: relative; overflow: hidden;
-            display: flex; align-items: center;
-            background: var(--admin-dark);
-            padding: 80px 40px;
+        .alert-success {
+            background: #0f5132 !important;
+            border: 1px solid #0d4128 !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 15px rgba(13, 65, 40, 0.3) !important;
+            opacity: 1 !important;
+            font-weight: 700 !important;
         }
-
-        .visual-content {
-            position: relative; z-index: 5; text-align: center;
-            color: white; width: 100%;
+        .alert-icon-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            background: rgba(255, 255, 255, 0.2) !important;
+            color: #ffffff !important;
+            font-size: 1.25rem;
         }
-
-        .visual-content h2 {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 3rem; font-weight: 700; margin-bottom: 20px;
-            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        .alert-message {
+            font-size: 0.95rem;
+            text-align: left;
         }
-
-        .visual-overlay {
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(135deg, rgba(26, 58, 46, 0.8), rgba(26, 58, 46, 0.4));
-            z-index: 2;
-        }
-
-        .form-panel {
-            flex: 1; background: white;
-            display: flex; flex-direction: column; padding: 80px 80px;
-            box-shadow: -10px 0 50px rgba(0,0,0,0.05);
-            overflow-y: auto;
-        }
-
-        .form-container { max-width: 440px; margin: 0 auto; width: 100%; }
-
-        .brand-header { text-align: left; margin-bottom: 45px; }
-        .brand-icon { font-size: 2.5rem; color: var(--admin-dark); margin-bottom: 15px; }
-
-        .admin-theme h1 {
-            font-family: 'Cormorant Garamond', serif !important;
-            font-size: 2.5rem !important;
-            font-weight: 700 !important; color: var(--admin-dark) !important;
-            margin: 0 !important;
-        }
-
-        .admin-theme .subtitle {
-            color: var(--admin-green) !important;
-            font-size: 1.1rem !important; margin-top: 5px !important;
+        .alert-message strong {
+            display: block;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
             opacity: 0.8;
         }
 
-        .form-group { margin-bottom: 25px; }
-        .admin-theme .form-label {
-            font-weight: 600 !important; font-size: 0.9rem !important;
-            color: var(--admin-dark) !important; margin-bottom: 8px !important;
-            display: block;
-        }
-
-        .admin-theme .form-control {
-            border: 1.5px solid #e1e9f0 !important; border-radius: 12px !important;
-            padding: 14px 20px !important; font-size: 1rem !important;
-            background: #f8fafc !important; transition: all 0.3s ease !important;
-        }
-
-        .form-control:focus {
-            border-color: var(--admin-dark) !important;
-            background: white !important;
-            box-shadow: 0 0 0 4px rgba(26, 58, 46, 0.1) !important;
-        }
-
-        .password-container { position: relative; overflow: visible; }
-        .password-container .form-control.is-invalid {
-            border-color: #fc8181 !important;
-            background: #fff5f5 !important;
-            box-shadow: 0 0 0 4px rgba(252, 129, 129, 0.15) !important;
+        /* Bulletproof Password Toggle Styles */
+        .password-container {
+            position: relative;
+            display: flex;
+            align-items: center;
         }
         .password-toggle-btn {
-            position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
-            border: none; background: transparent; color: var(--admin-green);
-            cursor: pointer; font-size: 1.1rem;
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(26, 58, 46, 0.1); /* Admin theme */
+            border: 1px solid rgba(26, 58, 46, 0.2);
+            border-radius: 8px;
+            padding: 6px 10px;
+            cursor: pointer;
+            color: #1a3a2e !important;
+            z-index: 99;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            outline: none !important;
+            height: 34px;
+            width: 40px;
         }
-
-        .form-options {
-            display: flex; justify-content: space-between; align-items: center;
-            margin: 20px 0 30px; font-size: 0.9rem;
+        .password-toggle-btn:hover {
+            background: rgba(26, 58, 46, 0.2);
+            transform: translateY(-50%) scale(1.05);
         }
-        .form-options a { color: var(--admin-dark); text-decoration: none; font-weight: 600; }
-
-        .btn-login {
-            width: 100%; height: 56px;
-            background: var(--admin-dark) !important; color: white !important;
-            border: none !important; border-radius: 12px !important;
-            font-weight: 700 !important; font-size: 1.1rem !important;
-            box-shadow: 0 10px 25px rgba(26, 58, 46, 0.2) !important;
-            transition: all 0.3s ease !important; cursor: pointer;
+        .password-toggle-btn:active {
+            transform: translateY(-50%) scale(0.95);
         }
-        .btn-login:disabled {
-            background: #a0aec0 !important;
-            color: rgba(255, 255, 255, 0.8) !important;
-            box-shadow: none !important;
-            cursor: not-allowed;
-            opacity: 0.6;
+        .form-control {
+            padding-right: 55px !important;
         }
-
-        .premium-divider {
-            margin: 30px 0; text-align: center; position: relative;
-            color: #a0aec0; font-size: 0.8rem; font-weight: 700;
-            letter-spacing: 1.5px;
-        }
-        .premium-divider::before {
-            content: ""; position: absolute; top: 50%; left: 0; right: 0;
-            height: 1px; background: #e2e8f0; z-index: 1;
-        }
-        .premium-divider span { position: relative; z-index: 2; background: white; padding: 0 15px; }
-
-        .register-footer { margin-top: 40px; text-align: center; font-size: 0.95rem; color: var(--admin-green); }
-        .register-footer a { color: var(--admin-dark); font-weight: 700; text-decoration: none; }
-
-        .modern-alert {
-            padding: 15px 20px; border-radius: 12px; margin-bottom: 25px;
-            display: flex; align-items: center; font-size: 0.95rem;
-        }
-        .alert-error { background: #fff5f5; color: #c53030; border: 1px solid #feb2b2; }
-        .alert-success { background: #f0fff4; color: #2f855a; border: 1px solid #c6f6d5; }
-
-        /* Toast notification */
-        #toast-error {
-            position: fixed; top: 24px; right: 24px; z-index: 9999;
-            display: none; min-width: 300px; max-width: 420px;
-        }
-        .toast-card {
-            background: #fff; border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.15), 0 0 0 1px rgba(26,58,46,0.1);
-            padding: 18px 20px; display: flex; align-items: flex-start; gap: 14px;
-            animation: slideInRight 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        }
-        @keyframes slideInRight {
-            from { opacity: 0; transform: translateX(60px) scale(0.9); }
-            to   { opacity: 1; transform: translateX(0) scale(1); }
-        }
-        @keyframes slideOutRight {
-            from { opacity: 1; transform: translateX(0) scale(1); }
-            to   { opacity: 0; transform: translateX(60px) scale(0.9); }
-        }
-        .toast-icon {
-            width: 40px; height: 40px; border-radius: 12px;
-            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
-            display: flex; align-items: center; justify-content: center;
-            color: #fff; font-size: 1.1rem; flex-shrink: 0;
-        }
-        .toast-body { flex: 1; }
-        .toast-title { font-weight: 700; font-size: 0.9rem; color: #1a202c; margin-bottom: 3px; }
-        .toast-msg   { font-size: 0.85rem; color: #718096; line-height: 1.4; }
-        .toast-close { background: none; border: none; color: #a0aec0; font-size: 1rem; cursor: pointer; padding: 0; transition: color 0.2s; }
-        .toast-close:hover { color: #1a202c; }
-        .toast-progress {
-            height: 3px; border-radius: 0 0 16px 16px;
-            background: linear-gradient(90deg, #ff6b6b, #ee5a24);
-            margin: 10px -20px -18px -20px; transform-origin: left;
-            animation: shrink 4s linear forwards;
-        }
-        @keyframes shrink { from { transform: scaleX(1); } to { transform: scaleX(0); } }
-        .field-error-msg {
-            font-size: 0.8rem; color: #c53030; margin-top: 6px;
-            display: flex; align-items: center; gap: 5px;
-            animation: fadeInDown 0.25s ease;
-        }
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-6px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        .form-control.is-invalid {
-            border-color: #fc8181 !important;
-            background: #fff5f5 !important;
-            box-shadow: 0 0 0 4px rgba(252, 129, 129, 0.15) !important;
-        }
-
-        @media (max-width: 992px) {
-            .visual-panel { display: none; }
-            .form-panel { padding: 40px 20px; }
+        /* Disable browser default reveal buttons */
+        input::-ms-reveal,
+        input::-ms-clear {
+            display: none !important;
         }
     </style>
 {% endblock %}
 
 {% block body %}
 
-<div class="split-container">
-    
-    {# ——— LEFT PANEL: VISUALS ——— #}
-    <div class="visual-panel">
-        <div id="bgCarousel" class="carousel slide carousel-fade h-100 w-100" data-bs-ride="carousel" data-bs-interval="3000" style="position: absolute; top:0; left:0;">
-            <div class="carousel-inner h-100">
-                <div class="carousel-item active h-100">
-                    <img src="/images/bg-2.jpg" class="d-block w-100 h-100" alt="Admin 1" style="object-fit: cover;">
-                </div>
-                <div class="carousel-item h-100">
-                    <img src="/images/bg-3.jpg" class="d-block w-100 h-100" alt="Admin 2" style="object-fit: cover;">
-                </div>
-            </div>
+{# ——— BOOTSTRAP BACKGROUND CAROUSEL ——— #}
+<div id="bgCarousel" class="carousel slide carousel-fade bg-carousel" data-bs-ride="carousel" data-bs-interval="1500">
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="/images/bg-2.jpg" class="d-block w-100" alt="Bien-être 1">
         </div>
-        <div class="visual-overlay"></div>
-        <div class="visual-content">
-            <i class="fa-solid fa-shield-halved mb-4" style="font-size: 4rem;"></i>
-            <h2>Evolia Administration</h2>
-            <p class="lead">Gestion sécurisée et centralisée de votre plateforme de santé.</p>
+        <div class="carousel-item">
+            <img src="/images/bg-3.jpg" class="d-block w-100" alt="Bien-être 2">
+        </div>
+        <div class="carousel-item">
+            <img src="/images/bg-4.jpg" class="d-block w-100" alt="Bien-être 3">
         </div>
     </div>
+</div>
 
-    {# ——— RIGHT PANEL: FORM ——— #}
-    <div class="form-panel">
-        <div class="form-container">
-            
-            <div class="brand-header animate__animated animate__fadeInDown">
-                <i class="fa-solid fa-seedling brand-icon"></i>
-                <h1>Espace Admin</h1>
-                <p class="subtitle">Connectez-vous à la console de gestion</p>
+{# ——— DARK OVERLAY ——— #}
+<div class="bg-dark-overlay"></div>
+
+<div class="login-card">
+
+    <i class="fa-solid fa-seedling login-icon"></i>
+
+    <h1>Espace Administrateur</h1>
+    <p class="subtitle">Connectez-vous à l'espace administration</p>
+
+    {% if error %}
+        <div class="modern-alert alert-error animate__animated animate__shakeX">
+            <div class="alert-icon-circle">
+                <i class="fa-solid fa-shield-halved"></i>
             </div>
+            <div class="alert-message">
+                <strong>Accès Refusé</strong> {{ error.messageKey|trans(error.messageData, 'security') }}
+            </div>
+        </div>
+    {% endif %}
 
-            {% if error %}
-                <div class="modern-alert alert-error animate__animated animate__headShake">
-                    <i class="fa-solid fa-lock me-3"></i>
-                    <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-                </div>
-            {% endif %}
+    {% if app.request.query.get('success') %}
+        <div class="modern-alert alert-success animate__animated animate__fadeInUp">
+            <div class="alert-icon-circle">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div class="alert-message">
+                <strong>Succès</strong> {{ app.request.query.get('success') }}
+            </div>
+        </div>
+    {% endif %}
 
-            {% if app.request.query.get('success') %}
-                <div class="modern-alert alert-success animate__animated animate__fadeInUp">
-                    <i class="fa-solid fa-circle-check me-3"></i>
-                    <div>{{ app.request.query.get('success') }}</div>
-                </div>
-            {% endif %}
+    <form method="post" action="{{ path('app_admin_login') }}">
 
-            <form method="post" action="{{ path('app_admin_login') }}" novalidate id="admin-login-form" class="animate__animated animate__fadeInUp" style="animation-delay: 0.1s;">
-                
-                <div class="form-group">
-                    <label class="form-label" for="admin_email">Email Administrateur</label>
-                    <input type="email" id="admin_email" name="_username" class="form-control" value="{{ last_username }}" placeholder="admin@evolia.com" autocomplete="off">
-                    <div class="field-error-msg" id="err-email" style="display:none"><i class="fa-solid fa-circle-exclamation"></i><span></span></div>
-                </div>
+        <div class="form-group">
+            <label class="form-label" for="admin_email">Email</label>
+            <input
+                type="email"
+                id="admin_email"
+                name="_username"
+                class="form-control"
+                placeholder="admin@evolia.com"
+                required
+                autocomplete="email"
+                readonly
+                onfocus="this.removeAttribute('readonly');"
+                onmousedown="this.removeAttribute('readonly');"
+            >
+        </div>
 
-                <div class="form-group">
-                    <label class="form-label" for="admin_password">Mot de passe</label>
-                    <div class="password-container">
-                        <input type="password" id="admin_password" name="_password" class="form-control" value="" placeholder="Votre mot de passe" autocomplete="off">
-                        <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('admin_password', this)">
-                            <i class="fa-solid fa-eye"></i>
-                        </button>
-                    </div>
-                    <div class="field-error-msg" id="err-password" style="display:none"><i class="fa-solid fa-circle-exclamation"></i><span></span></div>
-                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-                </div>
-
-                <div class="form-options">
-                    <label class="d-flex align-items-center gap-2 m-0" style="cursor: pointer;">
-                        <input type="checkbox" name="_remember_me" style="width: 16px; height: 16px; accent-color: #1a3a2e;"> 
-                        <span style="opacity: 0.8;">Rester connecté</span>
-                    </label>
-                    <a href="javascript:void(0)" onclick="showAdminResetNotice()" style="color: #1a3a2e;">Oublié ?</a>
-                </div>
-
-                <button type="submit" class="btn-login" style="width: 100%; background: #1a3a2e !important; box-shadow: 0 10px 25px rgba(26, 58, 46, 0.2) !important;">
-                    Accéder au Dashboard
+        <div class="form-group">
+            <label class="form-label" for="admin_password">Mot de passe</label>
+            <div class="password-container" style="position: relative;">
+                <input
+                    type="password"
+                    id="admin_password"
+                    name="_password"
+                    class="form-control"
+                    placeholder="Votre mot de passe"
+                    required
+                    autocomplete="current-password"
+                    readonly
+                    onfocus="this.removeAttribute('readonly');"
+                    onmousedown="this.removeAttribute('readonly');"
+                >
+                <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('admin_password', this)" aria-label="Afficher/Masquer le mot de passe">
+                    <i class="fa-solid fa-eye"></i>
                 </button>
-
-                <div class="premium-divider"><span>ZONE SÉCURISÉE</span></div>
-
-                <div class="register-footer mt-5 animate__animated animate__fadeIn" style="animation-delay: 0.8s;">
-                    <p class="text-muted mb-3 small">Accès administrateur non configuré ?</p>
-                    <a href="{{ path('app_admin_form') }}" class="btn btn-outline-success rounded-pill px-4 fw-bold" style="border-color: var(--admin-dark); color: var(--admin-dark); font-size: 0.9rem;">
-                        <i class="fa-solid fa-shield-plus me-2"></i> Demander un accès admin
-                    </a>
-                </div>
-
-                <div class="text-center mt-5">
-                    <a href="{{ path('app_home') }}" class="btn btn-sm btn-outline-secondary rounded-pill px-4" data-turbo="false">
-                       <i class="fa-solid fa-house me-2"></i> Accueil
-                    </a>
-                </div>
-
-            </form>
+            </div>
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
         </div>
-    </div>
+
+        <div class="form-options">
+            <label>
+                <input type="checkbox" name="_remember_me"> Se souvenir de moi
+            </label>
+            <a href="#">Mot de passe oublié ?</a>
+        </div>
+
+        <button type="submit" class="btn-login" style="border: none; width: 100%;">
+            <i class="fa-solid fa-seedling"></i>
+            Se connecter
+        </button>
+
+    </form>
+
+    <p class="register-link">
+        Pas encore de compte admin ? <a href="{{ path('app_admin_form') }}">Inscrivez-vous ici</a>
+    </p>
+
+    <hr class="divider">
+
+    <a href="{{ path('app_home') }}" class="btn-back">
+        <i class="fa-solid fa-house"></i> Retour à l'accueil
+    </a>
 
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-<div id="toast-error">
-    <div class="toast-card">
-        <div class="toast-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
-        <div class="toast-body">
-            <div class="toast-title">Champ requis</div>
-            <div class="toast-msg" id="toast-text"></div>
-        </div>
-        <button class="toast-close" onclick="closeToast()"><i class="fa-solid fa-xmark"></i></button>
-        <div class="toast-progress" id="toast-progress"></div>
-    </div>
-</div>
-
 <script>
-    let toastTimer;
-
-    function showToast(msg) {
-        const toast = document.getElementById('toast-error');
-        document.getElementById('toast-text').textContent = msg;
-        const card = toast.querySelector('.toast-card');
-        const progress = document.getElementById('toast-progress');
-        card.style.animation = 'none'; card.offsetHeight; card.style.animation = '';
-        progress.style.animation = 'none'; progress.offsetHeight; progress.style.animation = 'shrink 4s linear forwards';
-        toast.style.display = 'block';
-        clearTimeout(toastTimer);
-        toastTimer = setTimeout(closeToast, 4000);
-    }
-
-    function closeToast() {
-        const toast = document.getElementById('toast-error');
-        toast.querySelector('.toast-card').style.animation = 'slideOutRight 0.3s ease forwards';
-        setTimeout(() => { toast.style.display = 'none'; }, 300);
-    }
-
-    function clearFieldError(input, errId) {
-        input.classList.remove('is-invalid');
-        const err = document.getElementById(errId);
-        if (err) err.style.display = 'none';
-    }
-
-    function showFieldError(input, errId, msg) {
-        input.classList.add('is-invalid');
-        const err = document.getElementById(errId);
-        if (err) { err.querySelector('span').textContent = msg; err.style.display = 'flex'; }
-        input.focus();
-        showToast(msg);
-    }
-
-    document.getElementById('admin-login-form').addEventListener('submit', function(e) {
-        const email    = document.getElementById('admin_email');
-        const password = document.getElementById('admin_password');
-        let valid = true;
-
-        clearFieldError(email,    'err-email');
-        clearFieldError(password, 'err-password');
-
-        if (!email.value.trim()) {
-            showFieldError(email, 'err-email', 'Veuillez saisir votre adresse email.');
-            valid = false;
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
-            showFieldError(email, 'err-email', 'Format d\'email invalide.');
-            valid = false;
-        }
-
-        if (!password.value) {
-            showFieldError(password, 'err-password', 'Veuillez saisir votre mot de passe.');
-            valid = false;
-        }
-
-        if (!valid) e.preventDefault();
-    });
-
-    document.getElementById('admin_email').addEventListener('input', function() { clearFieldError(this, 'err-email'); });
-    document.getElementById('admin_password').addEventListener('input', function() { clearFieldError(this, 'err-password'); });
-
-    window.showAdminResetNotice = function() {
-        alert("Veuillez contacter l'administration système pour réinitialiser votre mot de passe.");
-    };
-
     window.togglePasswordVisibility = function(inputId, btn) {
         const input = document.getElementById(inputId);
         const icon = btn.querySelector('i');
+        
         if (input) {
             if (input.type === 'password') {
                 input.type = 'text';
-                icon.classList.replace('fa-eye', 'fa-eye-slash');
+                if (icon) {
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                }
             } else {
                 input.type = 'password';
-                icon.classList.replace('fa-eye-slash', 'fa-eye');
+                if (icon) {
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
             }
         }
     };
