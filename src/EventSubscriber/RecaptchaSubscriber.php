@@ -28,7 +28,13 @@ class RecaptchaSubscriber implements EventSubscriberInterface
         $request = $event->getRequest();
 
         // Check only for POST login requests
-        if ($request->attributes->get('_route') !== 'app_user_login' || !$request->isMethod('POST')) {
+        $routeName = $request->attributes->get('_route');
+        if (!in_array($routeName, ['app_user_login', 'app_admin_login']) || !$request->isMethod('POST')) {
+            return;
+        }
+
+        // Bypass Recaptcha in dev mode
+        if ($_ENV['APP_ENV'] === 'dev') {
             return;
         }
 
@@ -38,7 +44,7 @@ class RecaptchaSubscriber implements EventSubscriberInterface
             $exception = new \Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException('Veuillez valider le reCAPTCHA pour continuer.');
             $request->getSession()->set(\Symfony\Component\Security\Http\SecurityRequestAttributes::AUTHENTICATION_ERROR, $exception);
             
-            $event->setResponse(new RedirectResponse($this->router->generate('app_user_login')));
+            $event->setResponse(new RedirectResponse($this->router->generate($routeName)));
         }
     }
 }

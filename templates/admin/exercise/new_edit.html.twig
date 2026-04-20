@@ -1,0 +1,247 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ mode == 'edit' ? 'Modifier' : 'Nouvel' }} Exercice — Admin Evolia{% endblock %}
+{% block body_class %}admin-theme{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin_dashboard.css') }}">
+    <style>
+        body.admin-theme { background: #f0f4f8; color: #1a202c; }
+        .admin-main { margin-left: 260px; padding: 36px; flex: 1; }
+        .form-card { background:#fff; border-radius:20px; padding:40px; border:1px solid #e2e8f0; max-width:760px; margin:0 auto; box-shadow:0 4px 24px rgba(0,0,0,0.05); }
+        .form-label { font-weight:600; color:#4a5568; font-size:0.875rem; margin-bottom:6px; }
+        .form-control, .form-select { border:1.5px solid #e2e8f0; border-radius:12px; padding:12px 16px; font-size:0.9rem; transition:border-color 0.2s; }
+        .form-control:focus, .form-select:focus { border-color:#3A7D6B; box-shadow:0 0 0 3px rgba(58,125,107,0.12); }
+        /* Difficulty pills */
+        .diff-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+        .diff-opt { display:none; }
+        .diff-label { display:flex; flex-direction:column; align-items:center; gap:6px; padding:14px 8px; border-radius:12px; border:2px solid #e2e8f0; cursor:pointer; transition:all 0.2s; font-size:0.8rem; font-weight:600; }
+        .diff-label i { font-size:1.2rem; }
+        .diff-debutant + .diff-label { color:#27AE60; }
+        .diff-moyen + .diff-label    { color:#F39C12; }
+        .diff-avance + .diff-label   { color:#E74C3C; }
+        .diff-debutant:checked + .diff-label { background:#E9F7EF; border-color:#27AE60; }
+        .diff-moyen:checked    + .diff-label { background:#FEF9E7; border-color:#F39C12; }
+        .diff-avance:checked   + .diff-label { background:#FDEDEC; border-color:#E74C3C; }
+        /* Type pills */
+        .type-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+        .type-opt { display:none; }
+        .type-label { display:flex; align-items:center; gap:8px; justify-content:center; padding:11px 8px; border-radius:10px; border:2px solid #e2e8f0; cursor:pointer; transition:all 0.2s; font-size:0.8rem; font-weight:600; color:#4a5568; }
+        .type-opt:checked + .type-label { background:#EAF2FB; border-color:#2980B9; color:#2980B9; }
+        /* Publish toggle */
+        .publish-toggle { display:flex; align-items:center; gap:14px; padding:16px 20px; background:#f8fafc; border-radius:14px; border:1.5px solid #e2e8f0; }
+        .form-switch .form-check-input { width:44px; height:24px; cursor:pointer; }
+        .form-switch .form-check-input:checked { background-color:#3A7D6B; border-color:#3A7D6B; }
+        .btn-submit { background:linear-gradient(135deg,#3A7D6B,#27AE60); border:none; border-radius:12px; color:#fff; padding:13px 32px; font-weight:700; font-size:0.95rem; cursor:pointer; transition:all 0.2s; }
+        .btn-submit:hover { filter:brightness(1.1); transform:translateY(-1px); }
+        .flash-error { background:#FDEDEC; color:#E74C3C; border:1px solid #F5B7B1; padding:12px 20px; border-radius:12px; margin-bottom:16px; font-size:0.875rem; }
+        .duration-preview { display:inline-block; background:#EAF2FB; color:#2980B9; font-weight:700; padding:4px 14px; border-radius:20px; font-size:0.8rem; }
+        .media-preview { width:100%; border-radius:12px; overflow:hidden; background:#000; aspect-ratio:16/9; display:none; align-items:center; justify-content:center; }
+        .media-preview iframe { width:100%; height:100%; border:none; }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div style="display:flex;min-height:100vh;">
+    {% include 'admin_nav_bar/index.html.twig' %}
+    <main class="admin-main">
+        <div class="mb-4">
+            {% if mode == 'edit' and exercise.objective is defined %}
+                <a href="{{ path('app_admin_objective_exercises', {id: exercise.objective.id}) }}" class="text-decoration-none text-muted">
+                    <i class="fa-solid fa-arrow-left me-2"></i>Retour aux exercices de « {{ exercise.objective.title }} »
+                </a>
+            {% else %}
+                <a href="{{ path('app_admin_objective_index') }}" class="text-decoration-none text-muted">
+                    <i class="fa-solid fa-arrow-left me-2"></i>Retour aux objectifs
+                </a>
+            {% endif %}
+        </div>
+
+        <div class="form-card">
+            <div class="d-flex align-items-center gap-3 mb-5">
+                <div style="width:48px;height:48px;background:linear-gradient(135deg,#2980B9,#3A7D6B);border-radius:14px;display:flex;align-items:center;justify-content:center;">
+                    <i class="fa-solid fa-dumbbell text-white fs-5"></i>
+                </div>
+                <div>
+                    <h1 class="h4 mb-0 fw-bold">{{ mode == 'edit' ? 'Modifier l\'exercice' : 'Nouvel Exercice' }}</h1>
+                    <p class="text-muted small mb-0">{{ mode == 'edit' ? exercise.title : 'Ajouter un exercice à un objectif' }}</p>
+                </div>
+            </div>
+
+            {% for msg in app.flashes('error') %}
+                <div class="flash-error"><i class="fa-solid fa-triangle-exclamation me-2"></i>{{ msg }}</div>
+            {% endfor %}
+
+            <form method="POST" action="{{ mode == 'edit' ? path('app_admin_exercise_edit', {id: exercise.id}) : path('app_admin_exercise_new') }}" novalidate id="exForm">
+
+                {# Objective selector #}
+                <div class="mb-4">
+                    <label class="form-label"><i class="fa-solid fa-bullseye me-1 text-muted"></i>Objectif associé *</label>
+                    <select name="objective" class="form-select" required>
+                        <option value="">— Choisir un objectif —</option>
+                        {% for obj in objectives %}
+                            <option value="{{ obj.id }}"
+                                {{ (mode == 'edit' and exercise.objective is defined and exercise.objective.id == obj.id)
+                                   or (preObjective is defined and preObjective and preObjective.id == obj.id) ? 'selected' }}>
+                                {{ obj.title }} ({{ obj.level }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                {# Title #}
+                <div class="mb-4">
+                    <label class="form-label"><i class="fa-solid fa-heading me-1 text-muted"></i>Titre *</label>
+                    <input type="text" name="title" class="form-control" required
+                           value="{{ exercise.title ?? '' }}" placeholder="Ex: Respiration abdominale profonde">
+                </div>
+
+                {# Description #}
+                <div class="mb-4">
+                    <label class="form-label"><i class="fa-solid fa-align-left me-1 text-muted"></i>Description</label>
+                    <textarea name="description" class="form-control" rows="3"
+                              placeholder="Décrivez cet exercice en quelques phrases…">{{ exercise.description ?? '' }}</textarea>
+                </div>
+
+                {# Type + Difficulty in 2 cols #}
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fa-solid fa-tag me-1 text-muted"></i>Type</label>
+                        <div class="type-grid">
+                            {% set types = {
+                                physical:   {icon:'fa-person-running', label:'Physique'},
+                                breathing:  {icon:'fa-wind',           label:'Respiration'},
+                                meditation: {icon:'fa-spa',            label:'Méditation'},
+                                cognitive:  {icon:'fa-brain',          label:'Cognitif'},
+                                relaxation: {icon:'fa-couch',          label:'Relaxation'},
+                                social:     {icon:'fa-people-group',   label:'Social'}
+                            } %}
+                            {% for val, meta in types %}
+                                <div>
+                                    <input type="radio" name="type" value="{{ val }}" id="type_{{ val }}"
+                                           class="type-opt" {{ (exercise.type ?? 'physical') == val ? 'checked' }}>
+                                    <label for="type_{{ val }}" class="type-label">
+                                        <i class="fa-solid {{ meta.icon }}"></i>{{ meta.label }}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="fa-solid fa-signal me-1 text-muted"></i>Difficulté</label>
+                        <div class="diff-grid">
+                            {% set diffs = {
+                                debutant: {icon:'fa-seedling', label:'Débutant'},
+                                moyen:    {icon:'fa-leaf',     label:'Moyen'},
+                                avance:   {icon:'fa-fire',     label:'Avancé'}
+                            } %}
+                            {% for val, meta in diffs %}
+                                <div>
+                                    <input type="radio" name="difficulty" value="{{ val }}" id="diff_{{ val }}"
+                                           class="diff-opt diff-{{ val }}"
+                                           {{ (exercise.difficulty ?? 'debutant') == val ? 'checked' }}>
+                                    <label for="diff_{{ val }}" class="diff-label">
+                                        <i class="fa-solid {{ meta.icon }}"></i>{{ meta.label }}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                {# Duration #}
+                <div class="mb-4">
+                    <label class="form-label">
+                        <i class="fa-regular fa-clock me-1 text-muted"></i>Durée
+                        <span class="duration-preview ms-2" id="durationLabel">{{ exercise.durationMinutes ?? 30 }} minutes</span>
+                    </label>
+                    <input type="range" name="durationMinutes" class="form-range" min="5" max="120" step="5"
+                           value="{{ exercise.durationMinutes ?? 30 }}" oninput="document.getElementById('durationLabel').textContent=this.value+' minutes'">
+                    <div class="d-flex justify-content-between text-muted" style="font-size:0.75rem;">
+                        <span>5 min</span><span>60 min</span><span>120 min</span>
+                    </div>
+                </div>
+
+                {# Media URL #}
+                <div class="mb-2">
+                    <label class="form-label"><i class="fa-brands fa-youtube me-1 text-muted"></i>URL Vidéo (YouTube)</label>
+                    <input type="url" name="mediaUrl" class="form-control" id="mediaUrlInput"
+                           value="{{ exercise.mediaUrl ?? '' }}" placeholder="https://www.youtube.com/watch?v=..."
+                           oninput="previewVideo(this.value)">
+                </div>
+                <div class="media-preview mb-4" id="mediaPreview">
+                    <iframe id="previewIframe" src=""></iframe>
+                </div>
+
+                {# Steps #}
+                <div class="mb-4">
+                    <label class="form-label"><i class="fa-solid fa-list-ol me-1 text-muted"></i>Instructions (une étape par ligne)</label>
+                    <textarea name="steps" class="form-control" rows="5"
+                              placeholder="Étape 1 : …&#10;Étape 2 : …&#10;Étape 3 : …">{{ exercise.steps ?? '' }}</textarea>
+                    <div class="text-muted mt-1" style="font-size:0.76rem;">Chaque ligne deviendra une étape numérotée.</div>
+                </div>
+
+                {# Published #}
+                <div class="mb-5">
+                    <label class="form-label"><i class="fa-solid fa-toggle-on me-1 text-muted"></i>Visibilité</label>
+                    <div class="publish-toggle">
+                        <div class="form-check form-switch mb-0">
+                            <input class="form-check-input" type="checkbox" name="isPublished" id="publishToggle" value="1"
+                                   {{ (exercise.isPublished ?? false) ? 'checked' }}>
+                        </div>
+                        <div>
+                            <div class="fw-600 small" id="publishLabel">{{ (exercise.isPublished ?? false) ? 'Publié — visible aux utilisateurs' : 'Brouillon — non visible' }}</div>
+                            <div class="text-muted" style="font-size:0.75rem;">Les exercices publiés apparaissent dans l'espace utilisateur.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-3">
+                    <button type="submit" class="btn-submit">
+                        <i class="fa-solid {{ mode == 'edit' ? 'fa-floppy-disk' : 'fa-plus' }} me-2"></i>
+                        {{ mode == 'edit' ? 'Enregistrer' : 'Créer l\'exercice' }}
+                    </button>
+                    <a href="{{ path('app_admin_exercise_index') }}" class="btn btn-light rounded-3 px-4">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.getElementById('publishToggle').addEventListener('change', function() {
+    document.getElementById('publishLabel').textContent = this.checked
+        ? 'Publié — visible aux utilisateurs'
+        : 'Brouillon — non visible';
+});
+
+function previewVideo(url) {
+    const preview = document.getElementById('mediaPreview');
+    const iframe  = document.getElementById('previewIframe');
+    let videoId   = null;
+
+    const yt1 = url.match(/[?&]v=([^&]+)/);
+    const yt2 = url.match(/youtu\.be\/([^?]+)/);
+    if (yt1) videoId = yt1[1];
+    else if (yt2) videoId = yt2[1];
+
+    if (videoId) {
+        iframe.src = `https://www.youtube.com/embed/${videoId}`;
+        preview.style.display = 'flex';
+    } else {
+        preview.style.display = 'none';
+        iframe.src = '';
+    }
+}
+
+// Run on page load if editing
+window.addEventListener('load', () => {
+    const url = document.getElementById('mediaUrlInput').value;
+    if (url) previewVideo(url);
+});
+</script>
+{% endblock %}

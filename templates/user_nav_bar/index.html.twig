@@ -17,10 +17,10 @@
         <a href="{{ path('app_user_dashboard') }}" class="user-nav-link {{ app.request.get('_route') == 'app_user_dashboard' ? 'active' : '' }}">
             <i class="fa-solid fa-hotel"></i> Tableau de bord
         </a>
-        <a href="#" class="user-nav-link">
-            <i class="fa-solid fa-calendar-check"></i> Événements
+        <a href="{{ path('app_user_calendar') }}" class="user-nav-link {{ app.request.get('_route') == 'app_user_calendar' ? 'active' : '' }}">
+            <i class="fa-solid fa-calendar-alt"></i> Mon Agenda
         </a>
-        <a href="#" class="user-nav-link">
+        <a href="{{ path('app_user_objective_list') }}" class="user-nav-link {{ app.request.get('_route') starts with 'app_user_objective' or app.request.get('_route') starts with 'app_user_exercise' ? 'active' : '' }}">
             <i class="fa-solid fa-dumbbell"></i> Exercices
         </a>
 

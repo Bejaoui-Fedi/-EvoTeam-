@@ -29,5 +29,13 @@ services:
         arguments:
             $secretKey: '%env(RECAPTCHA_SECRET_KEY)%'
 
+    App\Service\YouTubeService:
+        arguments:
+            $apiKey: '%env(YOUTUBE_API_KEY)%'
+
     # Alias to solve autowiring error in GoogleLoginController
     Symfony\Component\Security\Http\Authenticator\FormLoginAuthenticator: '@security.authenticator.form_login.main'
+
+    App\Service\AIService:
+        arguments:
+            $groqKey: '%env(GROQ_API_KEY)%'

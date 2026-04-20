@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{ objective.title }}</title>
+    <style>
+        body { font-family: sans-serif; color: #333; line-height: 1.5; }
+        .header { background-color: #1e4d6b; color: white; padding: 20px; text-align: center; }
+        h1 { margin: 0; font-size: 24px; }
+        .meta { font-size: 14px; margin-top: 10px; opacity: 0.8; }
+        
+        .stats-box { border: 1px solid #ccc; padding: 15px; margin: 20px 0; background-color: #f9f9f9; text-align: center; }
+        .stats-box div { display: inline-block; width: 30%; font-size: 14px; }
+        .stats-box strong { display: block; font-size: 18px; color: #1e4d6b; }
+        
+        .exercise { border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 20px; }
+        .ex-title { font-size: 18px; font-weight: bold; color: #1e4d6b; margin-bottom: 5px; }
+        .ex-meta { font-size: 12px; color: #777; margin-bottom: 10px; }
+        .badge { background: #eee; padding: 3px 8px; border-radius: 10px; font-weight: bold; font-size: 10px; text-transform: uppercase; }
+        .badge.easy { color: #27ae60; }
+        .badge.medium { color: #f39c12; }
+        .badge.hard { color: #c0392b; }
+        
+        .steps { font-size: 13px; margin-top: 10px; white-space: pre-wrap; background: #fdfdfd; padding: 10px; border-left: 3px solid #1e4d6b; }
+        .footer { text-align: center; font-size: 10px; color: #999; margin-top: 40px; border-top: 1px solid #eee; padding-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>{{ objective.title }}</h1>
+        <div class="meta">Niveau: {{ objective.level|capitalize }}</div>
+        <p style="font-size: 14px; margin-top: 15px;">{{ objective.description }}</p>
+    </div>
+
+    {% set total_duration = 0 %}
+    {% for ex in exercises %}
+        {% set total_duration = total_duration + ex.durationMinutes %}
+    {% endfor %}
+
+    <div class="stats-box">
+        <div><strong>{{ exercises|length }}</strong> Exercices</div>
+        <div><strong>{{ total_duration }} min</strong> Durée Totale</div>
+        <div><strong>{{ objective.level|capitalize }}</strong> Difficulté Globale</div>
+    </div>
+
+    <h2>Programme d'exercices</h2>
+    
+    {% for ex in exercises %}
+        <div class="exercise">
+            <div class="ex-title">{{ ex.title }}</div>
+            <div class="ex-meta">
+                <span class="badge {{ ex.difficulty|lower|default('medium') }}">{{ ex.difficulty }}</span>
+                <span>Type: {{ ex.type|default('Général') }} | Durée: {{ ex.durationMinutes }} min</span>
+            </div>
+            {% if ex.description %}
+                <p style="font-size: 13px; margin: 0 0 10px 0;">{{ ex.description }}</p>
+            {% endif %}
+            
+            {% if ex.steps %}
+                <div style="font-weight: bold; font-size: 13px;">Étapes:</div>
+                <div class="steps">{{ ex.steps }}</div>
+            {% endif %}
+        </div>
+    {% else %}
+        <p>Aucun exercice trouvé dans ce programme.</p>
+    {% endfor %}
+    
+    <div class="footer">
+        Généré depuis Evolia - Votre solution bien-être et sport
+    </div>
+</body>
+</html>

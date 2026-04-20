@@ -61,6 +61,7 @@ security:
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/user/dashboard, roles: [ROLE_PATIENT, ROLE_COACH, ROLE_PSYCHOLOGUE, ROLE_USER] }
         - { path: ^/user/profile, roles: [ROLE_PATIENT, ROLE_COACH, ROLE_PSYCHOLOGUE, ROLE_USER] }
+        - { path: ^/user/objectives, roles: [ROLE_PATIENT, ROLE_COACH, ROLE_PSYCHOLOGUE, ROLE_USER] }
         # - { path: ^/profile, roles: ROLE_USER }
 
 when@test:

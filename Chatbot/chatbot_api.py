@@ -226,3 +226,4 @@ if __name__ == "__main__":
         ChatbotAI().demarrer()
     except Exception as e:
         print(f"Erreur : {e}")
+

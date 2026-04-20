@@ -1,0 +1,264 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Objectifs — Admin Evolia{% endblock %}
+
+{% block body_class %}admin-theme{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin_dashboard.css') }}">
+    <style>
+        .admin-main { margin-left: 260px; padding: 36px; flex: 1; }
+        .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+        .page-header h1 { font-size: 1.6rem; font-weight: 700; color: #1a202c; margin: 0; }
+        .search-bar { background:#fff; border-radius:40px; padding:8px 20px; border:1px solid #e2e8f0; display:flex; align-items:center; gap:10px; min-width:280px; }
+        .search-bar input { border:none; outline:none; flex:1; font-size:0.9rem; }
+        .sort-select { background:#fff; border:1px solid #e2e8f0; border-radius:40px; padding:8px 18px; font-size:0.875rem; cursor:pointer; }
+
+        /* ── Cards ── */
+        .obj-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .obj-card {
+            background: #fff; border-radius: 16px; padding: 22px;
+            border: 1px solid #e2e8f0; transition: all 0.25s;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .obj-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.1); border-color: #3A7D6B; }
+        .badge-level { font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; text-transform: uppercase; }
+        
+        /* Dynamic Objective Categories */
+        .obj-card.mix-beginner { border-left:4px solid #27AE60; background:linear-gradient(135deg, #ffffff 0%, #f4fbf7 100%); }
+        .obj-card.mix-beginner:hover { box-shadow:0 12px 32px rgba(39, 174, 96, 0.15); border-color:#27AE60; }
+        
+        .obj-card.mix-intermediate { border-left:4px solid #F39C12; background:linear-gradient(135deg, #ffffff 0%, #fdf8f0 100%); }
+        .obj-card.mix-intermediate:hover { box-shadow:0 12px 32px rgba(243, 156, 18, 0.15); border-color:#F39C12; }
+        
+        .obj-card.mix-advanced { border-left:4px solid #E74C3C; background:linear-gradient(135deg, #ffffff 0%, #fdf4f4 100%); }
+        .obj-card.mix-advanced:hover { box-shadow:0 12px 32px rgba(231, 76, 60, 0.15); border-color:#E74C3C; }
+        
+        .obj-card.mix-global { border-left:4px solid #2980B9; background:linear-gradient(135deg, #ffffff 0%, #f5f9fc 100%); }
+        .obj-card.mix-global:hover { box-shadow:0 12px 32px rgba(41, 128, 185, 0.15); border-color:#2980B9; }
+        .badge-debutant   { background:#E9F7EF; color:#27AE60; }
+        .badge-moyen      { background:#FEF9E7; color:#F39C12; }
+        .badge-avance     { background:#FDEDEC; color:#E74C3C; }
+        .badge-global     { background:#EAF2FB; color:#2980B9; }
+        .badge-published  { background:#E8F8F0; color:#27AE60; font-size:0.7rem; padding:3px 10px; border-radius:20px; }
+        .badge-draft      { background:#FFF3E0; color:#E67E22; font-size:0.7rem; padding:3px 10px; border-radius:20px; }
+        .obj-title { font-size: 1rem; font-weight: 700; color: #1a202c; margin: 0; line-height: 1.3; }
+        .obj-desc { font-size: 0.82rem; color: #718096; flex: 1; }
+        .obj-meta { font-size: 0.75rem; color: #a0aec0; }
+        .card-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; padding-top:12px; border-top:1px solid #f0f4f8; }
+        .btn-sm-action { padding:5px 14px; border-radius:20px; font-size:0.78rem; font-weight:600; border:none; cursor:pointer; transition:all 0.2s; text-decoration:none; display:inline-flex; align-items:center; gap:5px; }
+        .btn-exercises { background:#1e4d6b; color:#fff; }
+        .btn-exercises:hover { background:#1a3d59; color:#fff; }
+        .btn-edit { background:#2980b9; color:#fff; }
+        .btn-edit:hover { background:#1f6ea0; color:#fff; }
+        .btn-del { background:#e74c3c; color:#fff; }
+        .btn-del:hover { background:#c0392b; color:#fff; }
+        .btn-toggle { background:#f0f4f8; color:#718096; }
+        .btn-toggle:hover { background:#e2e8f0; }
+        .fab-new { position:fixed; bottom:36px; right:36px; width:58px; height:58px; background:linear-gradient(135deg,#3A7D6B,#27AE60); color:#fff; border:none; border-radius:50%; font-size:1.6rem; cursor:pointer; box-shadow:0 8px 24px rgba(58,125,107,0.5); display:flex; align-items:center; justify-content:center; text-decoration:none; transition:transform 0.2s; z-index: 200; }
+        .fab-new:hover { transform:scale(1.1); color:#fff; }
+        .empty-state { text-align:center; padding:80px 20px; color:#a0aec0; }
+        .empty-state i { font-size: 3rem; margin-bottom: 16px; display:block; }
+        .flash-msg { padding:12px 20px; border-radius:12px; margin-bottom:20px; font-size:0.875rem; font-weight:500; }
+        .flash-success { background:#E8F8F0; color:#27AE60; border:1px solid #A9DFBF; }
+        .flash-error   { background:#FDEDEC; color:#E74C3C; border:1px solid #F5B7B1; }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div style="display:flex;min-height:100vh;">
+    {% include 'admin_nav_bar/index.html.twig' %}
+    <main class="admin-main">
+
+        {# Flash messages #}
+        {% for msg in app.flashes('success') %}
+            <div class="flash-msg flash-success"><i class="fa-solid fa-check-circle me-2"></i>{{ msg }}</div>
+        {% endfor %}
+        {% for msg in app.flashes('error') %}
+            <div class="flash-msg flash-error"><i class="fa-solid fa-triangle-exclamation me-2"></i>{{ msg }}</div>
+        {% endfor %}
+
+        <div class="page-header">
+            <h1><i class="fa-solid fa-bullseye me-2" style="color:#3A7D6B"></i>Gestion des Objectifs</h1>
+            <div class="d-flex align-items-center gap-3">
+                <form method="GET" class="d-flex gap-2 align-items-center">
+                    <div class="search-bar">
+                        <i class="fa-solid fa-magnifying-glass" style="color:#a0aec0"></i>
+                        <input type="text" name="q" value="{{ q }}" placeholder="Rechercher un objectif…" id="searchInput" oninput="this.form.submit()">
+                    </div>
+                    <select name="sort" class="sort-select" onchange="this.form.submit()">
+                        <option value="title_az" {{ sort == 'title_az' ? 'selected' }}>Titre A → Z</option>
+                        <option value="title_za" {{ sort == 'title_za' ? 'selected' }}>Titre Z → A</option>
+                        <option value="level"    {{ sort == 'level'    ? 'selected' }}>Par niveau</option>
+                        <option value="published"{{ sort == 'published'? 'selected' }}>Publiés d'abord</option>
+                    </select>
+                </form>
+            </div>
+        </div>
+
+        {# INSIGHTS DASHBOARD #}
+        <div class="row mb-5">
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm rounded-4 h-100" style="background: linear-gradient(135deg, #1e4d6b, #2980b9); color: white;">
+                    <div class="card-body p-4 text-center">
+                        <i class="fa-solid fa-layer-group fa-2x mb-2 opacity-50"></i>
+                        <h2 class="fw-bold mb-0">{{ objectives|length }}</h2>
+                        <div class="small fw-semibold text-uppercase opacity-75">Objectifs Totaux</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm rounded-4 h-100" style="background: linear-gradient(135deg, #27ae60, #2ecc71); color: white;">
+                    <div class="card-body p-4 text-center">
+                        <i class="fa-solid fa-dumbbell fa-2x mb-2 opacity-50"></i>
+                        <h2 class="fw-bold mb-0">{{ insights.totalEx }}</h2>
+                        <div class="small fw-semibold text-uppercase opacity-75">Exercices Inclus</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
+                    <div class="card-body p-4 text-center">
+                        <i class="fa-solid fa-chart-pie fa-2x mb-2" style="color: #f39c12"></i>
+                        <h2 class="fw-bold mb-0" style="color: #2c3e50">{{ insights.avgEx|number_format(1) }}</h2>
+                        <div class="small fw-semibold text-uppercase text-muted">Exo / Objectif</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
+                    <div class="card-body p-3">
+                        <div class="small fw-bold text-muted text-uppercase mb-2 text-center">Répartition par Niveau</div>
+                        <div class="d-flex justify-content-between text-sm mb-1">
+                            <span class="text-success"><i class="fa-solid fa-leaf me-1"></i> Débutant</span>
+                            <span class="fw-bold">{{ insights.levels.debutant }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between text-sm mb-1">
+                            <span class="text-warning"><i class="fa-solid fa-fire me-1"></i> Moyen</span>
+                            <span class="fw-bold">{{ insights.levels.moyen }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between text-sm">
+                            <span class="text-danger"><i class="fa-solid fa-bolt me-1"></i> Avancé</span>
+                            <span class="fw-bold">{{ insights.levels.avance }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Grid #}
+        {% if objectives is empty %}
+            <div class="empty-state">
+                <i class="fa-solid fa-folder-open"></i>
+                <p>Aucun objectif trouvé{% if q %} pour « {{ q }} »{% endif %}.</p>
+                <a href="{{ path('app_admin_objective_new') }}" class="btn btn-success rounded-pill mt-2">
+                    <i class="fa-solid fa-plus me-1"></i> Créer un objectif
+                </a>
+            </div>
+        {% else %}
+            <div class="obj-grid">
+                {% for obj in objectives %}
+                    <div class="obj-card mix-{{ obj.level|lower }}" id="obj-card-{{ obj.id }}">
+                        <div class="d-flex gap-2 align-items-center flex-wrap">
+                            <span class="badge-level badge-{{ obj.level|lower }}">{{ obj.level }}</span>
+                            <span class="{{ obj.isPublished ? 'badge-published' : 'badge-draft' }}">
+                                {{ obj.isPublished ? '✓ Publié' : 'Brouillon' }}
+                            </span>
+                        </div>
+
+                        <p class="obj-title">{{ obj.title }}</p>
+                        <p class="obj-desc">{{ obj.description|default('Aucune description.')|slice(0,100) }}{% if obj.description|length > 100 %}…{% endif %}</p>
+
+                        <div class="obj-meta">
+                            <i class="fa-regular fa-clock me-1"></i>{{ obj.createdAt|date('d/m/Y') }}
+                            &nbsp;·&nbsp;
+                            <i class="fa-solid fa-dumbbell me-1"></i>{{ obj.exercises|length }} exercice{{ obj.exercises|length != 1 ? 's' }}
+                        </div>
+
+                        <div class="card-actions">
+                            <a href="{{ path('app_admin_objective_exercises', {id: obj.id}) }}" class="btn-sm-action btn-exercises">
+                                <i class="fa-solid fa-dumbbell"></i> Exercices
+                            </a>
+                            <a href="{{ path('app_admin_objective_edit', {id: obj.id}) }}" class="btn-sm-action btn-edit">
+                                <i class="fa-solid fa-pen"></i> Modifier
+                            </a>
+                            <button class="btn-sm-action btn-toggle" onclick="togglePublish({{ obj.id }}, this)"
+                                title="{{ obj.isPublished ? 'Dépublier' : 'Publier' }}">
+                                <i class="fa-solid {{ obj.isPublished ? 'fa-eye-slash' : 'fa-eye' }}"></i>
+                            </button>
+                            <button class="btn-sm-action btn-del" data-bs-toggle="modal" data-bs-target="#delModal{{ obj.id }}">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+
+                        {# Delete Modal #}
+                        <div class="modal fade" id="delModal{{ obj.id }}" tabindex="-1">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content rounded-4 border-0 shadow">
+                                    <div class="modal-header border-0 pb-0">
+                                        <h5 class="modal-title text-danger"><i class="fa-solid fa-triangle-exclamation me-2"></i>Confirmer la suppression</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Supprimer <strong>{{ obj.title }}</strong> et tous ses exercices associés ? Cette action est <strong>irréversible</strong>.
+                                    </div>
+                                    <div class="modal-footer border-0 pt-0">
+                                        <button class="btn btn-light rounded-pill" data-bs-dismiss="modal">Annuler</button>
+                                        <form method="POST" action="{{ path('app_admin_objective_delete', {id: obj.id}) }}" style="display:inline">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete_obj_' ~ obj.id) }}">
+                                            <button type="submit" class="btn btn-danger rounded-pill">
+                                                <i class="fa-solid fa-trash me-1"></i>Supprimer
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </main>
+</div>
+
+{# FAB #}
+<a href="{{ path('app_admin_objective_new') }}" class="fab-new" title="Nouvel objectif">
+    <i class="fa-solid fa-plus"></i>
+</a>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function togglePublish(id, btn) {
+    fetch(`/admin/objectives/${id}/toggle-publish`, {
+        method: 'POST',
+        headers: {'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/json'},
+    }).then(r => r.json()).then(data => {
+        const card = document.getElementById('obj-card-' + id);
+        const badge = card.querySelector('.badge-published, .badge-draft');
+        const icon = btn.querySelector('i');
+
+        if (data.published) {
+            badge.className = 'badge-published';
+            badge.textContent = '✓ Publié';
+            icon.className = 'fa-solid fa-eye-slash';
+            btn.title = 'Dépublier';
+        } else {
+            badge.className = 'badge-draft';
+            badge.textContent = 'Brouillon';
+            icon.className = 'fa-solid fa-eye';
+            btn.title = 'Publier';
+        }
+    });
+}
+
+// Live search with small debounce
+let timer;
+document.getElementById('searchInput').addEventListener('input', function () {
+    clearTimeout(timer);
+    timer = setTimeout(() => this.form.submit(), 400);
+});
+</script>
+{% endblock %}
