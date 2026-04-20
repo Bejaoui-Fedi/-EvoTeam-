@@ -1,0 +1,3 @@
+pro_calendar_bundle:
+    resource: "../../src/ProCalendarBundle/Controller/ProCalendarController.php"
+    type: attribute
