@@ -21,6 +21,7 @@ security:
             context: app_security
             lazy: true
             provider: app_user_provider
+            context: shared_auth
             form_login:
                 login_path: app_admin_login
                 check_path: app_admin_login
@@ -38,6 +39,7 @@ security:
             context: app_security
             lazy: true
             provider: app_user_provider
+            context: shared_auth
             form_login:
                 login_path: app_user_login
                 check_path: app_user_login
@@ -79,10 +81,16 @@ security:
 
         # Routes admin (back-office)
         - { path: ^/admin, roles: ROLE_ADMIN }
+<<<<<<< HEAD
 
         # Routes utilisateurs
         - { path: ^/user/dashboard, roles: [ROLE_PATIENT, ROLE_COACH, ROLE_PSYCHOLOGUE] }
         - { path: ^/user/profile, roles: [ROLE_PATIENT, ROLE_COACH, ROLE_PSYCHOLOGUE] }
+=======
+        - { path: ^/user/dashboard, roles: [ROLE_PATIENT, ROLE_COACH, ROLE_PSYCHOLOGUE] }
+        - { path: ^/user/profile, roles: [ROLE_PATIENT, ROLE_COACH, ROLE_PSYCHOLOGUE] }
+        # - { path: ^/profile, roles: ROLE_USER }
+>>>>>>> origin/!!!!!!!!!!!!!!!!!
 
 when@test:
     security:

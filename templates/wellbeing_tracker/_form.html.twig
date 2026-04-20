@@ -1,0 +1,78 @@
+{{ form_start(form) }}
+<div class="container-fluid px-0">
+    <div class="card user" style="width: 100%; max-width: 800px; margin: 0 auto; padding: 30px; border-radius: 20px;">
+        
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="form-group">
+                    {{ form_label(form.date, 'Date', {'label_attr': {'class': 'form-label fw-bold text-dark'}}) }}
+                    {{ form_widget(form.date, {'attr': {'class': 'form-control', 'style': 'border-radius: 12px;'}}) }}
+                    {{ form_errors(form.date) }}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    {{ form_label(form.sleepHours, 'Sleep Hours', {'label_attr': {'class': 'form-label fw-bold text-dark'}}) }}
+                    {{ form_widget(form.sleepHours, {'attr': {'class': 'form-control', 'style': 'border-radius: 12px;', 'step': '0.5'}}) }}
+                    {{ form_errors(form.sleepHours) }}
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <div class="form-group">
+                    {{ form_label(form.mood, 'Mood (1-5)', {'label_attr': {'class': 'form-label fw-bold text-dark'}}) }}
+                    {{ form_widget(form.mood, {'attr': {'class': 'form-control', 'style': 'border-radius: 12px;'}}) }}
+                    {{ form_errors(form.mood) }}
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    {{ form_label(form.stress, 'Stress (1-5)', {'label_attr': {'class': 'form-label fw-bold text-dark'}}) }}
+                    {{ form_widget(form.stress, {'attr': {'class': 'form-control', 'style': 'border-radius: 12px;'}}) }}
+                    {{ form_errors(form.stress) }}
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    {{ form_label(form.energy, 'Energy (1-5)', {'label_attr': {'class': 'form-label fw-bold text-dark'}}) }}
+                    {{ form_widget(form.energy, {'attr': {'class': 'form-control', 'style': 'border-radius: 12px;'}}) }}
+                    {{ form_errors(form.energy) }}
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="form-group">
+                    {{ form_label(form.note, 'Notes', {'label_attr': {'class': 'form-label fw-bold text-dark'}}) }}
+                    {{ form_widget(form.note, {'attr': {'class': 'form-control', 'style': 'border-radius: 12px; min-height: 100px;', 'rows': 4}}) }}
+                    {{ form_errors(form.note) }}
+                </div>
+            </div>
+        </div>
+
+        {# Hidden fields #}
+        {% for child in form %}
+            {% if 'hidden' in child.vars.block_prefixes %}
+                {{ form_widget(child) }}
+            {% endif %}
+        {% endfor %}
+
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex gap-3 justify-content-end">
+                    <a href="{{ path('app_wellbeing_tracker_index') }}" class="btn btn-secondary px-4 py-2" style="border-radius: 50px;">
+                        <i class="fa fa-times"></i> Annuler
+                    </a>
+                    <button type="submit" class="btn btn-primary px-4 py-2" style="background: linear-gradient(135deg, #1e4d6b 0%, #2980b9 100%); border: none; border-radius: 50px;">
+                        <i class="fa fa-save"></i> {{ button_label|default('Save') }}
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+{{ form_end(form) }}
