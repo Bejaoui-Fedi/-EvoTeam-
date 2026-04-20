@@ -17,8 +17,11 @@
         <a href="{{ path('app_user_dashboard') }}" class="user-nav-link {{ app.request.get('_route') == 'app_user_dashboard' ? 'active' : '' }}">
             <i class="fa-solid fa-hotel"></i> Tableau de bord
         </a>
-        <a href="{{ path('app_user_calendar') }}" class="user-nav-link {{ app.request.get('_route') == 'app_user_calendar' ? 'active' : '' }}">
-            <i class="fa-solid fa-calendar-alt"></i> Mon Agenda
+        <a href="{{ path('app_ai_coach_index') }}" class="user-nav-link {{ app.request.get('_route') == 'app_ai_coach_index' ? 'active' : '' }}">
+            <i class="fa-solid fa-robot"></i> AI Health Hub
+        </a>
+        <a href="#" class="user-nav-link">
+            <i class="fa-solid fa-calendar-check"></i> Événements
         </a>
         <a href="{{ path('app_user_objective_list') }}" class="user-nav-link {{ app.request.get('_route') starts with 'app_user_objective' or app.request.get('_route') starts with 'app_user_exercise' ? 'active' : '' }}">
             <i class="fa-solid fa-dumbbell"></i> Exercices
@@ -39,8 +42,9 @@
                 <i class="fa-solid fa-user-md"></i> Espace Pro
             </a>
         {% else %}
-            <a href="{{ path('app_patient_workspace') }}" class="user-nav-link">
-                <i class="fa-solid fa-user-clock"></i> Mes rendez-vous
+            {# Patients/Role simple see limited view #}
+            <a href="{{ path('app_wellbeing_tracker_index') }}" class="user-nav-link {{ app.request.get('_route') == 'app_wellbeing_tracker_index' ? 'active' : '' }}">
+                <i class="fa-solid fa-feather"></i> Journal bien-être
             </a>
         {% endif %}
 

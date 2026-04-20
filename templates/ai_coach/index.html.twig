@@ -1,0 +1,630 @@
+{% extends 'base.html.twig' %}
+
+{% set isAdminLayout = is_granted('ROLE_ADMIN') %}
+
+{% block title %}Evolia — AI Health Hub{% endblock %}
+
+{% block body_class %}{{ isAdminLayout ? 'admin-theme' : 'user-theme' }}{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+    <link rel="stylesheet" href="{{ asset('styles.css') }}">
+    <link rel="stylesheet" href="{{ asset(isAdminLayout ? 'admin_dashboard.css' : 'user_dashboard.css') }}">
+    <style>
+        body.user-theme, body.admin-theme { display: block !important; padding: 0 !important; margin: 0 !important; width: 100vw !important; height: 100vh !important; overflow: hidden !important; background: #f1f5f9 !important; }
+        .user-scope, .admin-scope { display: flex !important; width: 100vw !important; height: 100vh !important; max-width: none !important; margin: 0 !important; padding: 0 !important; }
+        .user-main-content, .admin-main-content { flex-grow: 1 !important; width: calc(100vw - 280px) !important; max-width: none !important; overflow-y: auto !important; padding: 2rem !important; background: #f8fafc; }
+        .habita-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 4px 20px rgba(31, 38, 135, 0.05); padding: 1.25rem; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); height: 100%; position: relative; }
+        .habita-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(31, 38, 135, 0.1); }
+        .metric-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; margin-bottom: 0; }
+        .metric-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .metric-add-btn { width: 32px; height: 32px; border-radius: 50% !important; padding: 0 !important; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .metric-add-btn:hover { transform: scale(1.1); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
+        .metric-value { font-size: 1.75rem; font-weight: 800; line-height: 1; margin-bottom: 0.25rem; }
+        .metric-label { font-size: 0.7rem; letter-spacing: 0.05em; color: #64748b; }
+        .nutrient-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-top: 1rem; }
+        .nutrient-item { display: flex; flex-direction: column; align-items: center; padding: 0.5rem; background: rgba(0,0,0,0.02); border-radius: 12px; }
+        .nutrient-label { font-size: 0.6rem; color: #64748b; text-transform: uppercase; font-weight: 700; margin-bottom: 2px; }
+        .nutrient-value { font-size: 0.85rem; font-weight: 700; color: #1e293b; }
+        .micro-row { display: flex; justify-content: space-between; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px dashed rgba(0,0,0,0.05); }
+        .micro-item { display: flex; align-items: center; gap: 4px; font-size: 0.65rem; color: #64748b; }
+        .micro-dot { width: 4px; height: 4px; border-radius: 50%; }
+        .chart-container { height: 250px; position: relative; }
+        .coach-card { cursor: pointer; overflow: hidden; position: relative; }
+        .coach-badge { position: absolute; top: 1rem; right: 1rem; background: rgba(30, 77, 107, 0.1); color: #1e4d6b; padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.75rem; font-weight: 600; z-index: 2; }
+        #chat-modal .modal-content { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border-radius: 30px; border: none; }
+        .chat-messages { height: 400px; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 1rem; }
+        .message-bubble { max-width: 80%; padding: 1rem; border-radius: 20px; font-size: 0.95rem; line-height: 1.5; }
+        .message-user { align-self: flex-end; background: #1e4d6b; color: white; border-bottom-right-radius: 4px; }
+        .message-ai { align-self: flex-start; background: #f1f5f9; color: #1e293b; border-bottom-left-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        @keyframes typing { from { opacity: 0.4; } to { opacity: 1; } }
+        .typing-dot { animation: typing 1s infinite alternate; }
+        .patient-search-container .choices { margin-bottom: 0; min-width: 300px; }
+        .flash-message { border-radius: 15px; border: none; margin-bottom: 2rem; }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="{{ isAdminLayout ? 'admin-scope' : 'user-scope' }}">
+    {% if isAdminLayout %}
+        {% include 'admin_nav_bar/index.html.twig' %}
+    {% else %}
+        {% include 'user_nav_bar/index.html.twig' %}
+    {% endif %}
+
+    <div class="{{ isAdminLayout ? 'admin-main-content' : 'user-main-content' }}">
+        
+        {# Flash Messages #}
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label == 'error' ? 'danger' : 'success' }} flash-message alert-dismissible fade show">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        <div class="d-flex align-items-center justify-content-between mb-5">
+            <div>
+                <h1 class="fw-bold text-dark mb-1">AI Health Hub</h1>
+                <p class="text-muted">
+                    {% if not is_viewing_self %}
+                        <span class="badge bg-primary bg-opacity-10 text-primary me-2 px-3 py-2 rounded-pill">
+                            <i class="fa-solid fa-eye me-1"></i> Consultation: {{ viewed_user.nom }}
+                        </span>
+                    {% endif %}
+                    Propulsé par Habit AI — Votre partenaire bien-être intelligent
+                </p>
+            </div>
+            
+            <div class="d-flex align-items-center gap-3">
+                {% if is_specialist %}
+                    <div class="patient-search-container">
+                        <select id="patient-search" class="form-select">
+                            <option value="">Sélectionner un patient...</option>
+                            {% for patient in patients %}
+                                <option value="{{ patient.id }}" {{ viewed_user.id == patient.id ? 'selected' : '' }}>
+                                    {{ patient.nom }} ({{ patient.email }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                {% endif %}
+
+                {% if not is_viewing_self %}
+                    <a href="{{ path('app_ai_coach_index') }}" class="btn btn-outline-secondary rounded-pill px-4">
+                        <i class="fa-solid fa-arrow-left me-2"></i> Mon Hub
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        {# Complete Metrics Row #}
+        <div class="row g-3 mb-5">
+            <div class="col-md-3">
+                <div class="habita-card">
+                    <div class="metric-header">
+                        <div class="metric-icon bg-primary bg-opacity-10 text-primary">
+                            <i class="fa-solid fa-person-walking"></i>
+                        </div>
+                        {% if is_viewing_self %}
+                        <button class="btn btn-primary metric-add-btn" data-bs-toggle="modal" data-bs-target="#stepsModal">
+                            <i class="fa-solid fa-plus fa-xs"></i>
+                        </button>
+                        {% endif %}
+                    </div>
+                    <div class="metric-label text-uppercase fw-bold">Pas Aujourd'hui</div>
+                    <div class="metric-value text-dark">{{ (current_steps|default(0))|number_format(0, ',', ' ') }}</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="habita-card">
+                    <div class="metric-header">
+                        <div class="metric-icon bg-success bg-opacity-10 text-success">
+                            <i class="fa-solid fa-fire"></i>
+                        </div>
+                        {% if is_viewing_self %}
+                        <button class="btn btn-success metric-add-btn" data-bs-toggle="modal" data-bs-target="#nutritionModal">
+                            <i class="fa-solid fa-plus fa-xs"></i>
+                        </button>
+                        {% endif %}
+                    </div>
+                    <div class="metric-label text-uppercase fw-bold">Calories Consommées</div>
+                    <div class="metric-value text-dark">
+                        {{ (nutrition_data.totalCalories|default(0))|number_format(0) }}
+                        <span class="fs-6 fw-normal text-muted">kcal</span>
+                    </div>
+                    <div class="progress mt-2" style="height: 4px; background: rgba(0,0,0,0.05);">
+                        <div class="progress-bar bg-success rounded-pill" style="width: {{ (nutrition_data.totalCalories|default(0) / profile.caloriesGoal|default(2000)) * 100 }}%"></div>
+                    </div>
+
+                    <div class="nutrient-grid">
+                        <div class="nutrient-item">
+                            <span class="nutrient-label">Protéines</span>
+                            <span class="nutrient-value">{{ nutrition_data.protein|default(0)|number_format(0) }}g</span>
+                        </div>
+                        <div class="nutrient-item">
+                            <span class="nutrient-label">Glucides</span>
+                            <span class="nutrient-value">{{ nutrition_data.carbs|default(0)|number_format(0) }}g</span>
+                        </div>
+                        <div class="nutrient-item">
+                            <span class="nutrient-label">Lipides</span>
+                            <span class="nutrient-value">{{ nutrition_data.fat|default(0)|number_format(0) }}g</span>
+                        </div>
+                    </div>
+
+                    <div class="micro-row">
+                        <div class="micro-item"><div class="micro-dot bg-primary"></div> Fibres: {{ nutrition_data.fiber|default(0)|number_format(0) }}g</div>
+                        <div class="micro-item"><div class="micro-dot bg-warning"></div> Sucre: {{ nutrition_data.sugar|default(0)|number_format(0) }}g</div>
+                        <div class="micro-item"><div class="micro-dot bg-danger"></div> Sodium: {{ nutrition_data.sodium|default(0)|number_format(0) }}mg</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="habita-card">
+                    <div class="metric-header">
+                        <div class="metric-icon bg-warning bg-opacity-10 text-warning">
+                            <i class="fa-solid fa-weight-scale"></i>
+                        </div>
+                        {% if is_viewing_self %}
+                        <button class="btn btn-warning metric-add-btn" data-bs-toggle="modal" data-bs-target="#weightModal">
+                            <i class="fa-solid fa-plus fa-xs"></i>
+                        </button>
+                        {% endif %}
+                    </div>
+                    <div class="metric-label text-uppercase fw-bold">Poids Actuel</div>
+                    <div class="metric-value text-dark">
+                        {{ current_weight }}
+                        <span class="fs-6 fw-normal text-muted">kg</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="habita-card">
+                    <div class="metric-header">
+                        <div class="metric-icon bg-info bg-opacity-10 text-info">
+                            <i class="fa-solid fa-droplet"></i>
+                        </div>
+                        {% if is_viewing_self %}
+                        <button class="btn btn-info metric-add-btn" data-bs-toggle="modal" data-bs-target="#waterModal">
+                            <i class="fa-solid fa-plus fa-xs"></i>
+                        </button>
+                        {% endif %}
+                    </div>
+                    <div class="metric-label text-uppercase fw-bold">Eau</div>
+                    <div class="metric-value text-dark">
+                        {{ nutrition_data.waterIntake|default(0) }}
+                        <span class="fs-6 fw-normal text-muted">ml</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Patient Local History (Visible only to specialists) #}
+        {% if is_specialist %}
+        <div class="row g-4 mb-5">
+            <div class="col-md-6">
+                <div class="habita-card h-100">
+                    <h5 class="fw-bold mb-3"><i class="fa-solid fa-book-medical me-2 text-primary"></i>Journal Bien-être (Evolia)</h5>
+                    <div class="list-group list-group-flush border-top">
+                        {% for entry in local_wellbeing %}
+                            <div class="list-group-item bg-transparent px-0 py-3">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="badge {{ entry.mood == 'happy' ? 'bg-success' : 'bg-secondary' }} rounded-pill">{{ entry.mood|title }}</span>
+                                    <small class="text-muted">{{ entry.date|date('d M Y') }}</small>
+                                </div>
+                                <p class="small text-dark mb-0 fst-italic">"{{ entry.note|slice(0, 100) }}..."</p>
+                            </div>
+                        {% else %}
+                            <p class="text-muted small py-3">Aucune entrée trouvée pour ce patient.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="habita-card h-100">
+                    <h5 class="fw-bold mb-3"><i class="fa-solid fa-list-check me-2 text-success"></i>Routines Quotidiennes</h5>
+                    <div class="list-group list-group-flush border-top">
+                        {% for task in local_routines %}
+                            <div class="list-group-item bg-transparent px-0 py-3 d-flex align-items-center justify-content-between">
+                                <div>
+                                    <div class="fw-bold small">{{ task.title }}</div>
+                                    <div class="text-muted smaller">Créé le {{ task.createdAt|date('d M') }}</div>
+                                </div>
+                                <span class="badge bg-{{ task.isCompleted ? 'success' : 'warning' }} bg-opacity-10 text-{{ task.isCompleted ? 'success' : 'warning' }} rounded-pill">
+                                    {{ task.isCompleted ? 'Terminé' : 'En cours' }}
+                                </span>
+                            </div>
+                        {% else %}
+                            <p class="text-muted small py-3">Aucune routine active.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {# Charts Row #}
+        <div class="row g-4 mb-5">
+            <div class="col-md-8">
+                <div class="habita-card h-100">
+                    <h5 class="fw-bold mb-4">Vos Progrès Quotidien (Score Global)</h5>
+                    <div class="chart-container">
+                        <canvas id="advancesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="habita-card h-100 border-start border-4 border-primary">
+                    <h5 class="fw-bold mb-3"><i class="fa-solid fa-brain me-2 text-primary"></i>Analyse de Santé Mentale</h5>
+                    <div class="p-3 rounded-4 bg-primary bg-opacity-5 mb-3">
+                        <p class="text-dark small mb-0 fw-medium">
+                            <i class="fa-solid fa-quote-left me-2 opacity-25"></i>
+                            {{ mental_health_analysis }}
+                        </p>
+                    </div>
+                    <div class="small text-muted">
+                        <i class="fa-solid fa-circle-info me-1"></i> 
+                        Cette analyse prend en compte vos tâches, votre hydratation et votre activité.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# AI Coaches Row (Interactive for patient, Static descriptions for specialist) #}
+        <h4 class="fw-bold mb-4">Coachs AI Personnalisés</h4>
+        <div class="row g-4 mb-5">
+            {% set coaches = [
+                {'id': 'eating', 'name': 'Coach Nutrition', 'desc': 'Optimisez vos repas et atteignez vos objectifs caloriques.', 'badge': 'NUTRITION', 'lottie': '819d28ea-4ff7-4e94-b209-6638840798e4/bIKshK5l1e'},
+                {'id': 'mindfulness', 'name': 'Coach de Vie', 'desc': 'Gérez votre stress et améliorez votre clarté mentale.', 'badge': 'ZEN', 'lottie': '574e402e-c567-4632-9ecb-8d0229497746/YpYI66r6Yw'},
+                {'id': 'meditation', 'name': 'Guide Méditation', 'desc': 'Séances guidées et techniques de respiration profonde.', 'badge': 'MÉDITATION', 'lottie': 'e6ec295b-38cc-4d87-9d7a-ec75fb019f56/X9R7qH6vD7'}
+            ] %}
+            {% for coach in coaches %}
+            <div class="col-md-4">
+                <div class="habita-card coach-card {{ is_viewing_self ? '' : 'pe-none' }}" onclick="{{ is_viewing_self ? 'openChat(\'' ~ coach.id ~ '\')' : '' }}">
+                    <span class="coach-badge">{{ coach.badge }}</span>
+                    <div class="welcome-icon mb-3">
+                        <lottie-player src="https://lottie.host/{{ coach.lottie }}.json" background="transparent" speed="1" style="width: 80px; height: 80px;" loop autoplay></lottie-player>
+                    </div>
+                    <h5 class="fw-bold">{{ coach.name }}</h5>
+                    <p class="text-muted small">{{ coach.desc }}</p>
+                    {% if is_viewing_self %}
+                        <button class="btn btn-sm btn-primary rounded-pill w-100 mt-2">Discuter</button>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{# Modals (Only rendered for owner) #}
+{% if is_viewing_self %}
+<div class="modal fade" id="chatModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" id="chatTitle">Coach AI</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="chat-messages" id="chatMessages"></div>
+                <div class="input-group mt-3 p-2 bg-white rounded-pill border shadow-sm">
+                    <input type="text" id="chatInput" class="form-control border-0 bg-transparent ps-3" placeholder="Écrivez votre message...">
+                    <button class="btn btn-primary rounded-pill px-4" id="sendBtn">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Steps Modal -->
+<div class="modal fade" id="stepsModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content habita-card p-4 border-0 shadow-lg">
+            <div class="modal-header border-0 p-0 mb-3">
+                <h5 class="modal-title fw-bold">Enregistrer les Pas</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ path('app_ai_coach_log') }}" method="POST">
+                <input type="hidden" name="type" value="steps">
+                <input type="hidden" name="redirect" value="1">
+                <div class="mb-3">
+                    <label class="form-label small text-muted text-uppercase fw-bold">Nombre de pas</label>
+                    <input type="number" name="value" class="form-control rounded-pill" placeholder="ex: 5000" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 rounded-pill fw-bold">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Weight Modal -->
+<div class="modal fade" id="weightModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content habita-card p-4 border-0 shadow-lg">
+            <div class="modal-header border-0 p-0 mb-3">
+                <h5 class="modal-title fw-bold">Enregistrer le Poids</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ path('app_ai_coach_log') }}" method="POST">
+                <input type="hidden" name="type" value="weight">
+                <input type="hidden" name="redirect" value="1">
+                <div class="mb-3">
+                    <label class="form-label small text-muted text-uppercase fw-bold">Poids (kg)</label>
+                    <input type="number" step="0.1" name="value" class="form-control rounded-pill" placeholder="ex: 75.5" required>
+                </div>
+                <button type="submit" class="btn btn-warning w-100 rounded-pill fw-bold">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Water Modal -->
+<!-- Water Modal -->
+<div class="modal fade" id="waterModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content habita-card p-4 border-0 shadow-lg">
+            <div class="modal-header border-0 p-0 mb-3">
+                <h5 class="modal-title fw-bold">Enregistrer l'Eau</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ path('app_ai_coach_log') }}" method="POST">
+                <input type="hidden" name="type" value="water">
+                <input type="hidden" name="redirect" value="1">
+                <div class="mb-3">
+                    <label class="form-label small text-muted text-uppercase fw-bold">Quantité (ml)</label>
+                    <div class="input-group">
+                        <input type="number" name="value" class="form-control rounded-pill-start border-end-0" value="250" required>
+                        <span class="input-group-text rounded-pill-end bg-transparent border-start-0 text-muted">ml</span>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-info w-100 rounded-pill fw-bold">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Nutrition Modal -->
+<div class="modal fade" id="nutritionModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-content habita-card p-4 border-0 shadow-lg" style="max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header border-0 p-0 mb-3">
+                <h5 class="modal-title fw-bold">Journal Alimentaire</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            
+            <div class="d-flex bg-light rounded-pill p-1 mb-4" style="max-width: 300px; margin: 0 auto;">
+                <button type="button" class="btn btn-sm flex-fill rounded-pill py-2 fw-bold active" id="btn-ai-mode" onclick="toggleNutritionMode('ai')">Evolia AI</button>
+                <button type="button" class="btn btn-sm flex-fill rounded-pill py-2 fw-bold" id="btn-manual-mode" onclick="toggleNutritionMode('manual')">Manuel</button>
+            </div>
+
+            {# AI Mode Form #}
+            <div id="nutrition-ai-form">
+                <p class="small text-muted mb-3">Décrivez votre repas et Evolia AI calculera les calories pour vous.</p>
+                <form action="{{ path('app_ai_coach_log') }}" method="POST">
+                    <input type="hidden" name="type" value="meal_description">
+                    <input type="hidden" name="redirect" value="1">
+                    <div class="mb-3">
+                        <label class="form-label small text-muted text-uppercase fw-bold">Que mangez-vous ?</label>
+                        <textarea name="value" class="form-control rounded-4" rows="3" placeholder="ex: Un bol d'avoine avec des myrtilles et du miel..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100 rounded-pill fw-bold py-2">Analyser & Enregistrer</button>
+                </form>
+            </div>
+
+            {# Manual Mode Form #}
+            <div id="nutrition-manual-form" style="display: none;">
+                <p class="small text-muted mb-3">Saisissez manuellement les valeurs nutritionnelles de votre repas.</p>
+                <form action="{{ path('app_ai_coach_log') }}" method="POST">
+                    <input type="hidden" name="type" value="nutrition_bulk">
+                    <input type="hidden" name="redirect" value="1">
+                    
+                    <div class="mb-3">
+                        <label class="form-label small text-muted text-uppercase fw-bold">Nom du Repas</label>
+                        <input type="text" name="mealName" class="form-control rounded-pill" placeholder="ex: Shaker de protéines" required>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label small text-muted text-uppercase fw-bold">Calories (kcal)</label>
+                            <input type="number" name="calories" class="form-control rounded-pill" placeholder="0" required>
+                        </div>
+                        
+                        <div class="col-4">
+                            <label class="form-label small text-muted text-uppercase fw-bold">Prot (g)</label>
+                            <input type="number" name="protein" class="form-control rounded-pill" placeholder="0">
+                        </div>
+                        <div class="col-4">
+                            <label class="form-label small text-muted text-uppercase fw-bold">Glu (g)</label>
+                            <input type="number" name="carbs" class="form-control rounded-pill" placeholder="0">
+                        </div>
+                        <div class="col-4">
+                            <label class="form-label small text-muted text-uppercase fw-bold">Lip (g)</label>
+                            <input type="number" name="fat" class="form-control rounded-pill" placeholder="0">
+                        </div>
+
+                        <div class="col-4">
+                            <label class="form-label small text-muted text-uppercase fw-bold">Fibr (g)</label>
+                            <input type="number" name="fiber" class="form-control rounded-pill" placeholder="0">
+                        </div>
+                        <div class="col-4">
+                            <label class="form-label small text-muted text-uppercase fw-bold">Sucr (g)</label>
+                            <input type="number" name="sugar" class="form-control rounded-pill" placeholder="0">
+                        </div>
+                        <div class="col-4">
+                            <label class="form-label small text-muted text-uppercase fw-bold">Sod (mg)</label>
+                            <input type="number" name="sodium" class="form-control rounded-pill" placeholder="0">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success w-100 rounded-pill fw-bold py-2 mt-4">Enregistrer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
+<script>
+    {% if is_specialist %}
+    // --- Patient Search Bar ---
+    document.addEventListener('DOMContentLoaded', () => {
+        const element = document.getElementById('patient-search');
+        if (element) {
+            const choices = new Choices(element, {
+                searchEnabled: true,
+                itemSelectText: '',
+                placeholderValue: 'Rechercher un patient...'
+            });
+            element.addEventListener('change', (e) => {
+                if (e.target.value) {
+                    window.location.href = `{{ path('app_ai_coach_index') }}?patientId=${e.target.value}`;
+                }
+            });
+        }
+    });
+    {% endif %}
+
+    // --- Charts ---
+    // --- Wellness Advances Chart ---
+    const advancesCtx = document.getElementById('advancesChart').getContext('2d');
+    const advancesRaw = {{ advances_data|json_encode|raw }};
+    
+    const advancesLabels = advancesRaw.map(d => d.day);
+    const advancesValues = advancesRaw.map(d => d.score);
+
+    const gradient = advancesCtx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, 'rgba(30, 77, 107, 0.4)');
+    gradient.addColorStop(1, 'rgba(30, 77, 107, 0.0)');
+
+    new Chart(advancesCtx, {
+        type: 'line',
+        data: {
+            labels: advancesLabels,
+            datasets: [{
+                label: 'Score Global (%)',
+                data: advancesValues,
+                borderColor: '#1e4d6b',
+                backgroundColor: gradient,
+                fill: true,
+                tension: 0.4,
+                borderWidth: 3,
+                pointRadius: 6,
+                pointBackgroundColor: '#fff',
+                pointBorderWidth: 3,
+                pointHoverRadius: 8,
+                pointHoverBackgroundColor: '#1e4d6b'
+            }]
+        },
+        options: { 
+            maintainAspectRatio: false, 
+            plugins: { 
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `Score: ${context.parsed.y}%`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: {
+                        callback: function(value) { return value + "%"; }
+                    }
+                }
+            }
+        }
+    });
+
+
+
+    {% if is_viewing_self %}
+    // --- Interactive Logic (Chat & Water) ---
+    let currentCoach = 'mindfulness';
+    const chatModal = new bootstrap.Modal(document.getElementById('chatModal'));
+    const chatMessages = document.getElementById('chatMessages');
+    const chatInput = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('sendBtn');
+    let messageHistory = [];
+
+    function openChat(coach) {
+        currentCoach = coach;
+        const titles = {'eating': 'Coach Nutrition AI', 'mindfulness': 'Coach de Vie AI', 'meditation': 'Guide Méditation AI'};
+        document.getElementById('chatTitle').innerText = titles[coach];
+        chatMessages.innerHTML = `<div class="message-bubble message-ai">Bonjour ! Je suis votre ${titles[coach]}. Comment puis-je aider ?</div>`;
+        messageHistory = [];
+        chatModal.show();
+    }
+
+    async function sendMessage() {
+        const msg = chatInput.value.trim();
+        if (!msg) return;
+        appendMessage(msg, 'user');
+        chatInput.value = '';
+        const loadingId = 'l-' + Date.now();
+        chatMessages.innerHTML += `<div class="message-bubble message-ai" id="${loadingId}">...</div>`;
+        try {
+            const res = await fetch('{{ path("app_ai_coach_chat") }}', { method: 'POST', mode: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: msg, coach: currentCoach, history: messageHistory }) });
+            const data = await res.json();
+            document.getElementById(loadingId).remove();
+            appendMessage(data.message || data.error, 'ai');
+            messageHistory.push({ role: 'user', content: msg }, { role: 'assistant', content: data.message });
+        } catch (e) { document.getElementById(loadingId).remove(); }
+    }
+
+    function appendMessage(text, role) {
+        const div = document.createElement('div');
+        div.className = `message-bubble message-${role}`;
+        div.innerText = text;
+        chatMessages.appendChild(div);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+
+    function quickLogWater(amount) {
+        document.getElementById('hiddenType').value = 'water';
+        document.getElementById('hiddenValue').value = amount;
+        document.getElementById('hiddenLogForm').submit();
+    }
+    {% endif %}
+
+    function toggleNutritionMode(mode) {
+        const aiForm = document.getElementById('nutrition-ai-form');
+        const manualForm = document.getElementById('nutrition-manual-form');
+        const btnAi = document.getElementById('btn-ai-mode');
+        const btnManual = document.getElementById('btn-manual-mode');
+        
+        if (mode === 'ai') {
+            aiForm.style.display = 'block';
+            manualForm.style.display = 'none';
+            btnAi.classList.add('active', 'btn-success');
+            btnAi.classList.remove('btn-light');
+            btnManual.classList.remove('active', 'btn-success');
+            btnManual.classList.add('btn-light');
+        } else {
+            aiForm.style.display = 'none';
+            manualForm.style.display = 'block';
+            btnManual.classList.add('active', 'btn-success');
+            btnManual.classList.remove('btn-light');
+            btnAi.classList.remove('active', 'btn-success');
+            btnAi.classList.add('btn-light');
+        }
+    }
+</script>
+{% endblock %}

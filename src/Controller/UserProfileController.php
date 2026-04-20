@@ -58,6 +58,7 @@ final class UserProfileController extends AbstractController
         $nom = $request->request->get('nom');
         $phone = $request->request->get('phone');
         $bio = $request->request->get('bio');
+        $habitAiToken = $request->request->get('habitAiToken');
         $avatarFile = $request->files->get('avatar');
 
         if (empty($nom) || empty($phone)) {
@@ -83,6 +84,7 @@ final class UserProfileController extends AbstractController
         // Update User info
         $user->setNom($nom);
         $user->setTelephone($phone);
+        $user->setHabitAiToken($habitAiToken);
         $userService->updateUser($user);
 
         // Update Profile info

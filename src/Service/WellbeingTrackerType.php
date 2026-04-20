@@ -48,13 +48,17 @@ class WellbeingTrackerType extends AbstractType
             ->add('user', EntityType::class, [
                 'class' => User::class,
                 'choice_label' => 'nom',
-                'label' => 'User',
+                'label' => 'Utilisateur',
+                'placeholder' => 'Sélectionner un utilisateur...',
+                'required' => true,
                 'attr' => ['class' => 'form-select']
             ])
             ->add('routineTask', EntityType::class, [
                 'class' => DailyRoutineTask::class,
                 'choice_label' => 'title',
-                'label' => 'Related Routine Task',
+                'label' => 'Tâche de routine liée',
+                'placeholder' => 'Aucune tâche liée (optionnel)',
+                'required' => false,
                 'attr' => ['class' => 'form-select']
             ])
         ;

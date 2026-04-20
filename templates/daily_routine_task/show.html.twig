@@ -254,9 +254,11 @@
                             <i class="fa-solid fa-trash"></i> Supprimer
                         </button>
                     </form>
-                    <a href="{{ path('app_daily_routine_task_edit', {'id': daily_routine_task.id}) }}" class="btn-edit">
-                        <i class="fa-solid fa-edit"></i> Modifier
-                    </a>
+                    {% if not isAdminLayout %}
+                        <a href="{{ path('app_daily_routine_task_edit', {'id': daily_routine_task.id}) }}" class="btn-edit">
+                            <i class="fa-solid fa-edit"></i> Modifier
+                        </a>
+                    {% endif %}
                 </div>
             </div>
         </div>

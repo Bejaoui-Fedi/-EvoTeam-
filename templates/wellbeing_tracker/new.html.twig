@@ -10,6 +10,7 @@
 {% block stylesheets %}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
     <link rel="stylesheet" href="{{ asset('styles.css') }}">
     <link rel="stylesheet" href="{{ asset(isAdminLayout ? 'admin_dashboard.css' : 'user_dashboard.css') }}">
     <style>
@@ -156,6 +157,67 @@
                 padding: 1rem !important;
             }
         }
+
+        /* ── Server-side Symfony form_errors() → red ── */
+        /* Symfony renders: <ul><li>message</li></ul> with no classes */
+        .form-group ul,
+        .form-group > ul,
+        div > ul {
+            list-style: none;
+            padding: 0;
+            margin: 0.4rem 0 0 0;
+        }
+        .form-group ul li,
+        .form-group > ul > li,
+        div > ul > li {
+            color: #dc3545 !important;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.3rem;
+        }
+        .form-group ul li::before,
+        div > ul > li::before {
+            content: '\26A0\FE0F';
+            flex-shrink: 0;
+        }
+
+        /* ── Choices.js custom styling ── */
+        .choices__inner {
+            border-radius: 12px !important;
+            border: 1px solid #dee2e6 !important;
+            padding: 0.5rem 1rem !important;
+            font-size: 0.95rem;
+            background: white !important;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+        }
+        .choices__list--dropdown {
+            border-radius: 12px !important;
+            border: 1px solid #dee2e6 !important;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12) !important;
+            z-index: 9999;
+        }
+        .choices__list--dropdown .choices__item--selectable.is-highlighted {
+            background-color: #1e4d6b !important;
+        }
+        .choices__input {
+            background: transparent !important;
+            font-size: 0.95rem;
+        }
+        .is-open .choices__inner {
+            border-color: #1e4d6b !important;
+            box-shadow: 0 0 0 0.2rem rgba(30,77,107,0.2) !important;
+        }
+        .choices[data-type*="select-one"] .choices__button {
+            opacity: 0.6;
+        }
+        .choices__placeholder {
+            color: #adb5bd !important;
+            opacity: 1 !important;
+        }
     </style>
 {% endblock %}
 
@@ -214,22 +276,24 @@
 
             <!-- Form -->
             <div class="form-container">
-                {{ form_start(form) }}
+                {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'id': 'wellbeing-form'}}) }}
                 
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <label class="form-label">
                             <i class="fa-regular fa-calendar me-2"></i> Date
                         </label>
-                        {{ form_widget(form.date, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_widget(form.date, {'attr': {'class': 'form-control', 'id': 'date_input'}}) }}
                         {{ form_errors(form.date) }}
+                        <div class="invalid-feedback" id="date_error" style="display:none;"></div>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">
                             <i class="fa-solid fa-bed me-2"></i> Heures de sommeil
                         </label>
-                        {{ form_widget(form.sleepHours, {'attr': {'class': 'form-control', 'step': '0.5', 'min': '0', 'max': '24'}}) }}
+                        {{ form_widget(form.sleepHours, {'attr': {'class': 'form-control', 'step': '0.5', 'min': '0', 'max': '24', 'id': 'sleep_input'}}) }}
                         {{ form_errors(form.sleepHours) }}
+                        <div class="invalid-feedback" id="sleep_error" style="display:none;"></div>
                     </div>
                 </div>
 
@@ -240,6 +304,7 @@
                         </label>
                         {{ form_widget(form.mood, {'attr': {'class': 'form-select', 'id': 'mood_select'}}) }}
                         {{ form_errors(form.mood) }}
+                        <div class="invalid-feedback" id="mood_error" style="display:none;"></div>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">
@@ -247,6 +312,7 @@
                         </label>
                         {{ form_widget(form.stress, {'attr': {'class': 'form-select', 'id': 'stress_select'}}) }}
                         {{ form_errors(form.stress) }}
+                        <div class="invalid-feedback" id="stress_error" style="display:none;"></div>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">
@@ -254,6 +320,7 @@
                         </label>
                         {{ form_widget(form.energy, {'attr': {'class': 'form-select', 'id': 'energy_select'}}) }}
                         {{ form_errors(form.energy) }}
+                        <div class="invalid-feedback" id="energy_error" style="display:none;"></div>
                     </div>
                 </div>
 
@@ -296,6 +363,24 @@
                     </small>
                 </div>
 
+                {# User + Routine Task — searchable selects, placed above buttons #}
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            <i class="fa-solid fa-user me-2"></i> Utilisateur
+                        </label>
+                        {{ form_widget(form.user, {'attr': {'class': 'form-select select2-user', 'id': 'user_select'}}) }}
+                        {{ form_errors(form.user) }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            <i class="fa-solid fa-dumbbell me-2"></i> Tâche de routine liée
+                        </label>
+                        {{ form_widget(form.routineTask, {'attr': {'class': 'form-select select2-routine', 'id': 'routine_select'}}) }}
+                        {{ form_errors(form.routineTask) }}
+                    </div>
+                </div>
+
                 {# Hidden fields #}
                 {% for child in form %}
                     {% if 'hidden' in child.vars.block_prefixes %}
@@ -312,7 +397,7 @@
                     </button>
                 </div>
                 
-                {{ form_end(form) }}
+                {{ form_end(form, {'render_rest': false}) }}
             </div>
         </div>
     </div>
@@ -345,51 +430,160 @@
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const userEl = document.getElementById('user_select');
+    if (userEl) {
+        new Choices(userEl, {
+            searchEnabled: true,
+            searchPlaceholderValue: 'Tapez pour rechercher...',
+            itemSelectText: '',
+            noResultsText: 'Aucun résultat trouvé',
+            noChoicesText: 'Aucun utilisateur disponible',
+            placeholder: true,
+            placeholderValue: 'Sélectionner un utilisateur...',
+            shouldSort: true,
+            searchFields: ['label']
+        });
+    }
+    const routineEl = document.getElementById('routine_select');
+    if (routineEl) {
+        new Choices(routineEl, {
+            searchEnabled: true,
+            searchPlaceholderValue: 'Tapez pour rechercher...',
+            itemSelectText: '',
+            noResultsText: 'Aucun résultat trouvé',
+            noChoicesText: 'Aucune tâche disponible',
+            placeholder: true,
+            placeholderValue: 'Aucune tâche liée (optionnel)',
+            shouldSort: true,
+            searchFields: ['label']
+        });
+    }
+});
+</script>
+<style>
+    .form-control.is-invalid,
+    .form-select.is-invalid {
+        border-color: #dc3545 !important;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+    }
+    .invalid-feedback {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 0.35rem;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+    .invalid-feedback::before {
+        content: '⚠';
+    }
+</style>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const form = document.querySelector('form');
-        if (form) {
-            form.addEventListener('submit', function(e) {
-                const moodInput = document.querySelector('select[name$="[mood]"]') || document.querySelector('input[name$="[mood]"]');
-                const stressInput = document.querySelector('select[name$="[stress]"]') || document.querySelector('input[name$="[stress]"]');
-                const energyInput = document.querySelector('select[name$="[energy]"]') || document.querySelector('input[name$="[energy]"]');
-                const sleepInput = document.querySelector('input[name$="[sleepHours]"]');
+        const form = document.getElementById('wellbeing-form');
+        if (!form) return;
 
-                if (moodInput) {
-                    const mood = parseInt(moodInput.value);
-                    if (isNaN(mood) || mood < 1 || mood > 5) {
-                        e.preventDefault();
-                        alert('Erreur de saisie: L\'humeur doit être un nombre entre 1 et 5.');
-                        return false;
-                    }
-                }
-                if (stressInput) {
-                    const stress = parseInt(stressInput.value);
-                    if (isNaN(stress) || stress < 1 || stress > 5) {
-                        e.preventDefault();
-                        alert('Erreur de saisie: Le niveau de stress doit être un nombre entre 1 et 5.');
-                        return false;
-                    }
-                }
-                if (energyInput) {
-                    const energy = parseInt(energyInput.value);
-                    if (isNaN(energy) || energy < 1 || energy > 5) {
-                        e.preventDefault();
-                        alert('Erreur de saisie: Le niveau d\'énergie doit être un nombre entre 1 et 5.');
-                        return false;
-                    }
-                }
-                if (sleepInput) {
-                    const sleep = parseFloat(sleepInput.value);
-                    if (isNaN(sleep) || sleep < 0 || sleep > 24) {
-                        e.preventDefault();
-                        alert('Erreur de saisie: Les heures de sommeil doivent être comprises entre 0 et 24.');
-                        return false;
-                    }
-                }
-                function runValidation() {} // marker
-            });
+        function setError(inputEl, errorEl, message) {
+            if (!inputEl || !errorEl) return;
+            inputEl.classList.add('is-invalid');
+            inputEl.classList.remove('is-valid');
+            errorEl.textContent = message;
+            errorEl.style.display = 'flex';
         }
+
+        function clearError(inputEl, errorEl) {
+            if (!inputEl || !errorEl) return;
+            inputEl.classList.remove('is-invalid');
+            inputEl.classList.add('is-valid');
+            errorEl.style.display = 'none';
+        }
+
+        function validateAll() {
+            let isValid = true;
+
+            const dateInput = document.getElementById('date_input');
+            const dateError = document.getElementById('date_error');
+            if (dateInput && !dateInput.value) {
+                setError(dateInput, dateError, 'La date est obligatoire.');
+                isValid = false;
+            } else if (dateInput) {
+                clearError(dateInput, dateError);
+            }
+
+            const sleepInput = document.getElementById('sleep_input');
+            const sleepError = document.getElementById('sleep_error');
+            if (sleepInput) {
+                const sleep = parseFloat(sleepInput.value);
+                if (sleepInput.value === '' || isNaN(sleep)) {
+                    setError(sleepInput, sleepError, 'Le nombre d\'heures de sommeil est obligatoire.');
+                    isValid = false;
+                } else if (sleep < 0 || sleep > 24) {
+                    setError(sleepInput, sleepError, 'Les heures de sommeil doivent être entre 0 et 24.');
+                    isValid = false;
+                } else {
+                    clearError(sleepInput, sleepError);
+                }
+            }
+
+            const moodInput = document.getElementById('mood_select');
+            const moodError = document.getElementById('mood_error');
+            if (moodInput) {
+                const mood = parseInt(moodInput.value);
+                if (!moodInput.value || isNaN(mood)) {
+                    setError(moodInput, moodError, 'Veuillez sélectionner un niveau d\'humeur.');
+                    isValid = false;
+                } else {
+                    clearError(moodInput, moodError);
+                }
+            }
+
+            const stressInput = document.getElementById('stress_select');
+            const stressError = document.getElementById('stress_error');
+            if (stressInput) {
+                const stress = parseInt(stressInput.value);
+                if (!stressInput.value || isNaN(stress)) {
+                    setError(stressInput, stressError, 'Veuillez sélectionner un niveau de stress.');
+                    isValid = false;
+                } else {
+                    clearError(stressInput, stressError);
+                }
+            }
+
+            const energyInput = document.getElementById('energy_select');
+            const energyError = document.getElementById('energy_error');
+            if (energyInput) {
+                const energy = parseInt(energyInput.value);
+                if (!energyInput.value || isNaN(energy)) {
+                    setError(energyInput, energyError, 'Veuillez sélectionner un niveau d\'énergie.');
+                    isValid = false;
+                } else {
+                    clearError(energyInput, energyError);
+                }
+            }
+
+            return isValid;
+        }
+
+        form.addEventListener('submit', function(e) {
+            if (!validateAll()) {
+                e.preventDefault();
+                // Scroll to first error
+                const firstError = form.querySelector('.is-invalid');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstError.focus();
+                }
+            }
+        });
+
+        // Live clear on change
+        form.querySelectorAll('input, select, textarea').forEach(function(el) {
+            el.addEventListener('input', validateAll);
+            el.addEventListener('change', validateAll);
+        });
     });
 </script>
 {% endblock %}

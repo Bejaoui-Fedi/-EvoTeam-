@@ -83,6 +83,20 @@
                                 <textarea name="bio" class="form-control rounded-4 p-3 shadow-sm border-light" rows="5" placeholder="Parlez-nous un peu de vous...">{{ userProfile.bio }}</textarea>
                             </div>
 
+                            <div class="col-12 mb-4 mt-4">
+                                <h5 class="text-info mb-3"><i class="fa-solid fa-robot me-2"></i> Configuration Habit AI</h5>
+                                <p class="small text-muted mb-3">Entrez votre clé API Habit AI pour activer votre tableau de bord santé personnel et le suivi intelligent.</p>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-light rounded-start-4 px-3"><i class="fa-solid fa-key text-info"></i></span>
+                                    <input type="password" name="habitAiToken" class="form-control border-light rounded-end-4 p-3 shadow-sm" value="{{ user.habitAiToken }}" placeholder="hab_xxxxxxxxxxxxxxxx">
+                                </div>
+                                <div class="mt-2">
+                                    <a href="https://habitapp.ai" target="_blank" class="text-info small text-decoration-none">
+                                        <i class="fa-solid fa-circle-info me-1"></i> Comment obtenir une clé ?
+                                    </a>
+                                </div>
+                            </div>
+
                             <div class="col-12 mt-5 pt-4 border-top d-flex justify-content-end gap-3">
                                 <a href="{{ path('app_user_profile') }}" class="btn-secondary-custom">Annuler</a>
                                 <button type="submit" class="edit-btn">

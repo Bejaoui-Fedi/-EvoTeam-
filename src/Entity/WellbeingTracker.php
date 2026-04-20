@@ -31,6 +31,7 @@ class WellbeingTracker
     private ?User $user = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Assert\NotBlank(message: "La date est obligatoire.")]
     private ?\DateTimeInterface $date = null;
 
     #[ORM\Column]
@@ -80,7 +81,7 @@ class WellbeingTracker
         return $this->date;
     }
 
-    public function setDate(\DateTimeInterface $date): static
+    public function setDate(?\DateTimeInterface $date): static
     {
         $this->date = $date;
         return $this;
@@ -91,7 +92,7 @@ class WellbeingTracker
         return $this->mood;
     }
 
-    public function setMood(int $mood): static
+    public function setMood(?int $mood): static
     {
         $this->mood = $mood;
         return $this;
@@ -102,7 +103,7 @@ class WellbeingTracker
         return $this->stress;
     }
 
-    public function setStress(int $stress): static
+    public function setStress(?int $stress): static
     {
         $this->stress = $stress;
         return $this;
@@ -113,7 +114,7 @@ class WellbeingTracker
         return $this->energy;
     }
 
-    public function setEnergy(int $energy): static
+    public function setEnergy(?int $energy): static
     {
         $this->energy = $energy;
         return $this;
@@ -124,7 +125,7 @@ class WellbeingTracker
         return $this->sleepHours;
     }
 
-    public function setSleepHours(float $sleepHours): static
+    public function setSleepHours(?float $sleepHours): static
     {
         $this->sleepHours = $sleepHours;
         return $this;

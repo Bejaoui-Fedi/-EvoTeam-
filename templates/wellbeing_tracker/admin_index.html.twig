@@ -6,9 +6,6 @@
 <div class="admin-container">
     <div class="admin-header">
         <h1>Journal de Bien-être</h1>
-        <a href="{{ path('app_wellbeing_tracker_new') }}" class="btn btn-primary">
-            <i class="fa-solid fa-plus"></i> Nouvelle entrée
-        </a>
     </div>
 
     <div class="admin-filters mb-4">
@@ -59,9 +56,6 @@
                         <td class="actions">
                             <a href="{{ path('app_wellbeing_tracker_show', {'id': tracker.id}) }}" class="btn btn-sm btn-info">
                                 <i class="fa-solid fa-eye"></i>
-                            </a>
-                            <a href="{{ path('app_wellbeing_tracker_edit', {'id': tracker.id}) }}" class="btn btn-sm btn-warning">
-                                <i class="fa-solid fa-edit"></i>
                             </a>
                             <form method="post" action="{{ path('app_wellbeing_tracker_delete', {'id': tracker.id}) }}" style="display: inline-block;">
                                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ tracker.id) }}">

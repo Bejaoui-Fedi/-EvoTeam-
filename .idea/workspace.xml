@@ -5,36 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9761c5c3-149c-4ec3-879e-07b94ef02267" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/add_js_val.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build_3_parts.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/fix_admin_layout.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/fix_templates.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/fix_templates.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/phpunit.xml.dist" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/pro_dashboard.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/uploads/avatars/69b5e2697bfbc.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/revert_to_2_themes.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Service/DailyRoutineTaskType.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Service/WellbeingTrackerType.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/symfony.exe" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/pro_nav_bar/index.html.twig" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/wellbeing_tracker/admin_index.html.twig" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/wellbeing_tracker/patient_index.html.twig" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/packages/security.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/security.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/DailyRoutineTaskController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/DailyRoutineTaskController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/WellbeingTrackerController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/WellbeingTrackerController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/User.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/daily_routine_task/edit.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/daily_routine_task/edit.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/daily_routine_task/index.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/daily_routine_task/index.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/daily_routine_task/new.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/daily_routine_task/new.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/daily_routine_task/show.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/daily_routine_task/show.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/user_nav_bar/index.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/user_nav_bar/index.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/wellbeing_tracker/edit.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/wellbeing_tracker/edit.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/wellbeing_tracker/index.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/wellbeing_tracker/index.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/wellbeing_tracker/new.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/wellbeing_tracker/new.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/wellbeing_tracker/show.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/wellbeing_tracker/show.html.twig" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,8 +42,9 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "#4 on WBmanagement",
+    "git-widget-placeholder": "WBmanagement",
     "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/Mega-Pc/IdeaProjects/ProSynfOG - Copy",
     "settings.editor.selected.configurable": "preferences.lookFeel"
   }
 }]]></component>
@@ -91,6 +63,23 @@
       <option name="presentableId" value="Default" />
       <updated>1772714948722</updated>
     </task>
+    <task id="LOCAL-00001" summary="Rated work For the start">
+      <option name="closed" value="true" />
+      <created>1776123680602</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1776123680602</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.env" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Merge remote-tracking branch 'origin/WBmanagement' into WBmanagement&#10;&#10;# Conflicts:&#10;#&#9;.gitignore&#10;#&#9;config/packages/security.yaml&#10;#&#9;src/Entity/User.php&#10;#&#9;templates/admin_nav_bar/index.html.twig" />
+    <MESSAGE value="Rated work For the start" />
+    <option name="LAST_COMMIT_MESSAGE" value="Rated work For the start" />
   </component>
 </project>

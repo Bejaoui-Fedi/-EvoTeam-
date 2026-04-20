@@ -47,42 +47,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $tokenExpiry = null;
 
-    #[ORM\Column(options: ["default" => 0])]
-    private int $xp = 0;
-
-    #[ORM\Column(length: 50, options: ["default" => "DEBUTANT"])]
-    private string $level = 'DEBUTANT';
-
-    #[ORM\Column(options: ["default" => 0])]
-    private int $currentStreak = 0;
-
-    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
-    private ?\DateTimeImmutable $lastActivityDate = null;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $googleAccessToken = null;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $googleRefreshToken = null;
-
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ExerciseCompletion::class, orphanRemoval: true)]
-    private Collection $completions;
-
-    /**
-     * @var Collection<int, Participation>
-     */
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Participation::class, orphanRemoval: true)]
-    private Collection $participations;
-
-    public function __construct()
-    {
-        $this->completions = new ArrayCollection();
-        $this->participations = new ArrayCollection();
-        $this->xp = 0;
-        $this->level = 'DEBUTANT';
-        $this->currentStreak = 0;
-        $this->actif = true;
-    }
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $habitAiToken = null;
 
     public function getId(): ?int
     {
@@ -185,6 +151,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getHabitAiToken(): ?string
+    {
+        return $this->habitAiToken;
+    }
+
+    public function setHabitAiToken(?string $habitAiToken): static
+    {
+        $this->habitAiToken = $habitAiToken;
+
+        return $this;
+    }
+
     /**
      * A visual identifier that represents this user.
      *
@@ -202,13 +180,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $roles = ['ROLE_USER'];
         
-        if ($this->role === 'ADMIN') {
-            $roles[] = 'ROLE_ADMIN';
-        } elseif ($this->role === 'PSY_COACH') {
-            $roles[] = 'ROLE_COACH';
-            $roles[] = 'ROLE_PSYCHOLOGUE';
-        } elseif ($this->role === 'PATIENT') {
-            $roles[] = 'ROLE_PATIENT';
+        if ($role) {
+            // Fix potential typos where ROLE_ prefix is missing
+            if (strpos($role, 'ROLE_') !== 0) {
+                $role = 'ROLE_' . strtoupper($role);
+            }
+            $roles[] = $role;
         }
 
         return array_unique($roles);

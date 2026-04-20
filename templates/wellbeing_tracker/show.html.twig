@@ -257,9 +257,11 @@
                     <a href="{{ path('app_wellbeing_tracker_index') }}" class="btn-back">
                         <i class="fa-solid fa-list"></i> Toutes les entrées
                     </a>
-                    <a href="{{ path('app_wellbeing_tracker_edit', {'id': wellbeing_tracker.id}) }}" class="btn-edit">
-                        <i class="fa-solid fa-edit"></i> Modifier
-                    </a>
+                    {% if not isAdminLayout %}
+                        <a href="{{ path('app_wellbeing_tracker_edit', {'id': wellbeing_tracker.id}) }}" class="btn-edit">
+                            <i class="fa-solid fa-edit"></i> Modifier
+                        </a>
+                    {% endif %}
                     <form method="post" action="{{ path('app_wellbeing_tracker_delete', {'id': wellbeing_tracker.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette entrée ?');">
                         <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ wellbeing_tracker.id) }}">
                         <button type="submit" class="btn-delete">

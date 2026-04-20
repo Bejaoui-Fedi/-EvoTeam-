@@ -366,7 +366,7 @@
                     <a href="{{ path('app_daily_routine_task_index') }}" class="btn-routine">
                         <i class="fa-solid fa-dumbbell"></i> Mes routines
                     </a>
-                    {% if not isPatient %}
+                    {% if not isPatient and not isAdminLayout %}
                     <a href="{{ path('app_wellbeing_tracker_new') }}" class="btn-create">
                         <i class="fa-solid fa-plus"></i> Nouvelle entrée
                     </a>
@@ -525,9 +525,11 @@
                                     <i class="fa-solid fa-eye"></i> Voir
                                 </a>
                                 {% if not isPatient %}
+                                {% if not isAdminLayout %}
                                 <a href="{{ path('app_wellbeing_tracker_edit', {'id': entry.id}) }}" class="btn btn-sm btn-outline-warning">
                                     <i class="fa-solid fa-edit"></i> Modifier
                                 </a>
+                                {% endif %}
                                 <form method="post" action="{{ path('app_wellbeing_tracker_delete', {'id': entry.id}) }}" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette entrée ?');">
                                     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ entry.id) }}">
                                     <button type="submit" class="btn btn-sm btn-outline-danger">

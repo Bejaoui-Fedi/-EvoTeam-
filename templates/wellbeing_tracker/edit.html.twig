@@ -10,6 +10,7 @@
 {% block stylesheets %}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
     <link rel="stylesheet" href="{{ asset('styles.css') }}">
     <link rel="stylesheet" href="{{ asset(isAdminLayout ? 'admin_dashboard.css' : 'user_dashboard.css') }}">
     <style>
@@ -37,7 +38,7 @@
             overflow-y: auto !important;
             padding: 2rem !important;
         }
-        
+
         .edit-form-container {
             background: white;
             border-radius: 20px;
@@ -46,14 +47,14 @@
             max-width: 800px;
             margin: 0 auto;
         }
-        
+
         .form-label {
             font-weight: 600;
             color: #1e4d6b;
             margin-bottom: 0.5rem;
             display: block;
         }
-        
+
         .form-control, .form-select {
             border-radius: 12px;
             padding: 0.75rem 1rem;
@@ -61,18 +62,18 @@
             width: 100%;
             transition: all 0.2s;
         }
-        
+
         .form-control:focus, .form-select:focus {
             border-color: #1e4d6b;
             box-shadow: 0 0 0 0.2rem rgba(30, 77, 107, 0.25);
             outline: none;
         }
-        
+
         textarea.form-control {
             resize: vertical;
             min-height: 120px;
         }
-        
+
         .btn-update {
             background: linear-gradient(135deg, #1e4d6b 0%, #2980b9 100%);
             color: white;
@@ -82,12 +83,12 @@
             font-weight: 500;
             transition: transform 0.2s;
         }
-        
+
         .btn-update:hover {
             transform: translateY(-2px);
             color: white;
         }
-        
+
         .btn-cancel {
             background: #6c757d;
             color: white;
@@ -99,12 +100,12 @@
             text-decoration: none;
             display: inline-block;
         }
-        
+
         .btn-cancel:hover {
             transform: translateY(-2px);
             color: white;
         }
-        
+
         .btn-danger {
             background: #dc3545;
             border: none;
@@ -113,19 +114,19 @@
             font-weight: 500;
             transition: transform 0.2s;
         }
-        
+
         .btn-danger:hover {
             transform: translateY(-2px);
             background: #c82333;
         }
-        
+
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
-        
+
         .stat-card {
             background: white;
             border-radius: 20px;
@@ -133,45 +134,113 @@
             text-align: center;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
-        
+
         .stat-card .stat-number {
             font-size: 2.5rem;
             font-weight: 700;
             color: #1e4d6b;
         }
-        
+
         .stat-card .stat-label {
             font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 1px;
             color: #6c757d;
         }
-        
+
         .metric-preview {
             background: #f8f9fa;
             padding: 1rem;
             border-radius: 12px;
             margin-bottom: 1rem;
         }
-        
+
         .metric-preview .metric-value {
             font-size: 1.25rem;
             font-weight: 600;
             color: #1e4d6b;
         }
-        
+
         .progress {
             height: 6px;
             border-radius: 3px;
         }
-        
-        .associated-task {
-            background: #e8f4f8;
-            padding: 1rem;
-            border-radius: 12px;
-            margin-top: 1rem;
-            margin-bottom: 1rem;
-            border-left: 4px solid #1e4d6b;
+
+        /* ── Server-side Symfony form_errors() → red ── */
+        div > ul {
+            list-style: none;
+            padding: 0;
+            margin: 0.4rem 0 0 0;
+        }
+        div > ul > li {
+            color: #dc3545 !important;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.3rem;
+        }
+        div > ul > li::before {
+            content: '⚠';
+            flex-shrink: 0;
+        }
+
+        /* ── JS inline validation errors ── */
+        .form-control.is-invalid,
+        .form-select.is-invalid {
+            border-color: #dc3545 !important;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+        }
+        .invalid-feedback {
+            color: #dc3545;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-top: 0.35rem;
+            display: none;
+            align-items: center;
+            gap: 0.35rem;
+        }
+        .invalid-feedback::before {
+            content: '⚠';
+        }
+
+        /* ── Choices.js custom styling ── */
+        .choices__inner {
+            border-radius: 12px !important;
+            border: 1px solid #dee2e6 !important;
+            padding: 0.5rem 1rem !important;
+            font-size: 0.95rem;
+            background: white !important;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+        }
+        .choices__list--dropdown {
+            border-radius: 12px !important;
+            border: 1px solid #dee2e6 !important;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12) !important;
+            z-index: 9999;
+        }
+        .choices__list--dropdown .choices__item--selectable.is-highlighted {
+            background-color: #1e4d6b !important;
+        }
+        .choices__input {
+            background: transparent !important;
+            font-size: 0.95rem;
+        }
+        .is-open .choices__inner {
+            border-color: #1e4d6b !important;
+            box-shadow: 0 0 0 0.2rem rgba(30,77,107,0.2) !important;
+        }
+        .choices__placeholder {
+            color: #adb5bd !important;
+            opacity: 1 !important;
+        }
+
+        @media (max-width: 768px) {
+            .user-main-content {
+                padding: 1rem !important;
+            }
         }
     </style>
 {% endblock %}
@@ -227,22 +296,24 @@
             </div>
 
             <div class="edit-form-container">
-                {{ form_start(form) }}
-                
+                {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'id': 'edit-form'}}) }}
+
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <label class="form-label">
                             <i class="fa-regular fa-calendar me-2"></i> Date
                         </label>
-                        {{ form_widget(form.date, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_widget(form.date, {'attr': {'class': 'form-control', 'id': 'edit_date'}}) }}
                         {{ form_errors(form.date) }}
+                        <div class="invalid-feedback" id="edit_date_error"></div>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">
                             <i class="fa-solid fa-bed me-2"></i> Heures de sommeil
                         </label>
-                        {{ form_widget(form.sleepHours, {'attr': {'class': 'form-control', 'step': '0.5', 'min': '0', 'max': '24'}}) }}
+                        {{ form_widget(form.sleepHours, {'attr': {'class': 'form-control', 'step': '0.5', 'min': '0', 'max': '24', 'id': 'edit_sleep'}}) }}
                         {{ form_errors(form.sleepHours) }}
+                        <div class="invalid-feedback" id="edit_sleep_error"></div>
                     </div>
                 </div>
 
@@ -252,18 +323,24 @@
                             <i class="fa-regular fa-face-smile me-2"></i> Humeur (1-5)
                         </label>
                         {{ form_widget(form.mood, {'attr': {'class': 'form-select', 'id': 'edit_mood'}}) }}
+                        {{ form_errors(form.mood) }}
+                        <div class="invalid-feedback" id="edit_mood_error"></div>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">
                             <i class="fa-solid fa-waveform me-2"></i> Stress (1-5)
                         </label>
                         {{ form_widget(form.stress, {'attr': {'class': 'form-select', 'id': 'edit_stress'}}) }}
+                        {{ form_errors(form.stress) }}
+                        <div class="invalid-feedback" id="edit_stress_error"></div>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">
                             <i class="fa-solid fa-bolt me-2"></i> Énergie (1-5)
                         </label>
                         {{ form_widget(form.energy, {'attr': {'class': 'form-select', 'id': 'edit_energy'}}) }}
+                        {{ form_errors(form.energy) }}
+                        <div class="invalid-feedback" id="edit_energy_error"></div>
                     </div>
                 </div>
 
@@ -287,22 +364,33 @@
                     </div>
                 </div>
 
-                {% if wellbeing_tracker.routineTask %}
-                    <div class="associated-task">
-                        <small class="text-muted d-block mb-1">
-                            <i class="fa-solid fa-dumbbell me-1"></i> Exercice associé
-                        </small>
-                        <p class="mb-0 fw-bold text-dark">{{ wellbeing_tracker.routineTask.title }}</p>
-                    </div>
-                {% endif %}
-
                 <div class="mb-4">
                     <label class="form-label">
                         <i class="fa-solid fa-pen me-2"></i> Notes personnelles
                     </label>
                     {{ form_widget(form.note, {'attr': {'class': 'form-control', 'rows': 4, 'placeholder': 'Comment vous êtes-vous senti aujourd\'hui ?'}}) }}
+                    {{ form_errors(form.note) }}
                 </div>
 
+                {# User + Routine Task — searchable, placed above buttons #}
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            <i class="fa-solid fa-user me-2"></i> Utilisateur
+                        </label>
+                        {{ form_widget(form.user, {'attr': {'class': 'form-select', 'id': 'edit_user'}}) }}
+                        {{ form_errors(form.user) }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            <i class="fa-solid fa-dumbbell me-2"></i> Tâche de routine liée
+                        </label>
+                        {{ form_widget(form.routineTask, {'attr': {'class': 'form-select', 'id': 'edit_routine'}}) }}
+                        {{ form_errors(form.routineTask) }}
+                    </div>
+                </div>
+
+                {# Hidden fields #}
                 {% for child in form %}
                     {% if 'hidden' in child.vars.block_prefixes %}
                         {{ form_widget(child) }}
@@ -323,8 +411,8 @@
                         <i class="fa-solid fa-save"></i> Mettre à jour
                     </button>
                 </div>
-                
-                {{ form_end(form) }}
+
+                {{ form_end(form, {'render_rest': false}) }}
             </div>
         </div>
     </div>
@@ -334,72 +422,157 @@
     const moodEl = document.getElementById('edit_mood');
     const stressEl = document.getElementById('edit_stress');
     const energyEl = document.getElementById('edit_energy');
-    
+
     function updateEditPreview() {
         const mood = moodEl?.value || 3;
         const stress = stressEl?.value || 3;
         const energy = energyEl?.value || 3;
-        
+
         document.getElementById('preview_mood').innerText = mood + '/5';
         document.getElementById('preview_stress').innerText = stress + '/5';
         document.getElementById('preview_energy').innerText = energy + '/5';
-        
+
         document.getElementById('bar_mood').style.width = (mood / 5) * 100 + '%';
         document.getElementById('bar_stress').style.width = (stress / 5) * 100 + '%';
         document.getElementById('bar_energy').style.width = (energy / 5) * 100 + '%';
     }
-    
+
     if (moodEl) moodEl.addEventListener('change', updateEditPreview);
     if (stressEl) stressEl.addEventListener('change', updateEditPreview);
     if (energyEl) energyEl.addEventListener('change', updateEditPreview);
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const form = document.querySelector('form');
-        if (form) {
-            form.addEventListener('submit', function(e) {
-                const moodInput = document.querySelector('select[name$="[mood]"]') || document.querySelector('input[name$="[mood]"]');
-                const stressInput = document.querySelector('select[name$="[stress]"]') || document.querySelector('input[name$="[stress]"]');
-                const energyInput = document.querySelector('select[name$="[energy]"]') || document.querySelector('input[name$="[energy]"]');
-                const sleepInput = document.querySelector('input[name$="[sleepHours]"]');
+document.addEventListener('DOMContentLoaded', function() {
 
-                if (moodInput) {
-                    const mood = parseInt(moodInput.value);
-                    if (isNaN(mood) || mood < 1 || mood > 5) {
-                        e.preventDefault();
-                        alert('Erreur de saisie: L\'humeur doit être un nombre entre 1 et 5.');
-                        return false;
-                    }
-                }
-                if (stressInput) {
-                    const stress = parseInt(stressInput.value);
-                    if (isNaN(stress) || stress < 1 || stress > 5) {
-                        e.preventDefault();
-                        alert('Erreur de saisie: Le niveau de stress doit être un nombre entre 1 et 5.');
-                        return false;
-                    }
-                }
-                if (energyInput) {
-                    const energy = parseInt(energyInput.value);
-                    if (isNaN(energy) || energy < 1 || energy > 5) {
-                        e.preventDefault();
-                        alert('Erreur de saisie: Le niveau d\'énergie doit être un nombre entre 1 et 5.');
-                        return false;
-                    }
-                }
-                if (sleepInput) {
-                    const sleep = parseFloat(sleepInput.value);
-                    if (isNaN(sleep) || sleep < 0 || sleep > 24) {
-                        e.preventDefault();
-                        alert('Erreur de saisie: Les heures de sommeil doivent être comprises entre 0 et 24.');
-                        return false;
-                    }
-                }
-                function runValidation() {} // marker
-            });
+    // ── Choices.js searchable selects ──
+    const userEl = document.getElementById('edit_user');
+    if (userEl) {
+        new Choices(userEl, {
+            searchEnabled: true,
+            searchPlaceholderValue: 'Tapez pour rechercher...',
+            itemSelectText: '',
+            noResultsText: 'Aucun résultat trouvé',
+            noChoicesText: 'Aucun utilisateur disponible',
+            shouldSort: true,
+            searchFields: ['label']
+        });
+    }
+    const routineEl = document.getElementById('edit_routine');
+    if (routineEl) {
+        new Choices(routineEl, {
+            searchEnabled: true,
+            searchPlaceholderValue: 'Tapez pour rechercher...',
+            itemSelectText: '',
+            noResultsText: 'Aucun résultat trouvé',
+            noChoicesText: 'Aucune tâche disponible',
+            shouldSort: true,
+            searchFields: ['label']
+        });
+    }
+
+    // ── Inline JS validation ──
+    const form = document.getElementById('edit-form');
+    if (!form) return;
+
+    function setError(inputEl, errorEl, message) {
+        if (!inputEl || !errorEl) return;
+        inputEl.classList.add('is-invalid');
+        inputEl.classList.remove('is-valid');
+        errorEl.textContent = message;
+        errorEl.style.display = 'flex';
+    }
+
+    function clearError(inputEl, errorEl) {
+        if (!inputEl || !errorEl) return;
+        inputEl.classList.remove('is-invalid');
+        inputEl.classList.add('is-valid');
+        errorEl.style.display = 'none';
+    }
+
+    function validateAll() {
+        let isValid = true;
+
+        const dateInput = document.getElementById('edit_date');
+        const dateError = document.getElementById('edit_date_error');
+        if (dateInput && !dateInput.value) {
+            setError(dateInput, dateError, 'La date est obligatoire.');
+            isValid = false;
+        } else if (dateInput) {
+            clearError(dateInput, dateError);
+        }
+
+        const sleepInput = document.getElementById('edit_sleep');
+        const sleepError = document.getElementById('edit_sleep_error');
+        if (sleepInput) {
+            const sleep = parseFloat(sleepInput.value);
+            if (sleepInput.value === '' || isNaN(sleep)) {
+                setError(sleepInput, sleepError, 'Le nombre d\'heures de sommeil est obligatoire.');
+                isValid = false;
+            } else if (sleep < 0 || sleep > 24) {
+                setError(sleepInput, sleepError, 'Les heures de sommeil doivent être entre 0 et 24.');
+                isValid = false;
+            } else {
+                clearError(sleepInput, sleepError);
+            }
+        }
+
+        const moodInput = document.getElementById('edit_mood');
+        const moodError = document.getElementById('edit_mood_error');
+        if (moodInput) {
+            const mood = parseInt(moodInput.value);
+            if (!moodInput.value || isNaN(mood)) {
+                setError(moodInput, moodError, 'Veuillez sélectionner un niveau d\'humeur.');
+                isValid = false;
+            } else {
+                clearError(moodInput, moodError);
+            }
+        }
+
+        const stressInput = document.getElementById('edit_stress');
+        const stressError = document.getElementById('edit_stress_error');
+        if (stressInput) {
+            const stress = parseInt(stressInput.value);
+            if (!stressInput.value || isNaN(stress)) {
+                setError(stressInput, stressError, 'Veuillez sélectionner un niveau de stress.');
+                isValid = false;
+            } else {
+                clearError(stressInput, stressError);
+            }
+        }
+
+        const energyInput = document.getElementById('edit_energy');
+        const energyError = document.getElementById('edit_energy_error');
+        if (energyInput) {
+            const energy = parseInt(energyInput.value);
+            if (!energyInput.value || isNaN(energy)) {
+                setError(energyInput, energyError, 'Veuillez sélectionner un niveau d\'énergie.');
+                isValid = false;
+            } else {
+                clearError(energyInput, energyError);
+            }
+        }
+
+        return isValid;
+    }
+
+    form.addEventListener('submit', function(e) {
+        if (!validateAll()) {
+            e.preventDefault();
+            const firstError = form.querySelector('.is-invalid');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                firstError.focus();
+            }
         }
     });
+
+    form.querySelectorAll('input, select, textarea').forEach(function(el) {
+        el.addEventListener('input', validateAll);
+        el.addEventListener('change', validateAll);
+    });
+});
 </script>
 {% endblock %}
