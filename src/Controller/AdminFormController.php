@@ -33,43 +33,37 @@ final class AdminFormController extends AbstractController
             $password = $request->request->get('password');
             $confirmPassword = $request->request->get('confirm_password');
 
-            $formData = [
-                'fullname' => $fullname,
-                'email'    => $email,
-                'phone'    => $phone,
-            ];
-
             if (empty($fullname) || empty($email) || empty($phone) || empty($password)) {
-                return $this->render('admin_form/index.html.twig', array_merge($formData, [
+                return $this->render('admin_form/index.html.twig', [
                     'error' => 'Tous les champs sont obligatoires.',
-                ]));
+                ]);
             }
 
             // Validation du numéro de téléphone tunisien (exactement 8 chiffres)
             if (!preg_match('/^[0-9]{8}$/', $phone)) {
-                return $this->render('admin_form/index.html.twig', array_merge($formData, [
+                return $this->render('admin_form/index.html.twig', [
                     'error' => 'Le numéro de téléphone doit contenir exactement 8 chiffres.',
-                ]));
+                ]);
             }
 
             // Replace miniaturized check -> check auth code
             if ($authCode !== self::ADMIN_AUTH_CODE) {
-                return $this->render('admin_form/index.html.twig', array_merge($formData, [
+                return $this->render('admin_form/index.html.twig', [
                     'error' => 'Code d\'autorisation invalide.',
-                ]));
+                ]);
             }
 
             if ($password !== $confirmPassword) {
-                return $this->render('admin_form/index.html.twig', array_merge($formData, [
+                return $this->render('admin_form/index.html.twig', [
                     'error' => 'Les mots de passe ne correspondent pas.',
-                ]));
+                ]);
             }
 
             // Check if user exists
             if ($userService->findByEmail($email)) {
-                return $this->render('admin_form/index.html.twig', array_merge($formData, [
+                return $this->render('admin_form/index.html.twig', [
                     'error' => 'Un administrateur avec cet email existe déjà.',
-                ]));
+                ]);
             }
 
             // Create Admin User

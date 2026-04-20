@@ -1,319 +1,168 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Evolia — Inscription{% endblock %}
+{% block title %}Evolia — Inscription Utilisateur{% endblock %}
 
 {% block body_class %}user-theme{% endblock %}
 
 {% block stylesheets %}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('styles.css') }}?v={{ 'now'|date('U') }}">
+    <link rel="stylesheet" href="{{ asset('styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('user_form.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <style>
-        .user-theme .full-split-container {
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-            width: 100%;
-            position: relative;
-            z-index: 10;
+        .modern-alert {
+            display: flex; align-items: center; padding: 1rem; margin-bottom: 2rem;
+            border-radius: 1.25rem; background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
         }
-
-        .user-theme .visual-side {
-            flex: 1.2;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            padding: 80px 100px;
+        .alert-error {
+            background: #842029 !important;
+            border: 1px solid #721c24 !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 15px rgba(114, 28, 36, 0.3) !important;
+            opacity: 1 !important;
         }
-
-        .user-theme .form-side {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.98);
-            color: #1a202c;
-            display: flex;
-            flex-direction: column;
-            padding: 80px 100px;
-            box-shadow: -20px 0 60px rgba(0, 0, 0, 0.1);
-            overflow-y: auto;
-            position: relative;
-        }
-
-        .user-theme .form-container-inner {
-            width: 100%;
-            max-width: 480px;
-            margin: 0 auto;
-        }
-
-        .user-theme .visual-content {
-            position: relative;
-            z-index: 15;
-            text-align: left;
-            max-width: 500px;
-            color: white;
-        }
-
-        .user-theme .visual-content h2 {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 3.5rem;
-            font-weight: 300;
-            line-height: 1.1;
-            margin-bottom: 24px;
-        }
-
-        .user-theme .visual-content h2 span {
-            display: block;
-            font-style: italic;
-            font-weight: 500;
-            color: #a8ced5;
-        }
-
-        .user-theme h1 {
-            font-family: 'Cormorant Garamond', serif !important;
-            font-size: 2.2rem !important;
-            font-weight: 600 !important;
-            color: #123e59 !important;
-            margin-bottom: 8px !important;
-        }
-
-        .user-theme .form-control {
-            border: 1.5px solid #e2e8f0 !important;
-            border-radius: 12px !important;
-            padding: 14px 18px !important;
-            background: #f8fafc !important;
-            transition: var(--transition-premium);
-        }
-
-        .user-theme .form-control:focus {
-            border-color: #256a8f !important;
-            box-shadow: 0 0 0 4px rgba(37, 106, 143, 0.1) !important;
-        }
-
-        .user-theme .account-type-card { cursor: pointer; flex: 1; }
-        .user-theme .account-type-card .card-inner {
-            padding: 15px; border: 1.5px solid #e1e9f0; border-radius: 12px;
-            text-align: center; font-weight: 600; color: #4a5568; transition: all 0.3s;
-        }
-        .user-theme .account-type-card input:checked + .card-inner {
-            border-color: #256a8f; background: #ebf8ff; color: #256a8f;
-        }
-
-        /* Toast positioning */
-        .user-theme #toast-error { position: fixed; top: 30px; right: 30px; z-index: 9999; display: none; }
-
-        @media (max-width: 1200px) {
-            .user-theme .form-side { padding: 60px 40px; }
-        }
-
-        @media (max-width: 992px) {
-            .user-theme .full-split-container { flex-direction: column; }
-            .user-theme .visual-side { display: none; }
-            .user-theme .form-side { min-height: 100vh; }
-        }
+        .alert-icon-circle { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 1rem; background: rgba(255, 255, 255, 0.2) !important; color: #ffffff !important; font-size: 1.25rem; }
+        .alert-message { font-size: 0.95rem; text-align: left; }
+        .alert-message strong { display: block; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; margin-bottom: 2px; opacity: 0.8; }
     </style>
 {% endblock %}
 
 {% block body %}
 
-{# --- GLOBAL BG FIXED --- #}
-<div id="bgCarousel" class="carousel slide carousel-fade bg-carousel" data-bs-ride="carousel" data-bs-interval="4000">
+{# ——— BOOTSTRAP BACKGROUND CAROUSEL ——— #}
+<div id="bgCarousel" class="carousel slide carousel-fade bg-carousel" data-bs-ride="carousel" data-bs-interval="1500">
     <div class="carousel-inner">
-        <div class="carousel-item active"><img src="/images/bg-2.jpg" class="d-block w-100" alt="BG"></div>
-        <div class="carousel-item"><img src="/images/bg-3.jpg" class="d-block w-100" alt="BG"></div>
+        <div class="carousel-item active">
+            <img src="/images/bg-2.jpg" class="d-block w-100" alt="Bien-être 1">
+        </div>
+        <div class="carousel-item">
+            <img src="/images/bg-3.jpg" class="d-block w-100" alt="Bien-être 2">
+        </div>
+        <div class="carousel-item">
+            <img src="/images/bg-4.jpg" class="d-block w-100" alt="Bien-être 3">
+        </div>
     </div>
 </div>
+
+{# ——— DARK OVERLAY ——— #}
 <div class="bg-dark-overlay"></div>
 
-<div class="full-split-container">
+<div class="registration-card">
 
-    {# ——— LEFT: VISUAL ——— #}
-    <div class="visual-side">
-        <div class="visual-content animate__animated animate__fadeInLeft">
-            <div class="logo-badge mb-4">
-                <i class="fa-solid fa-user-plus me-2"></i> Inscription
+    <h1>Inscription Utilisateur</h1>
+    <p class="subtitle">Patient • Coach • Psychologue</p>
+    
+    {% if error is defined and error %}
+        <div class="modern-alert alert-error animate__animated animate__shakeX">
+            <div class="alert-icon-circle">
+                <i class="fa-solid fa-circle-exclamation"></i>
             </div>
-            <h2>Bienvenue <span>parmi nous</span></h2>
-            <p class="subtitle mt-3">Créez votre profil en quelques instants et accédez à tout l'univers Evolia Healthy Life.</p>
+            <div class="alert-message">
+                <strong>Erreur</strong> {{ error }}
+            </div>
         </div>
-    </div>
+    {% endif %}
 
-    {# ——— RIGHT: FORM ——— #}
-    <div class="form-side animate__animated animate__fadeInRight">
+    <hr class="section-divider">
+
+    <form method="post" action="{{ path('app_user_form') }}" autocomplete="off">
+
+        <div class="section-title">Informations personnelles</div>
+        <input type="text" class="form-control" name="fullname" placeholder="Nom complet" required>
+        <input type="email" class="form-control" name="email" placeholder="Email (exemple@email.com)" required>
+        <input type="tel" class="form-control" name="phone" placeholder="Téléphone (8 chiffres)" pattern="[0-9]{8}" maxlength="8" required>
+
+        <div class="section-title">Type de compte</div>
+        <div class="radio-group">
+            <label class="radio-item"><input type="radio" name="account_type" value="patient" checked> Patient</label>
+            <label class="radio-item"><input type="radio" name="account_type" value="coach"> Coach</label>
+            <label class="radio-item"><input type="radio" name="account_type" value="psychologue"> Psychologue</label>
+        </div>
+
+        <div class="section-title">Sécurité</div>
+        <input type="password" class="form-control" name="password" placeholder="Mot de passe (min. 8 caractères)" required autocomplete="new-password">
+        <input type="password" class="form-control" name="confirm_password" placeholder="Confirmer le mot de passe" required autocomplete="new-password">
         
-        <div class="form-container-inner" style="max-width: 480px; width: 100%; margin: 0 auto;">
-            
-            <div class="brand-header mb-5">
-                <h1>Créer mon profil</h1>
-                <p class="text-muted small">Remplissez les informations ci-dessous.</p>
+        <div class="strength-container">
+            <div class="strength-bar">
+                <div class="strength-fill"></div>
             </div>
-
-            <form method="post" action="{{ path('app_user_form') }}" novalidate autocomplete="off">
-                {% if error is defined and error %}
-                    <div class="alert alert-danger px-4 py-3 border-0 rounded-4 mb-4" style="background: rgba(229, 62, 62, 0.1); color: #e53e3e; font-size: 0.9rem;">
-                        <i class="fa-solid fa-circle-exclamation me-2"></i> {{ error }}
-                    </div>
-                {% endif %}
-                <input type="hidden" name="_token" value="{{ csrf_token('registration') }}">
-                
-                <div class="form-group mb-4">
-                    <label class="form-label fw-bold small text-uppercase">Nom complet</label>
-                    <input type="text" id="f-fullname" class="form-control" name="fullname" placeholder="Ex: Jean Dupont" value="{{ fullname is defined ? fullname : '' }}">
-                    <div class="field-error-msg" id="err-fullname" style="display:none; color: #e53e3e; font-size: 0.75rem; margin-top: 5px;">
-                        <i class="fa-solid fa-circle-exclamation me-1"></i><span></span>
-                    </div>
-                </div>
-
-                <div class="form-group mb-4">
-                    <label class="form-label fw-bold small text-uppercase">Email Personnel</label>
-                    <input type="email" id="f-email" class="form-control" name="email" placeholder="nom@exemple.com" value="{{ email is defined ? email : '' }}" autocomplete="new-password">
-                    <div class="field-error-msg" id="err-email" style="display:none; color: #e53e3e; font-size: 0.75rem; margin-top: 5px;">
-                        <i class="fa-solid fa-circle-exclamation me-1"></i><span></span>
-                    </div>
-                </div>
-
-                <div class="form-group mb-4">
-                    <label class="form-label fw-bold small text-uppercase">Téléphone <span style="font-size:0.7rem;opacity:0.6;">(8 chiffres)</span></label>
-                    <input type="tel" id="f-phone" class="form-control" name="phone" placeholder="Ex: 22123456" maxlength="8" value="{{ phone is defined ? phone : '' }}" autocomplete="off" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-                    <div class="field-error-msg" id="err-phone" style="display:none; color: #e53e3e; font-size: 0.75rem; margin-top: 5px;">
-                        <i class="fa-solid fa-circle-exclamation me-1"></i><span></span>
-                    </div>
-                </div>
-
-                <div class="mb-4">
-                    <label class="form-label fw-bold small text-uppercase mb-3">Type de profil</label>
-                    <div class="d-flex gap-2">
-                        <label class="account-type-card">
-                            <input type="radio" name="account_type" value="patient" checked class="d-none">
-                            <div class="card-inner">Patient</div>
-                        </label>
-                        <label class="account-type-card">
-                            <input type="radio" name="account_type" value="coach" class="d-none">
-                            <div class="card-inner">Coach</div>
-                        </label>
-                        <label class="account-type-card">
-                            <input type="radio" name="account_type" value="psychologue" class="d-none">
-                            <div class="card-inner">Psy</div>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="form-group mb-4">
-                    <label class="form-label fw-bold small text-uppercase">Mot de passe</label>
-                    <input type="password" id="f-password" class="form-control" name="password" placeholder="8 caractères minimum" autocomplete="new-password">
-                    <div class="strength-bar mt-2" style="height: 4px; background: #edf2f7; border-radius: 10px; overflow: hidden;">
-                        <div class="strength-fill" style="height: 100%; width: 0; transition: width 0.3s; background: #e53e3e;"></div>
-                    </div>
-                </div>
-
-                <div class="form-group mb-4">
-                    <label class="form-label fw-bold small text-uppercase">Confirmation</label>
-                    <input type="password" id="f-confirm" class="form-control" name="confirm_password" placeholder="Répétez le mot de passe">
-                </div>
-
-                <div class="mb-4">
-                    <label class="d-flex align-items-center gap-2 m-0 small" style="cursor: pointer;">
-                        <input type="checkbox" name="terms" required style="width: 16px; height: 16px;"> 
-                        <span>J'accepte les conditions générales.</span>
-                    </label>
-                </div>
-
-                <button type="submit" class="btn btn-personal w-100 py-3 rounded-4 shadow-sm">
-                    Rejoindre la plateforme
-                </button>
-
-                <div class="text-center mt-5">
-                    <span class="text-muted small">Déjà inscrit ?</span>
-                    <a href="{{ path('app_user_login') }}" class="fw-bold text-decoration-none ms-2" style="color: #256a8f;">Connexion</a>
-                </div>
-
-                 <div class="text-center mt-4 pt-4 border-top">
-                    <a href="{{ path('app_home') }}" class="text-muted text-decoration-none small" data-turbo="false">
-                        <i class="fa-solid fa-house me-2"></i> Accueil
-                    </a>
-                </div>
-            </form>
-
-            <footer class="mt-auto pt-5">
-                <div class="footer-copy small text-muted">© 2026 EVOLIA PLATFORM</div>
-            </footer>
+            <div class="strength-label">Faible</div>
         </div>
-    </div>
+
+        <div class="form-options">
+            <label>
+                <input type="checkbox" name="terms" required> J'accepte les <a href="#">conditions générales</a> et la <a href="#">politique de confidentialité</a>
+            </label>
+        </div>
+
+        <button type="submit" class="btn-submit" style="border: none; width: 100%;">
+            <i class="fa-solid fa-check"></i> Créer mon compte
+        </button>
+
+    </form>
+
+    <p class="login-link">
+        Déjà un compte ? <a href="{{ path('app_user_login') }}">Connectez-vous</a>
+    </p>
+
 </div>
 
-<div id="toast-error" style="display: none; position: fixed; top: 20px; right: 20px; z-index: 9999;">
-    <div class="toast-card" style="background: white; border-radius: 16px; padding: 16px 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.05); display: flex; align-items: center; gap: 12px; animation: slideInRight 0.4s ease forwards;">
-        <div class="toast-icon" style="color: #e53e3e;"><i class="fa-solid fa-circle-exclamation"></i></div>
-        <div id="toast-text" style="color: #4a5568; font-size: 0.9rem; font-weight: 500;"></div>
-    </div>
-</div>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 (function() {
-    function init() {
-        const form = document.querySelector('form');
-        if (!form) return;
+    const initStrength = () => {
+        const password = document.querySelector('input[name="password"]');
+        const strengthFill = document.querySelector('.strength-fill');
+        const strengthLabel = document.querySelector('.strength-label');
 
-        const showToast = (msg) => {
-            const toast = document.getElementById('toast-error');
-            document.getElementById('toast-text').textContent = msg;
-            toast.style.display = 'block';
-            setTimeout(() => { toast.style.display = 'none'; }, 4000);
-        };
+        if (!password || !strengthFill || !strengthLabel) return;
 
-        form.addEventListener('submit', function(e) {
-            const fullname = document.getElementById('f-fullname');
-            const email = document.getElementById('f-email');
-            const phone = document.getElementById('f-phone');
-            const password = document.getElementById('f-password');
-            const confirm = document.getElementById('f-confirm');
-            const terms = document.querySelector('input[name="terms"]');
+        password.addEventListener('input', function() {
+            const val = password.value;
+            let score = 0;
 
-            document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
-            document.querySelectorAll('.field-error-msg').forEach(el => el.style.display = 'none');
-
-            let valid = true;
-
-            const showError = (input, msgId, msg) => {
-                if(input) input.classList.add('is-invalid');
-                const errDiv = document.getElementById(msgId);
-                if (errDiv) {
-                    errDiv.style.display = 'block';
-                    errDiv.querySelector('span').textContent = msg;
-                }
-                valid = false;
-            };
-
-            if (!fullname.value.trim()) showError(fullname, 'err-fullname', 'Le nom est requis.');
-            if (!email.value.trim() || !email.value.includes('@')) showError(email, 'err-email', 'Un email valide est requis.');
-            if (!phone || !phone.value.trim() || !/^[0-9]{8}$/.test(phone.value.trim())) showError(phone, 'err-phone', 'Téléphone: 8 chiffres requis.');
-            if (password.value.length < 8) showError(password, 'err-password', 'Mot de passe trop court.');
-            if (confirm && confirm.value !== password.value) showError(confirm, 'err-confirm', 'Les mots de passe ne correspondent pas.');
-            if (terms && !terms.checked) { showToast('Veuillez accepter les conditions'); valid = false; }
-
-            if (!valid) { 
-                e.preventDefault(); 
-                showToast('Veuillez remplir tous les champs correctement.'); 
+            if (!val) {
+                strengthFill.style.width = '0%';
+                strengthLabel.textContent = '';
+                return;
             }
+
+            // More granular scoring
+            if (val.length >= 8) score += 25;
+            if (/[A-Z]/.test(val)) score += 25;
+            if (/[0-9]/.test(val)) score += 25;
+            if (/[^A-Za-z0-9]/.test(val)) score += 25;
+
+            let color = '#ff6b6b';
+            let label = 'Très Faible';
+
+            if (score === 25) {
+                color = '#ff6b6b';
+                label = 'Faible';
+            } else if (score === 50) {
+                color = '#ffd166';
+                label = 'Moyen';
+            } else if (score === 75) {
+                color = '#06d6a0';
+                label = 'Fort';
+            } else if (score === 100) {
+                color = '#118ab2';
+                label = 'Excellent';
+            }
+
+            strengthFill.style.width = score + '%';
+            strengthFill.style.background = color;
+            strengthLabel.style.color = color;
+            strengthLabel.textContent = label;
         });
+    };
 
-        const pass = document.getElementById('f-password');
-        const fill = document.querySelector('.strength-fill');
-        if (pass && fill) {
-            pass.addEventListener('input', () => {
-                const v = pass.value;
-                let s = v.length >= 8 ? 40 : 10;
-                if (/[A-Z]/.test(v)) s += 30;
-                if (/[0-9]/.test(v)) s += 30;
-                fill.style.width = s + '%';
-                fill.style.background = s < 50 ? '#e53e3e' : s < 100 ? '#ecc94b' : '#48bb78';
-            });
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', init);
-    document.addEventListener('turbo:load', init);
-    if (document.readyState !== 'loading') init();
+    document.addEventListener('DOMContentLoaded', initStrength);
+    document.addEventListener('turbo:load', initStrength);
 })();
 </script>
 {% endblock %}

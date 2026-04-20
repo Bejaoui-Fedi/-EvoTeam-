@@ -12,10 +12,6 @@ final class UserLoginController extends AbstractController
     #[Route('/user/login', name: 'app_user_login')]
     public function index(AuthenticationUtils $authenticationUtils): Response
     {
-        if ($this->getUser()) {
-            return $this->redirectToRoute('app_user_dashboard');
-        }
-
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
 
